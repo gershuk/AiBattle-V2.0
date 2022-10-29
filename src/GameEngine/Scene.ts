@@ -1,6 +1,7 @@
 import { AbstractObjectComponent, ComponentParameters } from "./AbstractObjectComponent";
 import { GameObject } from "./GameObject";
 import { IScene } from "./IScene";
+import { Vector2 } from "./Vector2";
 
 enum SceneState {
   Init,
@@ -106,18 +107,19 @@ export class Scene implements IScene{
   }
 
   public AddGameObject<T extends GameObject>(
+    position:Vector2,
     gameObjectInits: T,
     ...newComponents: [AbstractObjectComponent, ComponentParameters?][]
   ): void {
     this._gameObjects.push(gameObjectInits);
-    gameObjectInits.Init(this, ...newComponents);
+    gameObjectInits.Init(position,this, ...newComponents);
   }
 
   public AddGameObjects<T extends GameObject>(
-    gameObjectInits: [T, [AbstractObjectComponent, ComponentParameters?][]][]
+    gameObjectInits: [Vector2,T, [AbstractObjectComponent, ComponentParameters?][]][]
   ): void {
     for (let gameObjectInit of gameObjectInits)
-      this.AddGameObject(gameObjectInit[0],...gameObjectInit[1]);
+      this.AddGameObject(gameObjectInit[0],gameObjectInit[1],...gameObjectInit[2]);
   }
 
   public GetGameObjectsByFilter(filter : (g:GameObject)=>boolean) : GameObject[]

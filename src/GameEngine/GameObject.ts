@@ -1,12 +1,21 @@
 import * as Utilities from "../Utilities/IndexUtilities";
-import { AbstractObjectComponent, ComponentParameters } from "./AbstractObjectComponent";
+import {
+  AbstractObjectComponent,
+  ComponentParameters,
+} from "./AbstractObjectComponent";
 import { IGameObject } from "./IGameObject";
 import { IScene } from "./IScene";
+import { Vector2 } from "./Vector2";
 
-export class GameObject implements IGameObject{
+export class GameObject implements IGameObject {
   private _id: string;
   private _components: AbstractObjectComponent[];
   private _owner: IScene | undefined;
+  private _position: Vector2;
+
+  public get position(): Vector2 {
+    return this._position;
+  }
 
   public get owner(): IScene {
     return this._owner;
@@ -20,14 +29,20 @@ export class GameObject implements IGameObject{
     this._id = id;
   }
 
-  constructor(owner?: IScene) {
-    this.Init(owner);
-  }
-
-  Init(
+  constructor(
+    position: Vector2,
     owner?: IScene,
     ...newComponents: [AbstractObjectComponent, ComponentParameters?][]
   ) {
+    this.Init(position, owner, ...newComponents);
+  }
+
+  Init(
+    position: Vector2,
+    owner?: IScene,
+    ...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+  ) {
+    this._position = position;
     this._components = new Array<AbstractObjectComponent>();
     this.id = Utilities.GenerateUUID();
     this._owner = owner;
@@ -44,12 +59,14 @@ export class GameObject implements IGameObject{
     }
   }
 
-  public RemoveComponents<T extends typeof AbstractObjectComponent> (type: T) : void{
-    this._components = this._components.filter(c => !(c instanceof type));
+  public RemoveComponents<T extends typeof AbstractObjectComponent>(
+    type: T
+  ): void {
+    this._components = this._components.filter((c) => !(c instanceof type));
   }
 
-  public GetComponents<T extends typeof AbstractObjectComponent> (type: T) : any {
-    return this._components.filter(c => c instanceof type);
+  public GetComponents<T extends typeof AbstractObjectComponent>(type: T): any {
+    return this._components.filter((c) => c instanceof type);
   }
 
   public OnInit(): void {

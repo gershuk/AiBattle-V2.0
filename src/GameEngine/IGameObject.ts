@@ -1,12 +1,16 @@
 import { AbstractObjectComponent, ComponentParameters } from "./AbstractObjectComponent";
 import { IScene } from "./IScene";
+import { Vector2 } from "./Vector2";
 
 export interface IGameObject {
   get owner(): IScene;
 
   get id(): string;
 
+  get position(): Vector2;
+
   Init(
+    position: Vector2,
     owner?: IScene,
     ...newComponents: [AbstractObjectComponent, ComponentParameters?][]
   ): void;
