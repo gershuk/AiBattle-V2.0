@@ -6,6 +6,32 @@ import { GameObject } from "./GameObject";
 import { Vector2 } from "./Vector2";
 
 export interface IScene {
+  get gameObjects(): GameObject[];
+
+  set turnIndex(turnIndex: number);
+
+  get turnIndex(): number;
+
+  set maxTurnIndex(maxTurnIndex: number);
+
+  get maxTurnIndex(): number;
+
+  set animTicksCount(animTicksCount: number);
+
+  get animTicksCount(): number;
+
+  set animTicksTime(animTicksTime: number);
+
+  get animTicksTime(): number;
+
+  set autoTurnTime(autoTurnTime: number);
+
+  get autoTurnTime(): number;
+
+  set autoTurnTimerId(autoTurnTimerId: number | undefined);
+
+  get autoTurnTimerId(): number | undefined;
+
   AddGameObject<T extends GameObject>(
     position: Vector2,
     gameObjectInits: T,

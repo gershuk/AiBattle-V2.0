@@ -21,7 +21,7 @@ export class Scene implements IScene{
   private _animTicksCount: number;
   private _animTicksTime: number;
 
-  public set gameObjects(gameObjects: GameObject[]) {
+  protected set gameObjects(gameObjects: GameObject[]) {
     this._gameObjects = gameObjects;
   }
 
@@ -47,7 +47,7 @@ export class Scene implements IScene{
     return this._maxTurnIndex;
   }
 
-  public set state(state: SceneState) {
+  protected set state(state: SceneState) {
     this._state = state;
   }
 
