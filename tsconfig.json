@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"outDir": "./build",
+		"baseUrl": "./src",
+		"noImplicitAny": true,
+		"module": "es6",
+		"target": "es5",
+		"allowJs": true,
+		"checkJs": true,
+		"moduleResolution": "node",
+		"resolveJsonModule": true
+	},
+	"include": ["src"],
+	"compileOnSave": true
+}
