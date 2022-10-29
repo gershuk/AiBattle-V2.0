@@ -1,8 +1,16 @@
 import * as Utilities from "../Utilities/IndexUtilities";
+import { AbstractObjectComponent, ComponentParameters } from "./AbstractObjectComponent";
+import { IGameObject } from "./IGameObject";
+import { IScene } from "./IScene";
 
-export class GameObject {
+export class GameObject implements IGameObject{
   private _id: string;
-  private _components: ObjectComponent[];
+  private _components: AbstractObjectComponent[];
+  private _owner: IScene | undefined;
+
+  public get owner(): IScene {
+    return this._owner;
+  }
 
   public get id(): string {
     return this._id;
@@ -12,34 +20,40 @@ export class GameObject {
     this._id = id;
   }
 
-  constructor() {
+  constructor(owner?: IScene) {
+    this.Init(owner);
+  }
+
+  Init(
+    owner?: IScene,
+    ...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+  ) {
+    this._components = new Array<AbstractObjectComponent>();
     this.id = Utilities.GenerateUUID();
+    this._owner = owner;
+    this.AddComponents(...newComponents);
+    this.OnInit();
   }
 
-  public AddComponent<T extends ObjectComponent>(
-    type: new () => T,
-    parameters?: ComponentParameters
-  ): any {
-    const component: T = new type();
-    component.Init(this, parameters);
-    this._components.push(component);
-    return component;
+  public AddComponents(
+    ...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+  ): void {
+    for (let component of newComponents) {
+      component[0].Init(this, component[1]);
+      this._components.push(component[0]);
+    }
   }
 
-  public RemoveComponents<T extends ObjectComponent>(type: new () => T) {
-    const obj = new type();
-    this._components = this._components.filter(
-      (component) =>
-        component.constructor.toString() != obj.constructor.toString()
-    );
+  public RemoveComponents<T extends typeof AbstractObjectComponent> (type: T) : void{
+    this._components = this._components.filter(c => !(c instanceof type));
   }
 
-  public GetComponents<T extends ObjectComponent>(type: new () => T): any {
-    const obj = new type();
-    return this._components.filter(
-      (component) =>
-        component.constructor.toString() == obj.constructor.toString()
-    );
+  public GetComponents<T extends typeof AbstractObjectComponent> (type: T) : any {
+    return this._components.filter(c => c instanceof type);
+  }
+
+  public OnInit(): void {
+    for (let component of this._components) component.OnOwnerInit();
   }
 
   public OnDestroy(): void {
@@ -64,23 +78,3 @@ export class GameObject {
     for (let component of this._components) component.OnFixedUpdate(index);
   }
 }
-
-export abstract class ObjectComponent {
-  protected _owner: GameObject;
-
-  constructor(owner: GameObject, parameters?: ComponentParameters) {
-    this._owner = owner;
-  }
-
-  Init(owner: GameObject, parameters?: ComponentParameters) {
-    this._owner = owner;
-  }
-
-  abstract OnDestroy(): void;
-  abstract OnSceneStart(): void;
-  abstract OnBeforeFrameRender(currentFrame: number, frameCount: number): void;
-  abstract OnAfterFrameRender(currentFrame: number, frameCount: number): void;
-  abstract OnFixedUpdate(index: number): void;
-}
-
-export abstract class ComponentParameters {}

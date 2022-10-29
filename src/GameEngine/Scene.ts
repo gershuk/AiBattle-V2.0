@@ -1,4 +1,6 @@
+import { AbstractObjectComponent, ComponentParameters } from "./AbstractObjectComponent";
 import { GameObject } from "./GameObject";
+import { IScene } from "./IScene";
 
 enum SceneState {
   Init,
@@ -8,18 +10,7 @@ enum SceneState {
   Animation,
 }
 
-export interface IScene {
-  Start(): void;
-  DoNextStep(): void;
-  RenderFrame(): void;
-  AddGameObject<T extends GameObject>(gameObject: T): void;
-  RemoveGameObject<T extends GameObject>(gameObject: T): void;
-  RemoveGameObjectById(uuid: string): void;
-  StopAutoTurn(): void;
-  StartAutoTurn(): void;
-}
-
-export class Scene implements IScene {
+export class Scene implements IScene{
   private _gameObjects: GameObject[];
   private _turnIndex: number;
   private _maxTurnIndex: number;
@@ -105,26 +96,38 @@ export class Scene implements IScene {
     animTicksTime: number = 50,
     gameObjects?: GameObject[]
   ) {
-    this.gameObjects = gameObjects ?? new GameObject[0]();
+    this.gameObjects = gameObjects ?? new Array<GameObject>();
     this.animTicksCount = animTicksCount;
     this.turnIndex = 0;
     this.state = SceneState.Init;
-
     this.maxTurnIndex = maxTurnIndex;
     this.autoTurnTime = autoTurnTime;
     this.animTicksTime = animTicksTime;
   }
 
-  public AddGameObject<T extends GameObject>(gameObject: T): void {
-    this.gameObjects.push(gameObject);
+  public AddGameObject<T extends GameObject>(
+    gameObjectInits: T,
+    ...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+  ): void {
+    this._gameObjects.push(gameObjectInits);
+    gameObjectInits.Init(this, ...newComponents);
   }
 
-  public RemoveGameObject<T extends GameObject>(gameObject: T): void {
-    this.gameObjects = this.gameObjects.filter((obj) => obj != gameObject);
+  public AddGameObjects<T extends GameObject>(
+    gameObjectInits: [T, [AbstractObjectComponent, ComponentParameters?][]][]
+  ): void {
+    for (let gameObjectInit of gameObjectInits)
+      this.AddGameObject(gameObjectInit[0],...gameObjectInit[1]);
   }
 
-  public RemoveGameObjectById(uuid: string): void {
-    this.gameObjects = this.gameObjects.filter((obj) => obj.id != uuid);
+  public GetGameObjectsByFilter(filter : (g:GameObject)=>boolean) : GameObject[]
+  {
+    return this._gameObjects.filter(filter);
+  }
+
+  public RemoveGameObjectsByFilter(filter : (g:GameObject)=>boolean) : void
+  {
+    this._gameObjects = this._gameObjects.filter((g)=>!filter(g));
   }
 
   private OnDestroy(): void {
@@ -175,7 +178,7 @@ export class Scene implements IScene {
     }
   }
 
-  public DoNextStep(): void {
+  public DoNextTurn(): void {
     if (this.state == SceneState.ReadyToNextTurn) {
       if (this.turnIndex >= this.maxTurnIndex) {
         throw new Error("turnIndex == this.maxTurnIndex");
@@ -207,7 +210,7 @@ export class Scene implements IScene {
       }
 
       if (!this.autoTurnTimerId)
-        this.autoTurnTimerId = setInterval(this.DoNextStep, this.autoTurnTime);
+        this.autoTurnTimerId = setInterval(this.DoNextTurn, this.autoTurnTime);
       else throw new Error("AutoTurn already started");
     }
   }
