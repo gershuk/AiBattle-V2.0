@@ -212,7 +212,7 @@ export class Scene implements IScene{
       }
 
       if (!this.autoTurnTimerId)
-        this.autoTurnTimerId = setInterval(this.DoNextTurn, this.autoTurnTime);
+        this.autoTurnTimerId = window.setInterval(this.DoNextTurn, this.autoTurnTime);
       else throw new Error("AutoTurn already started");
     }
   }
