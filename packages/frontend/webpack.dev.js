@@ -10,4 +10,5 @@ module.exports = merge(common, {
 		},
 		port: 3000,
 	},
+	devtool: 'inline-source-map',
 })
