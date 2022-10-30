@@ -40,7 +40,7 @@ export const CodeEditor = ({
 
 	const handlerSaveKeyboard = useCallback(
 		(e?: KeyboardEvent) => {
-			if (e.ctrlKey && e.key === 's') {
+			if (e.ctrlKey && e.key.toLowerCase() === 's') {
 				e.preventDefault()
 				onSave?.(value)
 			}
