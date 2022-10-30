@@ -1,4 +1,4 @@
-import * as Utilities from '../Utilities/IndexUtilities'
+import * as Utilities from 'Utilities'
 import {
 	AbstractObjectComponent,
 	ComponentParameters,

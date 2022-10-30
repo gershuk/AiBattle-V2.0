@@ -1,13 +1,4 @@
-import { repeatElement } from 'lib/array'
+import { Scene } from 'GameEngine/Scene'
+import { Vector2 } from 'GameEngine/Vector2'
 
-const btn = document.createElement('button')
-btn.innerText = 'click'
-btn.addEventListener('click', e => {
-	const div = document.createElement('div')
-	div.innerText = `${e.clientX},${e.clientY}`
-	document.body.append(div)
-})
-
-document.body.append(btn)
-
-console.log(repeatElement(1, 10))
+export { Scene, Vector2 }
