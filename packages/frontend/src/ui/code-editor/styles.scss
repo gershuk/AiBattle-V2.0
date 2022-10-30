@@ -1,0 +1,26 @@
+.code-editor {
+	height: 100%;
+	.ace-editor * {
+		font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro,
+			monospace;
+	}
+	.ace-tomorrow .ace_gutter {
+		background: white;
+	}
+	.toolbar {
+		padding: 8px 8px 8px 16px;
+		display: flex;
+		align-items: center;
+		background: #f3f3f3;
+		.toolbar-item {
+			font-size: 12px;
+			line-height: 22px;
+			padding: 0 8px;
+			border-radius: 5px;
+			cursor: pointer;
+			&:hover {
+				background: #e8e8e8;
+			}
+		}
+	}
+}
