@@ -5,8 +5,8 @@ import Split, { SplitProps } from 'react-split'
 import './styles.scss'
 
 interface SplitPanelProps extends SplitProps {
-	Left: JSXInternal.Element
-	Right: JSXInternal.Element
+	Left: JSXInternal.Element | null
+	Right: JSXInternal.Element | null
 }
 
 export const SplitPanel = ({

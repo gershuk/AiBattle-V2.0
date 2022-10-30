@@ -24,7 +24,7 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 
 	const createCodeFile = () => {
 		const res = prompt('Введите название файла')
-		if (res.trim()) {
+		if (res?.trim()) {
 			createdFileCode(res.trim())
 		}
 	}
@@ -47,7 +47,7 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 					<Item
 						key={code.name}
 						code={code}
-						active={active}
+						active={active ?? null}
 						ontToggleSelect={ontToggleSelect}
 					/>
 				))}

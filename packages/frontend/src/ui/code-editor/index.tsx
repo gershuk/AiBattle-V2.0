@@ -22,7 +22,7 @@ export const CodeEditor = ({
 	const [value, setValue] = useState(valueProps || '')
 
 	useEffect(() => {
-		setValue(valueProps)
+		setValue(valueProps || '')
 	}, [valueProps])
 
 	const handlerSave = () => {
@@ -40,7 +40,7 @@ export const CodeEditor = ({
 
 	const handlerSaveKeyboard = useCallback(
 		(e?: KeyboardEvent) => {
-			if (e.ctrlKey && e.key.toLowerCase() === 's') {
+			if (e?.ctrlKey && e?.key.toLowerCase() === 's') {
 				e.preventDefault()
 				onSave?.(value)
 			}

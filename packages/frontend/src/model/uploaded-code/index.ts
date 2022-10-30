@@ -26,7 +26,7 @@ const addCodesToLocalStorageFx = attach({
 
 const readCodesFromLocalStorageFx = createEffect({
 	handler: (): UploadedCode[] => {
-		return JSON.parse(localStorage.getItem('codes')) || []
+		return JSON.parse(localStorage.getItem('codes') || '') || []
 	},
 })
 
