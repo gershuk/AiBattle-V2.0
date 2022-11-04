@@ -33,6 +33,10 @@ export const Input = ({
 		}
 	}, [ref, value])
 
+	useEffect(() => {
+		setValue(valueProps ?? '')
+	}, [valueProps])
+
 	const handlerChange = (_value: string) => {
 		if (disabled) return
 		setValue(_value)

@@ -2,33 +2,7 @@
 	padding: 8px;
 	background: #f3f3f3;
 	height: 100%;
-}
-
-.bot-setting {
-	.title {
-		font-size: 14px;
-		margin-bottom: 8px;
-		white-space: nowrap;
-	}
-	.bot-list {
-		.bot-setting-item {
-			display: flex;
-			align-items: center;
-
-			& > * + * {
-				margin-left: 8px;
-			}
-			.bot-color {
-				height: 20px;
-				width: 20px;
-				background: red;
-			}
-			.bot-name {
-				width: 180px;
-			}
-			.bot-controller {
-				width: 140px;
-			}
-		}
+	& > * + * {
+		margin-top: 8px;
 	}
 }

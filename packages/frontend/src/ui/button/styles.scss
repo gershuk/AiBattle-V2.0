@@ -1,0 +1,31 @@
+.button {
+	color: rgb(255, 255, 255);
+	font-size: 14px;
+	line-height: 140%;
+	padding: 4px 8px;
+	outline: none;
+	border: none;
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+
+	&.primary {
+		background: rgb(0, 122, 204);
+		&:hover {
+			background: rgb(0, 98, 163);
+		}
+	}
+	&.warning {
+		background: rgb(204, 173, 0);
+		&:hover {
+			background: rgb(172, 146, 0);
+		}
+	}
+	&.danger {
+		background: rgb(204, 41, 0);
+		&:hover {
+			background: rgb(168, 34, 0);
+		}
+	}
+}
