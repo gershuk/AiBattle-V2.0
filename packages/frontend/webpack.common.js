@@ -38,7 +38,7 @@ module.exports = {
 	},
 	resolve: {
 		extensions: ['.tsx', '.ts', '.js', '.jsx', '.css'],
-		modules: ['node_modules'],
+		modules: ['./src/', 'node_modules'],
 		alias: {
 			react: 'preact/compat',
 			'react-dom/test-utils': 'preact/test-utils',
