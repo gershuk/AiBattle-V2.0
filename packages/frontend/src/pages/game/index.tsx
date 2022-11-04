@@ -1,11 +1,11 @@
+import { GameController } from 'features/game-controller'
 import { useMemo } from 'preact/hooks'
 import { SplitPanel } from 'ui'
-import { DropDown } from 'ui/dropdown'
 
 export const Game = () => {
 	const sizes = useMemo(() => {
 		const width = window.innerWidth
-		const r = (300 / width) * 100
+		const r = (400 / width) * 100
 		return [r, 100 - r]
 	}, [])
 	return (
@@ -15,15 +15,7 @@ export const Game = () => {
 				sizes={sizes}
 				gutterSize={3}
 				minSize={0}
-				Left={
-					<DropDown
-						options={[
-							{ id: 'kek', text: 'kek kek kek' },
-							{ id: 'lol', text: 'lol lol lol' },
-						]}
-						onChange={x => console.log(x)}
-					/>
-				}
+				Left={<GameController />}
 				Right={null}
 			/>
 		</div>
