@@ -2,10 +2,10 @@ import * as Utilities from 'Utilities'
 import {
 	AbstractObjectComponent,
 	ComponentParameters,
-} from './AbstractObjectComponent'
+} from '../BaseComponents/AbstractObjectComponent'
 import { IGameObject } from './IGameObject'
-import { IScene } from './IScene'
-import { Vector2 } from './Vector2'
+import { IScene } from '../Scene/IScene'
+import { Vector2 } from '../BaseComponents/Vector2'
 
 export class GameObject implements IGameObject {
 	private _id: string

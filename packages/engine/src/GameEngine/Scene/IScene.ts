@@ -1,9 +1,9 @@
 import {
 	AbstractObjectComponent,
 	ComponentParameters,
-} from './AbstractObjectComponent'
-import { GameObject } from './GameObject'
-import { Vector2 } from './Vector2'
+} from '../BaseComponents/AbstractObjectComponent'
+import { GameObject } from '../GameObject/GameObject'
+import { Vector2 } from '../BaseComponents/Vector2'
 
 export interface IScene {
 	get gameObjects(): GameObject[]

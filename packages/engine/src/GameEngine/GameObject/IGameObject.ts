@@ -1,9 +1,9 @@
 import {
 	AbstractObjectComponent,
 	ComponentParameters,
-} from './AbstractObjectComponent'
-import { IScene } from './IScene'
-import { Vector2 } from './Vector2'
+} from '../BaseComponents/AbstractObjectComponent'
+import { IScene } from '../Scene/IScene'
+import { Vector2 } from '../BaseComponents/Vector2'
 
 export interface IGameObject {
 	get owner(): IScene

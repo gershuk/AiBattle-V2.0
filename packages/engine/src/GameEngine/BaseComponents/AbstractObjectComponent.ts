@@ -1,4 +1,4 @@
-import { IGameObject } from './IGameObject'
+import { IGameObject } from '../GameObject/IGameObject'
 
 export abstract class AbstractObjectComponent {
 	protected _owner: IGameObject

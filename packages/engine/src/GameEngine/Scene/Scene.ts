@@ -1,10 +1,10 @@
 import {
 	AbstractObjectComponent,
 	ComponentParameters,
-} from './AbstractObjectComponent'
-import { GameObject } from './GameObject'
+} from '../BaseComponents/AbstractObjectComponent'
+import { GameObject } from '../GameObject/GameObject'
 import { IScene } from './IScene'
-import { Vector2 } from './Vector2'
+import { Vector2 } from '../BaseComponents/Vector2'
 
 enum SceneState {
 	Init,
