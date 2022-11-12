@@ -6,7 +6,7 @@ import {
 	$codesWithCache,
 } from './model'
 import { UploadedCode } from '../../model'
-import { AddIcon, UploadIcon } from './icons'
+import { AddIcon, UploadIcon } from './assets/icons'
 import { useEffect, useState } from 'preact/hooks'
 import { getPositionMouseEvent } from './utils'
 import { createPortal } from 'preact/compat'

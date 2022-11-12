@@ -1,0 +1,26 @@
+.maps-list {
+	background: #f3f3f3;
+	display: flex;
+	flex-flow: column;
+	.header {
+		padding: 8px 8px 0 8px;
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 5px;
+		.title {
+			font-size: 14px;
+			white-space: nowrap;
+		}
+		.toolbar {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			& > * + * {
+				margin-left: 4px;
+			}
+			svg {
+				cursor: pointer;
+			}
+		}
+	}
+}

@@ -1,6 +1,6 @@
 import { attach, combine, createEvent, createStore, sample } from 'effector'
-import { addCode, $codes, removeCode } from '../../../model'
-import { openFileExplorer, readFile } from '../../../api'
+import { addCode, $codes, removeCode } from 'model'
+import { openFileExplorer, readFile } from 'api'
 
 const $cacheSave = createStore<{ [k: string]: string }>({})
 

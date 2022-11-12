@@ -1,29 +1,6 @@
-.code-loader {
-	background: #f3f3f3;
-	padding: 8px 0;
+.flat-list {
 	overflow: auto;
-	.header {
-		padding: 0 8px;
-		display: flex;
-		justify-content: space-between;
-		margin-bottom: 5px;
-		.title {
-			font-size: 14px;
-			white-space: nowrap;
-		}
-		.toolbar {
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			& > * + * {
-				margin-left: 4px;
-			}
-			svg {
-				cursor: pointer;
-			}
-		}
-	}
-	.item-file {
+	.flat-list-item {
 		padding: 0 8px;
 		color: rgb(63, 62, 62);
 		display: flex;
@@ -39,13 +16,10 @@
 		&.active {
 			background: #d8d8d8;
 		}
-		&.modify {
-			color: rgb(230, 175, 65);
-		}
 	}
 }
 
-.codes-list-item-context-menu {
+.flat-list-context-menu {
 	position: fixed;
 	z-index: 10;
 	background: white;

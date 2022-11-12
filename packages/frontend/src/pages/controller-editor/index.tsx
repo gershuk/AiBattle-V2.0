@@ -1,7 +1,7 @@
 import { useUnit } from 'effector-react'
 import { useMemo } from 'preact/hooks'
-import { CodesList, EditorCode } from '../../features/codes-editor'
-import { SplitPanel, CodeEditor } from '../../ui'
+import { CodesList, EditorCode } from 'features/codes-editor'
+import { SplitPanel } from 'ui'
 import { $selectCode, selectedCode, changedCode } from './model'
 import './styles.scss'
 

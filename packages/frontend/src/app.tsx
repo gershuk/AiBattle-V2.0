@@ -4,6 +4,7 @@ import { SideBar } from 'features/side-bar'
 import { $locationSearch } from 'model'
 import { ControllerEditor } from 'pages/controller-editor'
 import './styles.scss'
+import { MapEditor } from 'pages/map-editor'
 
 export const App = () => {
 	return (
@@ -18,6 +19,7 @@ export const App = () => {
 
 //TODO: вынести роутинг в отдельный контролер и сделать хорошо
 const SwitchPage = () => {
+	// return <MapEditor />
 	const { page = '' } = useUnit($locationSearch)
 	switch (page) {
 		case '':
