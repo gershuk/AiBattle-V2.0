@@ -1,14 +1,27 @@
 import { attach, combine, createEvent, createStore, sample } from 'effector'
 import { addMap, removeMap, $maps, $dataMaps } from 'model'
 import { openFileExplorer, readFile } from 'api'
+import { jsonIsValid } from 'libs'
 
 const $cacheSave = createStore<{ [k: string]: string }>({})
 const $mapsWithCache = combine($dataMaps, $cacheSave, (maps, cashed) => {
-	return Object.values(maps).map(code => ({
-		...code,
-		cache: code.name in cashed ? cashed[code.name] : null,
-		modify: code.name in cashed && cashed[code.name] !== code.content,
-	}))
+	return Object.values(maps).map(code => {
+		if (code.name in cashed) {
+			const modifyJsonValid = jsonIsValid(cashed[code.name])
+			return {
+				...code,
+				cache: cashed[code.name],
+				modify: cashed[code.name] !== code.content,
+				modifyJsonValid,
+			}
+		}
+		return {
+			...code,
+			cache: null,
+			modify: false,
+			modifyJsonValid: code.validJson,
+		}
+	})
 })
 
 const uploadedFile = createEvent()
@@ -19,7 +32,7 @@ const removedFileMap = createEvent<string>()
 const loadedMapFx = attach({
 	source: $dataMaps,
 	effect: async maps => {
-		const file = await openFileExplorer({ accept: '.js' })
+		const file = await openFileExplorer({ accept: '.json' })
 		const content = await readFile(file)
 		if (typeof content === 'string') {
 			try {

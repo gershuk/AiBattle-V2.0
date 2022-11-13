@@ -1,5 +1,7 @@
 .code-editor {
 	height: 100%;
+	display: flex;
+	flex-flow: column;
 	.ace-editor * {
 		font-family: Monaco, Menlo, 'Ubuntu Mono', Consolas, source-code-pro,
 			monospace;

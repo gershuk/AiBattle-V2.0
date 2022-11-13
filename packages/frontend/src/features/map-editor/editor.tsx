@@ -1,3 +1,4 @@
+import { createEvent, createStore } from 'effector'
 import { useUnit } from 'effector-react'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor, SplitPanel } from 'ui'
@@ -9,23 +10,27 @@ export interface EditorCode {
 	onSave?: (value: string) => void
 }
 
-let sizes: undefined | number[] = undefined
+const $size = createStore<number[]>([50, 50])
+const setSize = createEvent<number[]>()
+$size.on(setSize, (_, x) => x)
 
 export const EditorMap = ({ active, onSave }: EditorCode) => {
-	const maps = useUnit($mapsWithCache)
+	const { maps, size } = useUnit({ maps: $mapsWithCache, size: $size })
 	const selectMap = useMemo(() => {
 		if (!active) return null
 		return maps.find(map => map.name === active) ?? null
 	}, [active, maps])
 
-	if (!selectMap) return null
+	const handlerDragEnd = (sizesPanel: number[]) => {
+		setSize([...sizesPanel])
+		window.dispatchEvent(new Event('resize'))
+	}
 
+	if (!selectMap) return null
 	return (
 		<SplitPanel
-			onDragEnd={e => {
-				sizes = e
-			}}
-			sizes={sizes}
+			onDragEnd={handlerDragEnd}
+			sizes={size ?? undefined}
 			minSize={[0, 0]}
 			className="json-map-editor"
 			gutterSize={5}
@@ -43,9 +48,9 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 			}
 			Right={
 				<div className={'preview-map'}>
-					{!selectMap.validJson ? (
+					{!selectMap.modifyJsonValid ? (
 						<div className={'error-valid-json'}>
-							Предпросмотр не доступен JSON не валиден
+							Предпросмотр не доступен по причине: JSON не валиден
 						</div>
 					) : (
 						<>
