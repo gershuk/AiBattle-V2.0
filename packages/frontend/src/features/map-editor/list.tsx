@@ -40,7 +40,8 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 	}
 
 	const handlerRemove = (item: ListItem) => {
-		removedFileMap(item.id)
+		const res = confirm('Удалить файл?')
+		if (res) removedFileMap(item.id)
 	}
 
 	return (

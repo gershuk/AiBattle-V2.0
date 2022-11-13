@@ -5,6 +5,7 @@ import {
 	createStore,
 	sample,
 } from 'effector'
+import { jsIsValid } from 'libs'
 
 export interface UploadedCode {
 	name: string
@@ -12,6 +13,25 @@ export interface UploadedCode {
 }
 
 const $codes = createStore<UploadedCode[]>([])
+
+const $codesData = $codes.map(codes =>
+	codes.reduce<{
+		[k: string]: {
+			name: string
+			content: string
+			valid: boolean
+		}
+	}>((acc, { name, content }) => {
+		return {
+			...acc,
+			[name]: {
+				valid: jsIsValid(content),
+				name,
+				content,
+			},
+		}
+	}, {})
+)
 
 const addCode = createEvent<UploadedCode>()
 const changeCode = createEvent<UploadedCode>()
@@ -46,4 +66,4 @@ sample({
 
 readCodesFromLocalStorageFx()
 
-export { $codes, addCode, removeCode, changeCode }
+export { $codes, addCode, removeCode, changeCode, $codesData }

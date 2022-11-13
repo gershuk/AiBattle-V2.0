@@ -1,11 +1,11 @@
 import { attach, combine, createEvent, createStore, sample } from 'effector'
-import { addCode, $codes, removeCode } from 'model'
+import { addCode, $codes, removeCode, $codesData } from 'model'
 import { openFileExplorer, readFile } from 'api'
 
 const $cacheSave = createStore<{ [k: string]: string }>({})
 
-const $codesWithCache = combine($codes, $cacheSave, (codes, cashed) => {
-	return codes.map(code => ({
+const $codesWithCache = combine($codesData, $cacheSave, (codes, cashed) => {
+	return Object.values(codes).map(code => ({
 		...code,
 		cache: code.name in cashed ? cashed[code.name] : null,
 		modify: code.name in cashed && cashed[code.name] !== code.content,
