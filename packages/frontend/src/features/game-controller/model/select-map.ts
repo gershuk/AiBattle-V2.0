@@ -3,9 +3,12 @@ import { $dataMaps, $maps } from 'model'
 
 const $selectedNameMap = createStore<string | null>(null)
 
-const $selectedMap = combine($dataMaps, $selectedNameMap, (maps, nameMap) =>
-	nameMap ? maps[nameMap] ?? null : null
-)
+const $selectedMap = combine($dataMaps, $selectedNameMap, (maps, nameMap) => {
+	if (nameMap && maps[nameMap]) {
+		return maps[nameMap].valid ? maps[nameMap] : null
+	}
+	return null
+})
 
 const selected = createEvent<string | null>()
 

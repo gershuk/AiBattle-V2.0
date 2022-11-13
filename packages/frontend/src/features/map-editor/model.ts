@@ -1,5 +1,5 @@
 import { attach, combine, createEvent, createStore, sample } from 'effector'
-import { addMap, removeMap, $maps, $dataMaps } from 'model'
+import { addMap, removeMap, $maps, $dataMaps, isMapData } from 'model'
 import { openFileExplorer, readFile } from 'api'
 import { jsonIsValid } from 'libs'
 
@@ -8,11 +8,15 @@ const $mapsWithCache = combine($dataMaps, $cacheSave, (maps, cashed) => {
 	return Object.values(maps).map(code => {
 		if (code.name in cashed) {
 			const modifyJsonValid = jsonIsValid(cashed[code.name])
+			const modifyValidDataMap = modifyJsonValid
+				? isMapData(JSON.parse(cashed[code.name]))
+				: false
 			return {
 				...code,
 				cache: cashed[code.name],
 				modify: cashed[code.name] !== code.content,
 				modifyJsonValid,
+				modifyValidDataMap,
 			}
 		}
 		return {
@@ -20,6 +24,7 @@ const $mapsWithCache = combine($dataMaps, $cacheSave, (maps, cashed) => {
 			cache: null,
 			modify: false,
 			modifyJsonValid: code.validJson,
+			modifyValidDataMap: code.validDataMap,
 		}
 	})
 })

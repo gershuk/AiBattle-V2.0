@@ -18,6 +18,7 @@ export interface Basis {
 	bottomRight: BottomRight
 }
 
+/** @see {isMapData} ts-auto-guard:type-guard */
 export interface MapData {
 	width: number
 	height: number

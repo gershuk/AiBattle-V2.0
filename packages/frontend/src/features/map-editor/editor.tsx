@@ -48,9 +48,12 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 			}
 			Right={
 				<div className={'preview-map'}>
-					{!selectMap.modifyJsonValid ? (
+					{!selectMap.modifyJsonValid || !selectMap.modifyValidDataMap ? (
 						<div className={'error-valid-json'}>
-							Предпросмотр не доступен по причине: JSON не валиден
+							Предпросмотр не доступен по причине:{' '}
+							{!selectMap.modifyJsonValid
+								? 'JSON не валиден'
+								: 'структура JSON не соответствует карте'}
 						</div>
 					) : (
 						<>

@@ -1,14 +1,18 @@
 import { useUnit } from 'effector-react'
-import { $maps } from 'model'
+import { $dataMaps, $maps } from 'model'
+import { useMemo } from 'react'
 import { DropDown } from 'ui'
 import { $selectedMap, selected } from '../model/select-map'
 import './styles.scss'
 
 export const MapSelection = () => {
-	const { maps, activeMap } = useUnit({
-		maps: $maps,
+	const { mapsHashMap, activeMap } = useUnit({
+		mapsHashMap: $dataMaps,
 		activeMap: $selectedMap,
 	})
+	const maps = useMemo(() => {
+		return Object.values(mapsHashMap).filter(x => x.valid)
+	}, [mapsHashMap])
 	return (
 		<div className={'map-selection'}>
 			<div className={'title'}>Карта</div>
