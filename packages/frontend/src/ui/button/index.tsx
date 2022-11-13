@@ -5,6 +5,7 @@ interface ButtonProps {
 	children: string | number
 	className?: string
 	color?: 'primary' | 'warning' | 'danger'
+	[k: string]: any
 }
 
 export const Button = ({
@@ -12,9 +13,14 @@ export const Button = ({
 	children,
 	className,
 	color = 'primary',
+	...props
 }: ButtonProps) => {
 	return (
-		<button className={`button ${className ?? ''} ${color}`} onClick={onClick}>
+		<button
+			{...props}
+			className={`button ${className ?? ''} ${color}`}
+			onClick={onClick}
+		>
 			{children}
 		</button>
 	)

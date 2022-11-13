@@ -38,3 +38,21 @@
 		}
 	}
 }
+
+.json-map-editor {
+	height: 100%;
+	.preview-map {
+		padding: 8px;
+		.title {
+			font-size: 14px;
+			margin-bottom: 8px;
+		}
+		.error-valid-json {
+			color: rgb(168, 34, 0);
+			font-size: 14px;
+		}
+		.text-content {
+			font-size: 12px;
+		}
+	}
+}

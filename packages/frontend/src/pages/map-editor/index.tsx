@@ -3,8 +3,8 @@ import { SplitPanel } from 'ui'
 import { MapsList } from 'features/map-editor'
 import { useUnit } from 'effector-react'
 import { $selectMap, savedMap, selectedMap } from './model'
-import './styles.scss'
 import { EditorMap } from 'features/map-editor'
+import './styles.scss'
 
 export const MapEditor = () => {
 	const selectMap = useUnit($selectMap)
@@ -18,7 +18,7 @@ export const MapEditor = () => {
 			<SplitPanel
 				className={'maps-editor-split'}
 				sizes={sizes}
-				gutterSize={3}
+				gutterSize={5}
 				minSize={0}
 				Left={
 					<MapsList active={selectMap?.name} ontToggleSelect={selectedMap} />

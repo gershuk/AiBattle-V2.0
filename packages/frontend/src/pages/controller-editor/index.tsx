@@ -17,7 +17,7 @@ export const ControllerEditor = () => {
 			<SplitPanel
 				className={'controller-editor-split'}
 				sizes={sizes}
-				gutterSize={3}
+				gutterSize={5}
 				minSize={0}
 				Left={
 					<CodesList

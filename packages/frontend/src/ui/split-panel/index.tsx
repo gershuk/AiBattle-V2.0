@@ -15,12 +15,13 @@ export const SplitPanel = ({
 	onDrag,
 	onDragEnd,
 	className: _className,
+	direction = 'horizontal',
 	...props
 }: SplitPanelProps) => {
 	const [drag, setDrag] = useState(false)
 	const className = useMemo(
 		() =>
-			['split-panel', drag ? 'drag-split' : '', _className || '']
+			['split-panel', drag ? 'drag-split' : '', _className || '', direction]
 				.join(' ')
 				.trim(),
 		[drag, _className]
@@ -30,6 +31,7 @@ export const SplitPanel = ({
 		//@ts-ignore
 		<Split
 			{...props}
+			direction={direction}
 			onDrag={value => {
 				setDrag(true)
 				onDrag?.(value)
