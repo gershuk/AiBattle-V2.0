@@ -3,8 +3,8 @@ import { Game } from 'pages/game'
 import { SideBar } from 'features/side-bar'
 import { $locationSearch } from 'model'
 import { ControllerEditor } from 'pages/controller-editor'
-import './styles.scss'
 import { MapEditor } from 'pages/map-editor'
+import './styles.scss'
 
 export const App = () => {
 	return (
@@ -26,6 +26,8 @@ const SwitchPage = () => {
 			return <ControllerEditor />
 		case 'game':
 			return <Game />
+		case 'map-editor':
+			return <MapEditor />
 	}
 	return null
 }
