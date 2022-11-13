@@ -13,9 +13,14 @@ export const MapEditor = () => {
 		const r = (300 / width) * 100
 		return [r, 100 - r]
 	}, [])
+	const handlerDragEnd = () => {
+		window.dispatchEvent(new Event('resize'))
+	}
+
 	return (
 		<div class={'maps-editor-page'}>
 			<SplitPanel
+				onDragEnd={handlerDragEnd}
 				className={'maps-editor-split'}
 				sizes={sizes}
 				gutterSize={5}
