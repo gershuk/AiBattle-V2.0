@@ -1,5 +1,5 @@
 import { useUnit } from 'effector-react'
-import { $codes } from 'model'
+import { $codesData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { DropDown, Input } from 'ui'
 import { $selectedMap } from '../model/select-map'
@@ -17,14 +17,16 @@ const colors = [
 ]
 
 export const BotsSetting = () => {
-	const { activeMap, codes } = useUnit({
+	const { activeMap, codesData } = useUnit({
 		activeMap: $selectedMap,
-		codes: $codes,
+		codesData: $codesData,
 	})
 
 	const listCodes = useMemo(() => {
-		return codes.map(({ name }) => ({ id: name, text: name }))
-	}, [codes])
+		return Object.values(codesData)
+			.filter(({ valid }) => valid)
+			.map(({ name }) => ({ id: name, text: name }))
+	}, [codesData])
 
 	return (
 		<div className={'bot-setting'}>
