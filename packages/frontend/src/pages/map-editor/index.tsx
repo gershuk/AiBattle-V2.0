@@ -1,9 +1,10 @@
 import { useMemo } from 'preact/hooks'
 import { SplitPanel } from 'ui'
 import { MapsList } from 'features/map-editor'
-import './styles.scss'
 import { useUnit } from 'effector-react'
-import { $selectMap, selectedMap } from './model'
+import { $selectMap, savedMap, selectedMap } from './model'
+import './styles.scss'
+import { EditorMap } from 'features/map-editor'
 
 export const MapEditor = () => {
 	const selectMap = useUnit($selectMap)
@@ -22,7 +23,14 @@ export const MapEditor = () => {
 				Left={
 					<MapsList active={selectMap?.name} ontToggleSelect={selectedMap} />
 				}
-				Right={null}
+				Right={
+					<EditorMap
+						active={selectMap?.name}
+						onSave={value =>
+							savedMap({ name: selectMap?.name ?? '', content: value })
+						}
+					/>
+				}
 			/>
 		</div>
 	)

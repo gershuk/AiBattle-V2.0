@@ -11,8 +11,8 @@ import { useEffect, useState } from 'preact/hooks'
 import { getPositionMouseEvent } from './utils'
 import { createPortal } from 'preact/compat'
 import { createAndDownloadFile } from '../../api'
-import './styles.scss'
 import { StoreValue } from 'effector'
+import './styles.scss'
 
 export interface LoaderScriptProps {
 	active?: string | null

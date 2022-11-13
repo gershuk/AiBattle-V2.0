@@ -1,18 +1,22 @@
+import { createAndDownloadFile } from 'api'
 import { useUnit } from 'effector-react'
-import { $maps } from 'model'
-import { MapData } from 'model/uploaded-maps/type'
 import { List, ListItem } from 'ui'
 import { AddIcon, UploadIcon } from './assets/icons'
-import { createdFile, uploadedFile } from './model'
+import {
+	$mapsWithCache,
+	createdFile,
+	removedFileMap,
+	uploadedFile,
+} from './model'
 import './styles.scss'
 
 interface MapsListProps {
 	active?: string | null
-	ontToggleSelect?: (code: { data: MapData; name: string } | null) => void
+	ontToggleSelect?: (code: { content: string; name: string } | null) => void
 }
 
 export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
-	const maps = useUnit($maps)
+	const maps = useUnit($mapsWithCache)
 
 	const handlerClickItemList = (item: ListItem) => {
 		const value = active === item.id ? null : item.id
@@ -30,6 +34,15 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 		}
 	}
 
+	const handlerDeviceSave = (item: ListItem) => {
+		const map = maps.find(x => x.name === item.id)
+		createAndDownloadFile(map?.content, item.id, 'text/plain')
+	}
+
+	const handlerRemove = (item: ListItem) => {
+		removedFileMap(item.id)
+	}
+
 	return (
 		<div className={'maps-list'}>
 			<div className={'header'}>
@@ -44,17 +57,23 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 				</div>
 			</div>
 			<List
-				items={maps.map(({ name }) => ({
-					text: name,
+				items={maps.map(({ name, validJson, modify }) => ({
+					htmlTitle: !validJson ? 'invalid json' : undefined,
+					text: (
+						<span className={`maps-list-item ${modify ? 'modify' : ''}`}>
+							{!validJson ? <div className={'error-indicator'} /> : null}
+							{name}
+						</span>
+					),
 					id: name,
 					active: active ? active === name : false,
 				}))}
 				onClick={handlerClickItemList}
 				contextMenu={[
-					{ text: 'Удалить', onClick: item => console.log(item) },
+					{ text: 'Удалить', onClick: handlerRemove },
 					{
 						text: 'Сохранить на устройство',
-						onClick: item => console.log(item),
+						onClick: handlerDeviceSave,
 					},
 				]}
 			/>

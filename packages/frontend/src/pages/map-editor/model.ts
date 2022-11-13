@@ -1,9 +1,15 @@
-import { createEvent, createStore } from 'effector'
-import { MapData } from 'model/uploaded-maps/type'
+import { createEvent, createStore, sample } from 'effector'
+import { changeMap } from 'model'
 
-const $selectMap = createStore<{ data: MapData; name: string } | null>(null)
-const selectedMap = createEvent<{ data: MapData; name: string } | null>()
+const $selectMap = createStore<{ content: string; name: string } | null>(null)
+const selectedMap = createEvent<{ content: string; name: string } | null>()
+const savedMap = createEvent<{ content: string; name: string }>()
 
 $selectMap.on(selectedMap, (_, code) => code)
 
-export { $selectMap, selectedMap }
+sample({
+	clock: savedMap,
+	target: [changeMap, selectedMap],
+})
+
+export { $selectMap, selectedMap, savedMap }

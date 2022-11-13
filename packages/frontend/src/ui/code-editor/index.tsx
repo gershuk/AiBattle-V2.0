@@ -1,12 +1,14 @@
 import AceEditor from 'react-ace'
 import './styles.scss'
 import 'ace-builds/src-noconflict/mode-javascript'
+import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/theme-tomorrow'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import { useCallback, useEffect, useState } from 'preact/hooks'
 import { createAndDownloadFile } from '../../api'
 
 interface CodeEditorProps {
+	mode: 'javascript' | 'json'
 	onChange?: (value: string) => void
 	onSave?: (value: string) => void
 	value?: string
@@ -14,6 +16,7 @@ interface CodeEditorProps {
 }
 
 export const CodeEditor = ({
+	mode,
 	onChange,
 	onSave,
 	value: valueProps,
@@ -77,7 +80,7 @@ export const CodeEditor = ({
 				height="100%"
 				width="100%"
 				fontSize={14}
-				mode="javascript"
+				mode={mode}
 				theme="tomorrow"
 				setOptions={{
 					enableBasicAutocompletion: true,

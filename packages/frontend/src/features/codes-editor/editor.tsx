@@ -19,6 +19,7 @@ export const EditorCode = ({ active, onSave }: EditorCode) => {
 	if (!selectCode) return null
 	return (
 		<CodeEditor
+			mode="javascript"
 			value={selectCode.modify ? selectCode.cache || '' : selectCode.content}
 			fileName={selectCode.name}
 			onSave={value => onSave?.(value)}

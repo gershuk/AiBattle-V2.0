@@ -1,12 +1,10 @@
 import { combine, createEvent, createStore } from 'effector'
-import { $maps } from 'model'
+import { $dataMaps, $maps } from 'model'
 
 const $selectedNameMap = createStore<string | null>(null)
 
-const $selectedMap = combine(
-	$maps,
-	$selectedNameMap,
-	(maps, nameMap) => maps.find(({ name }) => name === nameMap) ?? null
+const $selectedMap = combine($dataMaps, $selectedNameMap, (maps, nameMap) =>
+	nameMap ? maps[nameMap] ?? null : null
 )
 
 const selected = createEvent<string | null>()

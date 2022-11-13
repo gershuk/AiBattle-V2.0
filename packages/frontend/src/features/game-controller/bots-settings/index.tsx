@@ -30,7 +30,7 @@ export const BotsSetting = () => {
 		<div className={'bot-setting'}>
 			<div className={'title'}>Конфигурация ботов</div>
 			<div className={'bot-list'}>
-				{activeMap?.data.spawns.map((_, i) => (
+				{activeMap?.data?.spawns.map((_, i) => (
 					<div className={'bot-setting-item'}>
 						<div className={'bot-color'} style={{ background: colors[i] }} />
 						<Input

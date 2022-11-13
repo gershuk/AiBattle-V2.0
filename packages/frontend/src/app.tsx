@@ -19,7 +19,6 @@ export const App = () => {
 
 //TODO: вынести роутинг в отдельный контролер и сделать хорошо
 const SwitchPage = () => {
-	// return <MapEditor />
 	const { page = '' } = useUnit($locationSearch)
 	switch (page) {
 		case '':
