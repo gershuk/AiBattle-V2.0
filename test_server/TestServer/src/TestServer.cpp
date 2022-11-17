@@ -5,7 +5,7 @@
 
 int main()
 {
-    CV8Engine::Instance().Initialize();
+    v8::CEngine::Instance().Initialize();
 
     std::cout << "Hello World!\n";
 }
