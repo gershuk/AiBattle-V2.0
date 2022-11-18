@@ -5,7 +5,7 @@
 namespace Helpers {
 
 template<class T>
-class CSingleton
+class TSingleton
 {
 public:
     template<typename... Args>
@@ -34,6 +34,6 @@ private:
 };
 
 template<class T>
-T* CSingleton<T>::s_instance = nullptr;
+T* TSingleton<T>::s_instance = nullptr;
 
 }   // namespace Helpers

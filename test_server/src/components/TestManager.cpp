@@ -1,7 +1,5 @@
 #include "TestManager.h"
-
-// TODO: add path to an actual core
-#define CORE_SCRIPTS_PATH ".\\..\\..\\AiBattle\\scripts\\"
+#include "Components/Configurator.h"
 
 CTestManager::CTestManager()
 {
@@ -17,7 +15,6 @@ CTestManager::~CTestManager()
 void CTestManager::LoadScripts() const
 {
     // TODO: update with a new core
-
     std::string files[] =
     {
         "ImageFake.js",
@@ -29,8 +26,9 @@ void CTestManager::LoadScripts() const
         "Scene.js"
     };
 
+    const std::string& scriptsPath = CConfigurator::Instance().GetConfig().scriptsPath;
     for (auto&& fileName : files)
     {
-        v8::CEngine::Instance().EvaluateFile(m_hSceneContext, CORE_SCRIPTS_PATH + fileName);
+        v8::CEngine::Instance().EvaluateFile(m_hSceneContext, scriptsPath + fileName);
     }
 }

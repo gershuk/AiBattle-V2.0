@@ -26,7 +26,7 @@ typedef UniquePersistent<Context> TScriptContext;
 static constexpr THandle INVALID_HANDLE = -1;
 
 /** A wrapper for V8 JavaScript Engine */
-class CEngine : public Helpers::CSingleton<CEngine>
+class CEngine : public Helpers::TSingleton<CEngine>
 {
 	~CEngine();
 
