@@ -1,7 +1,7 @@
 #include "TestManager.h"
 
 // TODO: add path to an actual core
-#define CORE_SCRIPTS_PATH ".\\..\\..\\..\\AiBattle\\scripts\\"
+#define CORE_SCRIPTS_PATH ".\\..\\..\\AiBattle\\scripts\\"
 
 CTestManager::CTestManager()
 {
