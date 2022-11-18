@@ -31,4 +31,6 @@ void CGameScene::LoadSceneScripts() const
     {
         v8::CEngine::Instance().EvaluateFile(m_hSceneContext, scriptsPath + fileName);
     }
+
+
 }
