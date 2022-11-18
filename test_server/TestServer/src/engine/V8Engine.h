@@ -10,6 +10,7 @@
 namespace v8
 {
 
+// An unique identifier for generated objects
 typedef int64_t THandle;
 
 /**
@@ -50,8 +51,35 @@ public:
 	 */
 	void CloseContext(THandle hContext);
 
+	/**
+	 * Executes a string with JavaScript code
+	 * 
+	 * @param hContext - a handle of execution context
+	 * @param sourceStr - a code for execution
+	 * 
+	 * @return True if execution was successfull
+	 */
+	bool Evaluate(THandle hContext, const std::string& sourceStr) const;
+
+	/**
+	 * Executes a string with JavaScript code from a file
+	 *
+	 * @param hContext - a handle of execution context
+	 * @param filePathStr - a full path to code file
+	 *
+	 * @return True if execution was successfull
+	 */
+	bool EvaluateFile(THandle hContext, const std::string& filePathStr) const;
+
 private:
-	/** A storage for created contexts */
+	/**
+	 * Handles try-catch exceptions
+	 * 
+	 * @param tryCatch - an exception source
+	 */
+	void ProcessException(TryCatch* tryCatch) const;
+
+	// A storage for created contexts
 	std::map<THandle, TScriptContext> m_contextsMap;
 
 	// Saving a platform pointer so that it is

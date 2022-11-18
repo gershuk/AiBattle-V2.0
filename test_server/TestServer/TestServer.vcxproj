@@ -149,14 +149,15 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\components\TestManager.cpp" />
     <ClCompile Include="src\engine\V8Engine.cpp" />
-    <ClCompile Include="src\TestServer.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\engine\V8Engine.h" />
     <ClInclude Include="src\helpers\Log.h" />
     <ClInclude Include="src\helpers\Singleton.h" />
-    <ClInclude Include="src\TestManager.h" />
+    <ClInclude Include="src\components\TestManager.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets" />
