@@ -2,6 +2,9 @@
 
 #include <string>
 
+namespace Utils
+{
+
 class CFileSystem
 {
 public:
@@ -15,3 +18,5 @@ public:
 	 */
 	static bool LoadFileToString(const std::string& filePath, std::string& outStr);
 };
+
+}   // namespace Utils

@@ -1,9 +1,16 @@
 {
     "ScriptsPath": "../../AiBattle/scripts/",
-    "MapPath": "./../AiBattle/maps/simple_map.json",
+    "MapPath": "../../AiBattle/maps/simple_map.json",
     "OutPath": "./result.txt",
     "IsRandomSpawn": false,
     "InitTimeout": 100,
     "TurnTimeout": 100,
-    "IsLogging": true
+    "IsLogging": true,
+	"BotPaths":
+	[
+		"../../AiBattle/bots/badBot.js",
+		"../../AiBattle/bots/randomBot.js",
+		"../../AiBattle/bots/simpleBot.js",
+		"../../AiBattle/bots/simpleBot.js"
+	]
 }

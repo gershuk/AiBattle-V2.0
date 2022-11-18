@@ -3,6 +3,7 @@
 #include "helpers/Singleton.h"
 
 #include <string>
+#include <vector>
 
 /**
  * A structure that holds all necessary configurable properties
@@ -13,6 +14,7 @@ struct SConfig
 	std::string mapPath;
 	std::string scoreOutPath;
 	std::string replayOutPath;
+	std::vector<std::string> botPaths;
 	int initTimeout = 100;
 	int turnTimeout = 100;
 	bool isLogging = true;

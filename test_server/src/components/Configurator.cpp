@@ -34,6 +34,8 @@ bool CConfigurator::LoadConfiguration(const std::string& filePath)
 	if (data.contains("IsShortReplay"))				m_config.isShortReplay = data["IsShortReplay"];
 	if (data.contains("IsStoreControllersText"))	m_config.isStoreControllersText = data["IsStoreControllersText"];
 
+	if (data.contains("BotPaths"))					m_config.botPaths = data["BotPaths"];
+
 	LOG_INFO("[CConfigurator] Updated configuration:\r\n"
 		"\tscriptsPath = '%s'\r\n"
 		"\tmapPath = '%s'\r\n"
@@ -54,6 +56,19 @@ bool CConfigurator::LoadConfiguration(const std::string& filePath)
 		, m_config.isShortReplay ? "true" : "false"
 		, m_config.isStoreControllersText ? "true" : "false"
 	);
+
+	LOG_INFO("\tbotPaths =\r\n");
+	if (m_config.botPaths.empty())
+	{
+		LOG_INFO("\t\tempty\r\n");
+	}
+	else
+	{
+		for (auto&& botPath : m_config.botPaths)
+		{
+			LOG_INFO("\t\t'%s'\r\n", botPath.c_str());
+		}
+	}
 
 	return true;
 }

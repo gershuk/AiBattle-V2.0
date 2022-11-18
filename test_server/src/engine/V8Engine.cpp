@@ -1,7 +1,7 @@
 #include "V8Engine.h"
 
-#include "helpers/FileSystem.h"
 #include "helpers/Log.h"
+#include "utils/FileSystem.h"
 
 #include <libplatform/libplatform.h>
 #include <v8-platform.h>
@@ -186,7 +186,7 @@ bool CEngine::EvaluateFile(THandle hContext, const std::string& filePathStr) con
 	HandleScope handleScope(m_pIsolate);
 
 	std::string sourceStr;
-	if (!CFileSystem::LoadFileToString(filePathStr, sourceStr))
+	if (!::Utils::CFileSystem::LoadFileToString(filePathStr, sourceStr))
 	{
 		LOG_ERR("[V8] Failed to open the source file '%s'\r\n", filePathStr.c_str());
 		return false;

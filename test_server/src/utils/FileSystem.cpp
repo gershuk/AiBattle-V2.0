@@ -1,6 +1,9 @@
 #include "FileSystem.h"
 #include <fstream>
 
+namespace Utils
+{
+
 bool CFileSystem::LoadFileToString(const std::string& filePath, std::string& outStr)
 {
 	std::ifstream sourceFile(filePath, std::ios::binary);
@@ -18,3 +21,5 @@ bool CFileSystem::LoadFileToString(const std::string& filePath, std::string& out
 
 	return true;
 }
+
+}   // namespace Utils
