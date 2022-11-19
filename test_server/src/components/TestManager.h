@@ -4,6 +4,9 @@
 
 class CTestManager
 {
+public:
+	CTestManager();
+
 private:
-	CGameScene m_gameScene;
+	std::unique_ptr<CGameScene> m_gameScene;
 };

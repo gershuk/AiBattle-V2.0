@@ -9,6 +9,7 @@ CGameScene::CGameScene()
 {
     m_hSceneContext = v8::CEngine::Instance().CreateContext();
     LoadSceneScripts();
+    InitializeBots();
 }
 
 CGameScene::~CGameScene()
@@ -135,4 +136,21 @@ void CGameScene::LoadSceneScripts() const
     }
 
     LOG_INFO("[CGameScene] Initialized scene scripts\r\n");
+}
+
+void CGameScene::InitializeBots()
+{
+    const auto& config = CConfigurator::Instance().GetConfig();
+
+    for (int32_t i = 0; i < config.botPaths.size(); ++i)
+    {
+        std::unique_ptr<CGameBot> bot = std::make_unique<CGameBot>();
+        const bool bInited = bot->InitializeBot(i, config.initTimeout);
+        if (bInited)
+        {
+            m_gameBots.push_back(std::move(bot));
+        }
+    }
+
+    LOG_INFO("[CGameScene] Initialized %zd bots\r\n", m_gameBots.size());
 }

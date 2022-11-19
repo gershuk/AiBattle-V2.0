@@ -1,5 +1,6 @@
 #pragma once
 
+#include "components/game/GameBot.h"
 #include "engine/V8Engine.h"
 
 class CGameScene
@@ -14,7 +15,14 @@ private:
 	 */
 	void LoadSceneScripts() const;
 
-private:
+	/**
+	 * Generates initialized bots instances
+	 */
+	void InitializeBots();
+
+	// A storage for user bots instances
+	std::vector<std::unique_ptr<CGameBot>> m_gameBots;
+
 	// A context for scene scripts execution
 	// Bots should be executed in separate contexts
 	v8::THandle m_hSceneContext = v8::INVALID_HANDLE;
