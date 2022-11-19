@@ -34,7 +34,7 @@ public:
 	/**
 	 * Starts up an engine instance and
 	 * creates an isolate for the further work.
-	 * 
+	 *
 	 * @return True if initialized successfully
 	 */
 	bool Initialize();
@@ -53,11 +53,11 @@ public:
 
 	/**
 	 * Executes a string with JavaScript code
-	 * 
+	 *
 	 * @param hContext - a handle of execution context
 	 * @param sourceStr - a code for execution
-	 * 
-	 * @return True if execution was successfull
+	 *
+	 * @return True if evaluated successfully
 	 */
 	bool Evaluate(THandle hContext, const std::string& sourceStr) const;
 
@@ -67,14 +67,36 @@ public:
 	 * @param hContext - a handle of execution context
 	 * @param filePathStr - a full path to code file
 	 *
-	 * @return True if execution was successfull
+	 * @return True if evaluated successfully
 	 */
 	bool EvaluateFile(THandle hContext, const std::string& filePathStr) const;
+
+	/**
+	 * Executes a string with JavaScript code, returning a result value
+	 *
+	 * @param hContext - a handle of execution context
+	 * @param sourceStr - a code for execution
+	 * @param outStr - execution result output in string form
+	 *
+	 * @return True if evaluated successfully
+	 */
+	bool Evaluate(THandle hContext, const std::string& sourceStr, std::string& outStr) const;
+
+	/**
+	 * Executes a string with JavaScript code from a file, returning a result value
+	 *
+	 * @param hContext - a handle of execution context
+	 * @param filePathStr - a full path to code file
+	 * @param outStr - execution result output in string form
+	 *
+	 * @return True if evaluated successfully
+	 */
+	bool EvaluateFile(THandle hContext, const std::string& filePathStr, std::string& outStr) const;
 
 private:
 	/**
 	 * Handles try-catch exceptions
-	 * 
+	 *
 	 * @param tryCatch - an exception source
 	 */
 	void ProcessException(TryCatch* tryCatch) const;

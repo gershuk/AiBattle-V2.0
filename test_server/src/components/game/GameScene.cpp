@@ -128,5 +128,11 @@ void CGameScene::LoadSceneScripts() const
         return;
     }
 
-    v8::CEngine::Instance().Evaluate(m_hSceneContext, "scene");
+    if (!v8::CEngine::Instance().Evaluate(m_hSceneContext, "scene"))
+    {
+        LOG_ERR("[CGameScene] Failed to initialize scene\r\n");
+        return;
+    }
+
+    LOG_INFO("[CGameScene] Initialized scene scripts\r\n");
 }

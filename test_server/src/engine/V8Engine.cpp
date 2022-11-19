@@ -57,7 +57,7 @@ bool CEngine::Initialize()
 	ArrayBuffer::Allocator* pIsolateAllocator = ArrayBuffer::Allocator::NewDefaultAllocator();
 	if (pIsolateAllocator == NULL)
 	{
-		LOG_INFO("[V8] Failed to create an isolate allocator\r\n");
+		LOG_ERR("[V8] Failed to create an isolate allocator\r\n");
 		return false;
 	}
 
@@ -75,7 +75,7 @@ bool CEngine::Initialize()
 	m_pIsolate = Isolate::New(isolateCreateParams);
 	if (m_pIsolate == NULL)
 	{
-		LOG_INFO("[V8] Failed to create an isolate\r\n");
+		LOG_ERR("[V8] Failed to create an isolate\r\n");
 		delete pIsolateAllocator;
 		return false;
 	}
@@ -123,6 +123,18 @@ void CEngine::CloseContext(THandle hContext)
 
 bool CEngine::Evaluate(THandle hContext, const std::string& sourceStr) const
 {
+	std::string temp;
+	return Evaluate(hContext, sourceStr, temp);
+}
+
+bool CEngine::EvaluateFile(THandle hContext, const std::string& filePathStr) const
+{
+	std::string temp;
+	return EvaluateFile(hContext, filePathStr, temp);
+}
+
+bool CEngine::Evaluate(THandle hContext, const std::string& sourceStr, std::string& outStr) const
+{
 	if (!m_isInitialized)
 	{
 		return false;
@@ -167,15 +179,14 @@ bool CEngine::Evaluate(THandle hContext, const std::string& sourceStr) const
 			return false;
 		}
 
-		// Convert the result to an UTF8 string and print it.
-		String::Utf8Value utf8(m_pIsolate, result);
-		LOG_INFO("%s\r\n", *utf8);
+		String::Utf8Value resultStr(m_pIsolate, result);
+		outStr = ToCString(resultStr);
 	}
 
 	return true;
 }
 
-bool CEngine::EvaluateFile(THandle hContext, const std::string& filePathStr) const
+bool CEngine::EvaluateFile(THandle hContext, const std::string& filePathStr, std::string& outStr) const
 {
 	if (!m_isInitialized)
 	{
@@ -185,11 +196,11 @@ bool CEngine::EvaluateFile(THandle hContext, const std::string& filePathStr) con
 	std::string sourceStr;
 	if (!::Utils::CFileSystem::LoadFileToString(filePathStr, sourceStr))
 	{
-		LOG_ERR("[V8] Failed to open the source file '%s'\r\n", filePathStr.c_str());
+		LOG_ERR("[V8] Failed to read source from file '%s'\r\n", filePathStr.c_str());
 		return false;
 	}
 
-	return Evaluate(hContext, sourceStr);
+	return Evaluate(hContext, sourceStr, outStr);
 }
 
 void CEngine::ProcessException(TryCatch* tryCatch) const
@@ -242,12 +253,12 @@ void CEngine::ProcessException(TryCatch* tryCatch) const
 		}
 		LOG_ERR("\n");
 
-		Local<Value> stack_trace_string;
-		if (tryCatch->StackTrace(context).ToLocal(&stack_trace_string) &&
-			stack_trace_string->IsString() &&
-			stack_trace_string.As<String>()->Length() > 0)
+		Local<Value> stackTraceString;
+		if (tryCatch->StackTrace(context).ToLocal(&stackTraceString) &&
+			stackTraceString->IsString() &&
+			stackTraceString.As<String>()->Length() > 0)
 		{
-			String::Utf8Value stack_trace(m_pIsolate, stack_trace_string);
+			String::Utf8Value stack_trace(m_pIsolate, stackTraceString);
 			const char* err = ToCString(stack_trace);
 			LOG_ERR("%s\n", err);
 		}
