@@ -182,9 +182,6 @@ bool CEngine::EvaluateFile(THandle hContext, const std::string& filePathStr) con
 		return false;
 	}
 
-	Isolate::Scope isolateScope(m_pIsolate);
-	HandleScope handleScope(m_pIsolate);
-
 	std::string sourceStr;
 	if (!::Utils::CFileSystem::LoadFileToString(filePathStr, sourceStr))
 	{

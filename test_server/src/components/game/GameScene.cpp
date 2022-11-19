@@ -128,5 +128,5 @@ void CGameScene::LoadSceneScripts() const
         return;
     }
 
-    v8::CEngine::Instance().Evaluate(m_hSceneContext, "InitScene()");
+    v8::CEngine::Instance().Evaluate(m_hSceneContext, "scene");
 }

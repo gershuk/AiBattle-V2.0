@@ -19,6 +19,8 @@ bool CFileSystem::LoadFileToString(const std::string& filePath, std::string& out
 	sourceStr.resize(len);
 	sourceFile.read((char*)sourceStr.data(), len);
 
+	outStr = sourceStr;
+
 	return true;
 }
 
