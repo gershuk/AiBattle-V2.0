@@ -27,7 +27,7 @@ bool CGameBot::InitializeBot(int32_t botId, int32_t timeout) const
     std::thread initThread([this, botId, &cv, &initRes]()
         {
             const std::string initStr =
-                "buffVar = InitBotClone(scene, {" + std::to_string(botId) + "}); buffVar";
+                "buffVar = InitBotClone(scene, " + std::to_string(botId) + "); buffVar";
             if (!v8::CEngine::Instance().Evaluate(m_hBotContext, initStr, initRes))
             {
                 LOG_ERR("[CGameBot] Initialization error!\r\n");
@@ -35,6 +35,8 @@ bool CGameBot::InitializeBot(int32_t botId, int32_t timeout) const
 
             cv.notify_one();
         });
+
+    initThread.detach();
 
     {
         std::unique_lock<std::mutex> l(m);
