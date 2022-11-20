@@ -5,6 +5,7 @@ import { $locationSearch } from 'model'
 import { ControllerEditor } from 'pages/controller-editor'
 import { MapEditor } from 'pages/map-editor'
 import './styles.scss'
+import { Replays } from 'pages/replays'
 
 export const App = () => {
 	return (
@@ -28,6 +29,8 @@ const SwitchPage = () => {
 			return <Game />
 		case 'map-editor':
 			return <MapEditor />
+		case 'replay':
+			return <Replays />
 	}
 	return null
 }

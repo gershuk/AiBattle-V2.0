@@ -1,3 +1,4 @@
+import { clsx } from 'libs'
 import './styles.scss'
 
 interface ButtonProps {
@@ -5,6 +6,7 @@ interface ButtonProps {
 	children: string | number
 	className?: string
 	color?: 'primary' | 'warning' | 'danger'
+	disabled?: boolean
 	[k: string]: any
 }
 
@@ -13,13 +15,15 @@ export const Button = ({
 	children,
 	className,
 	color = 'primary',
+	disabled,
 	...props
 }: ButtonProps) => {
 	return (
 		<button
 			{...props}
-			className={`button ${className ?? ''} ${color}`}
-			onClick={onClick}
+			disabled={disabled}
+			className={clsx('button', className, color, disabled ? 'disabled' : null)}
+			onClick={disabled ? undefined : onClick}
 		>
 			{children}
 		</button>

@@ -10,22 +10,28 @@
 	align-items: center;
 	cursor: pointer;
 
-	&.primary {
-		background: rgb(0, 122, 204);
-		&:hover {
-			background: rgb(0, 98, 163);
+	&:not(.disabled) {
+		&.primary {
+			background: rgb(0, 122, 204);
+			&:hover {
+				background: rgb(0, 98, 163);
+			}
+		}
+		&.warning {
+			background: rgb(204, 173, 0);
+			&:hover {
+				background: rgb(172, 146, 0);
+			}
+		}
+		&.danger {
+			background: rgb(204, 41, 0);
+			&:hover {
+				background: rgb(168, 34, 0);
+			}
 		}
 	}
-	&.warning {
-		background: rgb(204, 173, 0);
-		&:hover {
-			background: rgb(172, 146, 0);
-		}
-	}
-	&.danger {
-		background: rgb(204, 41, 0);
-		&:hover {
-			background: rgb(168, 34, 0);
-		}
+
+	&.disabled {
+		background: rgb(221 221 221);
 	}
 }
