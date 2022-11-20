@@ -1,12 +1,21 @@
 import { useUnit } from 'effector-react'
+import { ReplayController } from 'features/replay-contoller'
 import { ReplayList } from 'features/replays-list/list'
 import { useMemo } from 'preact/hooks'
 import { Button, SplitPanel } from 'ui'
-import { $selectReplay, selectedReplay } from './model'
+import {
+	$selectReplay,
+	$startGame,
+	selectedReplay,
+	setStartReplay,
+} from './model'
 import './styles.scss'
 
 export const Replays = () => {
-	const selectReplay = useUnit($selectReplay)
+	const { selectReplay, startGame } = useUnit({
+		selectReplay: $selectReplay,
+		startGame: $startGame,
+	})
 	const sizes = useMemo(() => {
 		const width = window.innerWidth
 		const r = (300 / width) * 100
@@ -26,13 +35,31 @@ export const Replays = () => {
 				minSize={0}
 				Left={
 					<div className={'controller-replays-wrapper'}>
-						<ReplayList
-							ontToggleSelect={selectedReplay}
-							active={selectReplay?.name}
-						/>
-						<div className={'replays-start-wrapper'}>
-							<Button disabled={!selectReplay}>Запустить</Button>
-						</div>
+						{!startGame ? (
+							<>
+								<ReplayList
+									ontToggleSelect={selectedReplay}
+									active={selectReplay?.name}
+								/>
+								<div className={'replays-start-wrapper'}>
+									<Button
+										onClick={() => setStartReplay(true)}
+										disabled={!selectReplay}
+									>
+										Запустить
+									</Button>
+								</div>
+							</>
+						) : (
+							<>
+								<ReplayController replay={selectReplay!} />
+								<div className={'replays-start-wrapper'}>
+									<Button color="danger" onClick={() => setStartReplay(false)}>
+										Отменить
+									</Button>
+								</div>
+							</>
+						)}
 					</div>
 				}
 				Right={null}
