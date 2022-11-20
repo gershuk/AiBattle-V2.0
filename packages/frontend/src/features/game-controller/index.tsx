@@ -17,22 +17,26 @@ export const GameController = () => {
 	if (startedGame) {
 		return (
 			<div className={'game-controller'}>
-				<GameSettings />
+				<div className={'game-controller-metrics'}>
+					<GameSettings />
+				</div>
 				<TogglerGame />
 			</div>
 		)
 	}
 	return (
 		<div className={'game-controller'}>
-			<MapSelection />
-			{activeMap ? (
-				<>
-					<MapInfo />
-					<BotsSetting />
-					<PreGameSettings />
-					<TogglerGame />
-				</>
-			) : null}
+			<div className={'game-controller-metrics'}>
+				<MapSelection />
+				{activeMap ? (
+					<>
+						<MapInfo />
+						<BotsSetting />
+						<PreGameSettings />
+					</>
+				) : null}
+			</div>
+			{activeMap ? <TogglerGame /> : null}
 		</div>
 	)
 }

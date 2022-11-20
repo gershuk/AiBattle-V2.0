@@ -2,7 +2,14 @@
 	padding: 8px;
 	background: #f3f3f3;
 	height: 100%;
-	& > * + * {
-		margin-top: 24px;
+	display: flex;
+	flex-flow: column;
+	.game-controller-metrics {
+		height: 100%;
+		margin-bottom: 8px;
+		overflow: auto;
+		& > * + * {
+			margin-top: 24px;
+		}
 	}
 }
