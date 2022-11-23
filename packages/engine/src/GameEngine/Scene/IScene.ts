@@ -59,4 +59,15 @@ export interface IScene {
 	StopAutoTurn(): void
 
 	StartAutoTurn(): void
+
+	Init(parameters: SceneParameters): void
+}
+
+export class SceneParameters {
+	turnIndex: number
+	maxTurnIndex: number
+	animTicksCount: number
+	animTicksTime: number
+	autoTurnTime: number
+	canvas: HTMLCanvasElement
 }

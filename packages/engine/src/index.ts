@@ -1,4 +1,6 @@
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
-import { Scene } from 'GameEngine/Scene/Scene'
+import { GameEngine } from 'GameEngine/GameEngine'
+import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
+import { IScene, SceneParameters } from 'GameEngine/Scene/IScene'
 
-export { Scene, Vector2 }
+export { GameEngine, IScene, SceneParameters, ImageLoader, Vector2 }
