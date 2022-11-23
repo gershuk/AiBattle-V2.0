@@ -1,39 +1,51 @@
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
-import { AbstractObjectComponent, ComponentParameters } from '../AbstractObjectComponent'
+import {
+	AbstractObjectComponent,
+	ComponentParameters,
+} from '../AbstractObjectComponent'
+import { Vector2 } from '../Vector2'
 
 export class StaticRenderComponent extends AbstractObjectComponent {
-	private _xOffset: number
-	public get xOffset(): number {
-		return this._xOffset
+	private _offset: Vector2
+	public get offset(): Vector2 {
+		return this._offset
 	}
-	protected set xOffset(x: number) {
-		this._xOffset = x
-	}
-
-	private _yOffset: number
-	public get yOffset(): number {
-		return this._yOffset
-	}
-	protected set yOffset(y: number) {
-		this._yOffset = y
+	protected set offset(o: Vector2) {
+		this._offset = o
 	}
 
-	private _Image: HTMLImageElement
+	private _size: Vector2
+	public get size(): Vector2 {
+		return this._size
+	}
+	protected set size(s: Vector2) {
+		this._size = s
+	}
+
+	private _zOder: number
+	public get zOder(): number {
+		return this._zOder
+	}
+	public set zOder(v: number) {
+		this._zOder = v
+	}
+
+	private _image: HTMLImageElement
 	public get Image(): HTMLImageElement {
-		return this._Image
+		return this._image
 	}
 	protected set Image(image: HTMLImageElement) {
-		this._Image = image
+		this._image = image
 	}
 
-    Init(owner: IGameObject, parameters?: ComponentParameters) {
+	Init(owner: IGameObject, parameters?: ComponentParameters) {
 		this._owner = owner
-        if (parameters instanceof StaticRenderComponent)
-        {
-            this.xOffset = parameters.xOffset
-            this.yOffset = parameters.yOffset
-            this.Image = parameters.Image
-        }
+		if (parameters instanceof StaticRenderComponentParameters) {
+			this.size = parameters.size
+			this.offset = parameters.offset
+			this.Image = parameters.image
+			this.zOder = parameters.zOder
+		}
 	}
 
 	OnOwnerInit(): void {}
@@ -44,8 +56,9 @@ export class StaticRenderComponent extends AbstractObjectComponent {
 	OnFixedUpdate(index: number): void {}
 }
 
-export class StaticRenderComponentComponents{
-    _xOffset:number;
-    _yOffset:number;
-    _image:HTMLImageElement;
+export class StaticRenderComponentParameters {
+	offset:Vector2
+	size:Vector2
+	image: HTMLImageElement
+	zOder: number
 }
