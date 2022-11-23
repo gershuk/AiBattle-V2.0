@@ -3,6 +3,10 @@ import { IGameObject } from '../GameObject/IGameObject'
 export abstract class AbstractObjectComponent {
 	protected _owner: IGameObject
 
+	public get Owner(): IGameObject {
+		return this._owner
+	}
+
 	constructor(owner: IGameObject, parameters?: ComponentParameters) {
 		this.Init(owner, parameters)
 	}

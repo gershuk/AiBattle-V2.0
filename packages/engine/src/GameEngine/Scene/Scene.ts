@@ -5,6 +5,7 @@ import {
 import { GameObject } from '../GameObject/GameObject'
 import { IScene } from './IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
+import { StaticRenderComponent } from 'GameEngine/BaseComponents/RenderComponents/StaticRenderComponent'
 
 enum SceneState {
 	Init,
@@ -23,6 +24,15 @@ export class Scene implements IScene {
 	private _state: SceneState
 	private _animTicksCount: number
 	private _animTicksTime: number
+	private _canvas: HTMLCanvasElement
+
+	private _renderOffset: Vector2
+	public get renderOffset(): Vector2 {
+		return this._renderOffset
+	}
+	public set renderOffset(v: Vector2) {
+		this._renderOffset = v
+	}
 
 	protected set gameObjects(gameObjects: GameObject[]) {
 		this._gameObjects = gameObjects
@@ -93,13 +103,23 @@ export class Scene implements IScene {
 		return this._autoTurnTimerId
 	}
 
+	public get canvas(): HTMLCanvasElement {
+		return this._canvas
+	}
+
+	public set canvas(canvas: HTMLCanvasElement) {
+		this._canvas = canvas
+	}
+
 	constructor(
+		canvas: HTMLCanvasElement,
 		maxTurnIndex: number = 50,
 		autoTurnTime: number = 500,
 		animTicksCount: number = 1,
 		animTicksTime: number = 50,
 		gameObjects?: GameObject[]
 	) {
+		this.canvas = canvas
 		this.gameObjects = gameObjects ?? new Array<GameObject>()
 		this.animTicksCount = animTicksCount
 		this.turnIndex = 0
@@ -172,7 +192,28 @@ export class Scene implements IScene {
 		this.state = SceneState.ReadyToNextTurn
 	}
 
-	public RenderFrame(): void {}
+	public RenderFrame(): void {
+		let renderComponents: StaticRenderComponent[] =
+			new Array<StaticRenderComponent>()
+		for (let gameObject of this.gameObjects) {
+			renderComponents.push(gameObject.GetComponents(StaticRenderComponent))
+		}
+
+		renderComponents = renderComponents.sort((a, b) => a.zOder - b.zOder)
+
+		const context = <CanvasRenderingContext2D>this.canvas.getContext('2d')
+		//ToDo : test ctx.beginPath();
+		context.clearRect(0, 0, this.canvas.width, this.canvas.height)
+
+		for (let component of renderComponents) {
+			const image = component.Image
+			const pos = component.Owner.position.Add(component.offset)
+			const dw = component.size.x
+			const dh = component.size.y
+			context.drawImage(image, pos.x, pos.y, dw, dh)
+			context.save()
+		}
+	}
 
 	private AnimationStep(index: number, animTicksCount: number) {
 		this.OnBeforeFrameRender(index, this.animTicksCount)
