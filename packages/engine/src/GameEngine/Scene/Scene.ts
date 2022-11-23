@@ -199,19 +199,18 @@ export class Scene implements IScene {
 			renderComponents.push(gameObject.GetComponents(StaticRenderComponent))
 		}
 
-		renderComponents = renderComponents.sort((a,b)=>a.zOder-b.zOder);
+		renderComponents = renderComponents.sort((a, b) => a.zOder - b.zOder)
 
-		const context = < CanvasRenderingContext2D > this.canvas.getContext('2d');
+		const context = <CanvasRenderingContext2D>this.canvas.getContext('2d')
 		//ToDo : test ctx.beginPath();
-		context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+		context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
-		for (let component of renderComponents)
-		{
-			const image = component.Image;
-			const pos = component.Owner.position.Add(component.offset);
-			const dw = component.size.x;
-			const dh = component.size.y;
-			context.drawImage(image,pos.x,pos.y,dw,dh)
+		for (let component of renderComponents) {
+			const image = component.Image
+			const pos = component.Owner.position.Add(component.offset)
+			const dw = component.size.x
+			const dh = component.size.y
+			context.drawImage(image, pos.x, pos.y, dw, dh)
 			context.save()
 		}
 	}

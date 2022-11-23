@@ -57,8 +57,8 @@ export class StaticRenderComponent extends AbstractObjectComponent {
 }
 
 export class StaticRenderComponentParameters {
-	offset:Vector2
-	size:Vector2
+	offset: Vector2
+	size: Vector2
 	image: HTMLImageElement
 	zOder: number
 }
