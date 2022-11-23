@@ -1,8 +1,11 @@
 import { useUnit } from 'effector-react'
-import { SideBar } from './features/side-bar'
-import { $locationSearch } from './model'
-import { ControllerEditor } from './pages/controller-editor'
+import { Game } from 'pages/game'
+import { SideBar } from 'features/side-bar'
+import { $locationSearch } from 'model'
+import { ControllerEditor } from 'pages/controller-editor'
+import { MapEditor } from 'pages/map-editor'
 import './styles.scss'
+import { Replays } from 'pages/replays'
 
 export const App = () => {
 	return (
@@ -22,6 +25,12 @@ const SwitchPage = () => {
 		case '':
 		case 'controller-editor':
 			return <ControllerEditor />
+		case 'game':
+			return <Game />
+		case 'map-editor':
+			return <MapEditor />
+		case 'replay':
+			return <Replays />
 	}
 	return null
 }

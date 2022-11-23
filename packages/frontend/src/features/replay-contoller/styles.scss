@@ -1,0 +1,25 @@
+.replay-settings {
+	padding: 8px;
+	.title {
+		font-size: 16px;
+		margin-bottom: 4px;
+		white-space: nowrap;
+	}
+	.game-settings-range {
+		width: 100%;
+	}
+	.setting-item {
+		font-size: 14px;
+	}
+	.setting-item + .setting-item {
+		margin-top: 24px;
+	}
+	.auto-buttons {
+		& > * + * {
+			margin-left: 4px;
+		}
+	}
+	.auto-range {
+		margin-bottom: 4px;
+	}
+}

@@ -1,9 +1,15 @@
 .split-panel {
-	display: flex;
-	flex-direction: row;
+	&:not(.vertical) {
+		display: flex;
+		flex-direction: row;
+	}
 	.gutter {
 		background-color: rgb(216, 222, 233);
 		cursor: col-resize;
+	}
+
+	.gutter.gutter-vertical {
+		cursor: row-resize;
 	}
 
 	&.drag-split {

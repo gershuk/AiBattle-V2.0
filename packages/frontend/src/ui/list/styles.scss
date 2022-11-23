@@ -1,0 +1,37 @@
+.flat-list {
+	overflow: auto;
+	.flat-list-item {
+		padding: 0 8px;
+		color: rgb(63, 62, 62);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		justify-self: center;
+		line-height: 140%;
+		font-size: 14px;
+		cursor: pointer;
+		&:hover {
+			background: #e8e8e8;
+		}
+		&.active {
+			background: #d8d8d8;
+		}
+	}
+}
+
+.flat-list-context-menu {
+	position: fixed;
+	z-index: 10;
+	background: white;
+	padding: 8px 0;
+	font-size: 12px;
+	line-height: 160%;
+	border-radius: 2px;
+	.item {
+		padding: 0 8px;
+		cursor: pointer;
+		&:hover {
+			background: #e8e8e8;
+		}
+	}
+}

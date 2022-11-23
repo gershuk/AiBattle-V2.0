@@ -1,0 +1,25 @@
+.replays {
+	height: 100%;
+	.replays-split {
+		height: 100%;
+		.replays-list {
+			height: calc(100% - 45px);
+		}
+		.controller-replays-wrapper {
+			background: #f3f3f3;
+			height: 100%;
+			display: flex;
+			flex-flow: column;
+			justify-content: space-between;
+			.replays-start-wrapper {
+				padding: 8px;
+				display: flex;
+				justify-content: end;
+			}
+		}
+		.replay-settings {
+			height: 100%;
+			overflow: auto;
+		}
+	}
+}

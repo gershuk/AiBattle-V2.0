@@ -12,7 +12,8 @@
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"jsx": "react-jsx",
-		"jsxImportSource": "preact"
+		"jsxImportSource": "preact",
+		"strictNullChecks": true
 	},
 	"include": ["src"],
 	"compileOnSave": true

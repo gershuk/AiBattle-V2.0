@@ -1,7 +1,7 @@
 import { useUnit } from 'effector-react'
 import { useMemo } from 'preact/hooks'
-import { CodesList, EditorCode } from '../../features/codes-editor'
-import { SplitPanel, CodeEditor } from '../../ui'
+import { CodesList, EditorCode } from 'features/codes-editor'
+import { SplitPanel } from 'ui'
 import { $selectCode, selectedCode, changedCode } from './model'
 import './styles.scss'
 
@@ -12,12 +12,17 @@ export const ControllerEditor = () => {
 		const r = (300 / width) * 100
 		return [r, 100 - r]
 	}, [])
+	const handlerDragEnd = () => {
+		window.dispatchEvent(new Event('resize'))
+	}
+
 	return (
 		<div class={'controller-editor'}>
 			<SplitPanel
+				onDragEnd={handlerDragEnd}
 				className={'controller-editor-split'}
 				sizes={sizes}
-				gutterSize={3}
+				gutterSize={5}
 				minSize={0}
 				Left={
 					<CodesList

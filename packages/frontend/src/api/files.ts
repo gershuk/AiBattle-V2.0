@@ -3,7 +3,7 @@ export const readFile = (file: File) => {
 		var reader = new FileReader()
 		try {
 			reader.onload = readerEvent => {
-				const content = readerEvent?.target?.result
+				const content = readerEvent?.target?.result || ''
 				resolve(content)
 			}
 			reader.readAsText(file, 'UTF-8')

@@ -1,0 +1,30 @@
+.bot-setting {
+	.title {
+		font-size: 16px;
+		margin-bottom: 4px;
+		white-space: nowrap;
+	}
+	.bot-list {
+		.bot-setting-item {
+			display: flex;
+			align-items: center;
+
+			& > * + * {
+				margin-left: 8px;
+			}
+			.bot-color {
+				height: 20px;
+				width: 20px;
+			}
+			// .bot-name {
+			// 	width: 180px;
+			// }
+			// .bot-controller {
+			// 	width: 140px;
+			// }
+		}
+		.bot-setting-item + .bot-setting-item {
+			margin-top: 4px;
+		}
+	}
+}

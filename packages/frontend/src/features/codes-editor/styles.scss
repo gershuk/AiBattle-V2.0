@@ -9,6 +9,7 @@
 		margin-bottom: 5px;
 		.title {
 			font-size: 14px;
+			white-space: nowrap;
 		}
 		.toolbar {
 			display: flex;
@@ -22,54 +23,18 @@
 			}
 		}
 	}
-	.item-file {
-		padding: 0 8px;
-		color: rgb(63, 62, 62);
+	.codes-list-item {
 		display: flex;
 		align-items: center;
-		justify-content: space-between;
-		justify-self: center;
-		line-height: 140%;
-		font-size: 14px;
-		cursor: pointer;
-		&:hover {
-			background: #e8e8e8;
-		}
-		&.active {
-			background: #d8d8d8;
+		.error-indicator {
+			background: rgb(168, 34, 0);
+			border-radius: 100%;
+			width: 10px;
+			height: 10px;
+			margin-right: 8px;
 		}
 		&.modify {
 			color: rgb(230, 175, 65);
-		}
-		.item-file-icon-wrapper {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-		.item-file-icon {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			& > .item-file-icon-wrapper + .item-file-icon-wrapper {
-				margin-left: 8px;
-			}
-		}
-	}
-}
-
-.codes-list-item-context-menu {
-	position: fixed;
-	z-index: 10;
-	background: white;
-	padding: 8px 0;
-	font-size: 12px;
-	line-height: 160%;
-	border-radius: 2px;
-	.item {
-		padding: 0 8px;
-		cursor: pointer;
-		&:hover {
-			background: #e8e8e8;
 		}
 	}
 }
