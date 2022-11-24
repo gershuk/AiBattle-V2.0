@@ -118,7 +118,6 @@ export class Scene implements IScene {
 	Init(parameters: SceneParameters): void {
 		if (this.autoTurnTimerId) this.StopAutoTurn()
 
-		this.turnIndex = parameters.turnIndex
 		this.maxTurnIndex = parameters.maxTurnIndex
 		this.autoTurnTime = parameters.autoTurnTime
 		this.animTicksCount = parameters.animTicksCount

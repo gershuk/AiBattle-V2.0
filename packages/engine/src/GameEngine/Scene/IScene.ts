@@ -64,7 +64,6 @@ export interface IScene {
 }
 
 export class SceneParameters {
-	turnIndex: number
 	maxTurnIndex: number
 	animTicksCount: number
 	animTicksTime: number
@@ -72,14 +71,12 @@ export class SceneParameters {
 	canvas: HTMLCanvasElement
 
 	constructor(
-		turnIndex: number,
 		maxTurnIndex: number,
 		animTicksCount: number,
 		animTicksTime: number,
 		autoTurnTime: number,
 		canvas: HTMLCanvasElement
 	) {
-		this.turnIndex = turnIndex
 		this.maxTurnIndex = maxTurnIndex
 		this.animTicksCount = animTicksCount
 		this.animTicksTime = animTicksTime
