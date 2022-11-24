@@ -225,10 +225,8 @@ export class Scene implements IScene {
 		this.OnAfterFrameRender(index, this.animTicksCount)
 		if (index + 1 <= animTicksCount) {
 			setTimeout(
-				this.AnimationStep,
-				this.animTicksTime,
-				index + 1,
-				animTicksCount
+				() => this.AnimationStep(index + 1, animTicksCount),
+				this.animTicksTime
 			)
 		} else {
 			this.state = SceneState.ReadyToNextTurn
@@ -268,7 +266,7 @@ export class Scene implements IScene {
 
 			if (!this.autoTurnTimerId)
 				this.autoTurnTimerId = window.setInterval(
-					this.DoNextTurn,
+					() => this.DoNextTurn,
 					this.autoTurnTime
 				)
 			else throw new Error('AutoTurn already started')

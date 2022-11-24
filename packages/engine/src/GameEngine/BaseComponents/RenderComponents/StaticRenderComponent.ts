@@ -61,4 +61,16 @@ export class StaticRenderComponentParameters {
 	size: Vector2
 	image: HTMLImageElement
 	zOder: number
+
+	constructor(
+		offset: Vector2,
+		size: Vector2,
+		image: HTMLImageElement,
+		zOder: number
+	) {
+		this.offset = offset
+		this.size = size
+		this.image = image
+		this.zOder = zOder
+	}
 }

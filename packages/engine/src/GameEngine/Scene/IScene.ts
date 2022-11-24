@@ -70,4 +70,20 @@ export class SceneParameters {
 	animTicksTime: number
 	autoTurnTime: number
 	canvas: HTMLCanvasElement
+
+	constructor(
+		turnIndex: number,
+		maxTurnIndex: number,
+		animTicksCount: number,
+		animTicksTime: number,
+		autoTurnTime: number,
+		canvas: HTMLCanvasElement
+	) {
+		this.turnIndex = turnIndex
+		this.maxTurnIndex = maxTurnIndex
+		this.animTicksCount = animTicksCount
+		this.animTicksTime = animTicksTime
+		this.autoTurnTime = autoTurnTime
+		this.canvas = canvas
+	}
 }

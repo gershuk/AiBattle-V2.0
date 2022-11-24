@@ -1,6 +1,6 @@
-import { ImageLoader } from "./ResourceStorage/ImageLoader"
-import { IScene, SceneParameters } from "./Scene/IScene"
-import { Scene } from "./Scene/Scene"
+import { ImageLoader } from './ResourceStorage/ImageLoader'
+import { IScene, SceneParameters } from './Scene/IScene'
+import { Scene } from './Scene/Scene'
 
 export class GameEngine {
 	private _scene: IScene
@@ -56,4 +56,9 @@ export class GameEngine {
 export class GameEngineParameters {
 	sceneParameters: SceneParameters
 	imageLoader?: ImageLoader
+
+	constructor(sceneParameters: SceneParameters, imageLoader?: ImageLoader) {
+		this.sceneParameters = sceneParameters
+		this.imageLoader = imageLoader
+	}
 }
