@@ -8,6 +8,10 @@ import { Vector2 } from '../BaseComponents/Vector2'
 export interface IScene {
 	get gameObjects(): GameObject[]
 
+	get renderOffset(): Vector2
+
+	set renderOffset(v: Vector2)
+
 	set turnIndex(turnIndex: number)
 
 	get turnIndex(): number
