@@ -1,4 +1,20 @@
+import { StaticRenderComponentParameters } from 'GameEngine/BaseComponents/RenderComponents/StaticRenderComponent'
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
-import { Scene } from 'GameEngine/Scene/Scene'
+import {
+	GameEngine,
+	GameEngineParameters,
+	IGameEngine,
+} from 'GameEngine/GameEngine'
+import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
+import { IScene, SceneParameters } from 'GameEngine/Scene/IScene'
 
-export { Scene, Vector2 }
+export {
+	IGameEngine,
+	GameEngine,
+	GameEngineParameters,
+	IScene,
+	SceneParameters,
+	ImageLoader,
+	Vector2,
+	StaticRenderComponentParameters,
+}

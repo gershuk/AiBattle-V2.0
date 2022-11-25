@@ -8,6 +8,10 @@ import { Vector2 } from '../BaseComponents/Vector2'
 export interface IScene {
 	get gameObjects(): GameObject[]
 
+	get renderOffset(): Vector2
+
+	set renderOffset(v: Vector2)
+
 	set turnIndex(turnIndex: number)
 
 	get turnIndex(): number
@@ -59,4 +63,28 @@ export interface IScene {
 	StopAutoTurn(): void
 
 	StartAutoTurn(): void
+
+	Init(parameters: SceneParameters): void
+}
+
+export class SceneParameters {
+	maxTurnIndex: number
+	animTicksCount: number
+	animTicksTime: number
+	autoTurnTime: number
+	canvas: HTMLCanvasElement
+
+	constructor(
+		maxTurnIndex: number,
+		animTicksCount: number,
+		animTicksTime: number,
+		autoTurnTime: number,
+		canvas: HTMLCanvasElement
+	) {
+		this.maxTurnIndex = maxTurnIndex
+		this.animTicksCount = animTicksCount
+		this.animTicksTime = animTicksTime
+		this.autoTurnTime = autoTurnTime
+		this.canvas = canvas
+	}
 }

@@ -3,7 +3,7 @@ import {
 	ComponentParameters,
 } from '../BaseComponents/AbstractObjectComponent'
 import { GameObject } from '../GameObject/GameObject'
-import { IScene } from './IScene'
+import { IScene, SceneParameters } from './IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { StaticRenderComponent } from 'GameEngine/BaseComponents/RenderComponents/StaticRenderComponent'
 
@@ -111,22 +111,23 @@ export class Scene implements IScene {
 		this._canvas = canvas
 	}
 
-	constructor(
-		canvas: HTMLCanvasElement,
-		maxTurnIndex: number = 50,
-		autoTurnTime: number = 500,
-		animTicksCount: number = 1,
-		animTicksTime: number = 50,
-		gameObjects?: GameObject[]
-	) {
-		this.canvas = canvas
-		this.gameObjects = gameObjects ?? new Array<GameObject>()
-		this.animTicksCount = animTicksCount
-		this.turnIndex = 0
+	constructor(parameters: SceneParameters) {
+		this.Init(parameters)
+	}
+
+	Init(parameters: SceneParameters): void {
+		if (this.autoTurnTimerId) this.StopAutoTurn()
+
+		this.maxTurnIndex = parameters.maxTurnIndex
+		this.autoTurnTime = parameters.autoTurnTime
+		this.animTicksCount = parameters.animTicksCount
+		this.animTicksTime = parameters.animTicksTime
+		this.canvas = parameters.canvas
+
+		this.gameObjects = new Array<GameObject>()
+		this.renderOffset = new Vector2(0, 0)
+
 		this.state = SceneState.Init
-		this.maxTurnIndex = maxTurnIndex
-		this.autoTurnTime = autoTurnTime
-		this.animTicksTime = animTicksTime
 	}
 
 	public AddGameObject<T extends GameObject>(
@@ -207,7 +208,9 @@ export class Scene implements IScene {
 
 		for (let component of renderComponents) {
 			const image = component.Image
-			const pos = component.Owner.position.Add(component.offset)
+			const pos = component.Owner.position
+				.Add(component.offset)
+				.Add(this.renderOffset)
 			const dw = component.size.x
 			const dh = component.size.y
 			context.drawImage(image, pos.x, pos.y, dw, dh)
@@ -221,10 +224,8 @@ export class Scene implements IScene {
 		this.OnAfterFrameRender(index, this.animTicksCount)
 		if (index + 1 <= animTicksCount) {
 			setTimeout(
-				this.AnimationStep,
-				this.animTicksTime,
-				index + 1,
-				animTicksCount
+				() => this.AnimationStep(index + 1, animTicksCount),
+				this.animTicksTime
 			)
 		} else {
 			this.state = SceneState.ReadyToNextTurn
@@ -264,7 +265,7 @@ export class Scene implements IScene {
 
 			if (!this.autoTurnTimerId)
 				this.autoTurnTimerId = window.setInterval(
-					this.DoNextTurn,
+					() => this.DoNextTurn,
 					this.autoTurnTime
 				)
 			else throw new Error('AutoTurn already started')
