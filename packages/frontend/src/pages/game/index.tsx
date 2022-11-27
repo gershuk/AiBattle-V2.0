@@ -1,6 +1,13 @@
+import {
+	GameEngine,
+	GameEngineParameters,
+	SceneParameters,
+} from '@ai-battle/engine'
 import { GameController } from 'features/game-controller'
+import { CreateEngineCanvas } from 'libs/engine-canvas'
 import { useMemo } from 'preact/hooks'
 import { SplitPanel } from 'ui'
+import './styles.scss'
 
 export const Game = () => {
 	const sizes = useMemo(() => {
@@ -16,8 +23,25 @@ export const Game = () => {
 				gutterSize={3}
 				minSize={0}
 				Left={<GameController />}
-				Right={null}
+				Right={<GameMap />}
 			/>
 		</div>
 	)
 }
+
+const GameMap = () => {
+	return <CanvasComponent />
+}
+
+const { canvas, CanvasComponent } = CreateEngineCanvas({
+	className: 'canvas-game',
+	wrapperClassName: 'canvas-game-wrapper',
+})
+
+const engine = new GameEngine(
+	new GameEngineParameters(new SceneParameters(10, 10, 10, 120, canvas))
+)
+engine.Start()
+engine.DoNextTurn()
+engine.StartAutoTurn()
+console.log('engine', engine)
