@@ -1,4 +1,4 @@
-import { Input, RangeInput } from 'ui'
+import { Input, LinkButton, RangeInput } from 'ui'
 import './styles.scss'
 
 export const PreGameSettings = () => {
@@ -11,7 +11,9 @@ export const PreGameSettings = () => {
 					<Input />
 				</div>
 				<div className={'setting-item'}>
-					<div>Размер тайла</div>
+					<div className={'size-tile-title'}>
+						Задать размер тайла <LinkButton>или сбросить</LinkButton>
+					</div>
 					<RangeInput min={20} max={200} className="game-settings-range" />
 				</div>
 			</div>

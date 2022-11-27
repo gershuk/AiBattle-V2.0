@@ -1,5 +1,5 @@
 import { useUnit } from 'effector-react'
-import { Button, RangeInput } from 'ui'
+import { Button, LinkButton, RangeInput } from 'ui'
 import { $autoStep, setAutoStep } from '../model/game'
 import './styles.scss'
 
@@ -30,7 +30,9 @@ export const GameSettings = () => {
 					</div>
 				</div>
 				<div className={'setting-item'}>
-					<div>Размер тайла</div>
+					<div className={'size-tile-title'}>
+						Задать размер тайла <LinkButton>или сбросить</LinkButton>
+					</div>
 					<RangeInput min={20} max={200} className="game-settings-range" />
 				</div>
 			</div>

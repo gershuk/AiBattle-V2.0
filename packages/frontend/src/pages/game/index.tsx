@@ -3,8 +3,9 @@ import {
 	GameEngineParameters,
 	SceneParameters,
 } from '@ai-battle/engine'
+import { createStore } from 'effector'
 import { GameController } from 'features/game-controller'
-import { CreateEngineCanvas } from 'libs/engine-canvas'
+import { createEngineCanvas } from 'libs/engine-canvas'
 import { useMemo } from 'preact/hooks'
 import { SplitPanel } from 'ui'
 import './styles.scss'
@@ -33,7 +34,7 @@ const GameMap = () => {
 	return <CanvasComponent />
 }
 
-const { canvas, CanvasComponent } = CreateEngineCanvas({
+const { canvas, CanvasComponent } = createEngineCanvas({
 	className: 'canvas-game',
 	wrapperClassName: 'canvas-game-wrapper',
 })
@@ -41,7 +42,5 @@ const { canvas, CanvasComponent } = CreateEngineCanvas({
 const engine = new GameEngine(
 	new GameEngineParameters(new SceneParameters(10, 10, 10, 120, canvas))
 )
-engine.Start()
-engine.DoNextTurn()
-engine.StartAutoTurn()
-console.log('engine', engine)
+const $engine = createStore(engine)
+$engine.watch(engine => console.log('engine', engine))

@@ -1,0 +1,30 @@
+.link-button {
+	font-size: 14px;
+	line-height: 22px;
+	padding: 0 8px;
+	border-radius: 5px;
+	outline: none;
+	border: none;
+	cursor: pointer;
+	background: transparent;
+	color: rgb(0, 122, 204);
+	&:hover {
+		background: #e8e8e8;
+	}
+
+	&:not(.disabled) {
+		&.primary {
+			color: rgb(0, 122, 204);
+		}
+		&.warning {
+			color: rgb(204, 173, 0);
+		}
+		&.danger {
+			color: rgb(204, 41, 0);
+		}
+	}
+
+	&.disabled {
+		background: rgb(221 221 221);
+	}
+}

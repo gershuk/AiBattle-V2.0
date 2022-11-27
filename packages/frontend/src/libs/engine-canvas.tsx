@@ -1,7 +1,7 @@
 import { memo, useEffect, useRef } from 'react'
 import { clsx } from './clsx'
 
-export const CreateEngineCanvas = ({
+export const createEngineCanvas = ({
 	className,
 	wrapperClassName,
 }: {
