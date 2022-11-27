@@ -8,6 +8,7 @@ export interface DropDownProps {
 	disabled?: boolean
 	name?: string
 	className?: string
+	required?: boolean
 	[k: string]: any
 }
 
@@ -18,6 +19,7 @@ export const DropDown = ({
 	disabled,
 	name,
 	className,
+	required,
 	...props
 }: DropDownProps) => {
 	const ref = useRef<HTMLSelectElement | null>(null)
@@ -55,6 +57,7 @@ export const DropDown = ({
 			className={`dropdown ${disabled ? 'disabled' : ''} ${className ?? ''}`}
 		>
 			<select
+				required={required}
 				name={name}
 				disabled={disabled}
 				className={'dropdown-select'}

@@ -14,17 +14,12 @@ export const GameSettings = () => {
 				</div>
 				<div className={'setting-item'}>
 					<div>Auto шаг</div>
-					<div className={'auto-range'}>
-						<RangeInput min={10} max={1000} className="game-settings-range" />
-					</div>
 					<div className={'auto-buttons'}>
 						<Button
-							color={autoStep.enable ? 'warning' : 'primary'}
-							onClick={() =>
-								setAutoStep({ ...autoStep, enable: !autoStep.enable })
-							}
+							color={autoStep ? 'warning' : 'primary'}
+							onClick={() => setAutoStep(!autoStep)}
 						>
-							{autoStep.enable ? 'Остановить' : 'Запустить'}
+							{autoStep ? 'Остановить' : 'Запустить'}
 						</Button>
 						<Button>Next step with timer</Button>
 					</div>

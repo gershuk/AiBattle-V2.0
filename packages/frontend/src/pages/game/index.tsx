@@ -1,11 +1,4 @@
-import {
-	GameEngine,
-	GameEngineParameters,
-	SceneParameters,
-} from '@ai-battle/engine'
-import { createStore } from 'effector'
-import { GameController } from 'features/game-controller'
-import { createEngineCanvas } from 'libs/engine-canvas'
+import { GameController, ViewPortGame } from 'features/game-controller'
 import { useMemo } from 'preact/hooks'
 import { SplitPanel } from 'ui'
 import './styles.scss'
@@ -24,23 +17,8 @@ export const Game = () => {
 				gutterSize={3}
 				minSize={0}
 				Left={<GameController />}
-				Right={<GameMap />}
+				Right={<ViewPortGame />}
 			/>
 		</div>
 	)
 }
-
-const GameMap = () => {
-	return <CanvasComponent />
-}
-
-const { canvas, CanvasComponent } = createEngineCanvas({
-	className: 'canvas-game',
-	wrapperClassName: 'canvas-game-wrapper',
-})
-
-const engine = new GameEngine(
-	new GameEngineParameters(new SceneParameters(10, 10, 10, 120, canvas))
-)
-const $engine = createStore(engine)
-$engine.watch(engine => console.log('engine', engine))

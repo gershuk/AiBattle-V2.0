@@ -1,4 +1,5 @@
 import { clsx } from 'libs'
+import { JSXInternal } from 'preact/src/jsx'
 import './styles.scss'
 
 interface ButtonProps {
@@ -7,6 +8,7 @@ interface ButtonProps {
 	className?: string
 	color?: 'primary' | 'warning' | 'danger'
 	disabled?: boolean
+	type?: 'button' | 'reset' | 'submit'
 	[k: string]: any
 }
 
@@ -16,11 +18,13 @@ export const Button = ({
 	className,
 	color = 'primary',
 	disabled,
+	type = 'button',
 	...props
 }: ButtonProps) => {
 	return (
 		<button
 			{...props}
+			type={type}
 			disabled={disabled}
 			className={clsx('button', className, color, disabled ? 'disabled' : null)}
 			onClick={disabled ? undefined : onClick}

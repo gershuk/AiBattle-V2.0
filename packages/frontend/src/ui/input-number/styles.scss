@@ -1,0 +1,16 @@
+.input-number {
+	background-color: rgb(255, 255, 255);
+	color: rgb(97, 97, 97);
+	display: inline-flex;
+
+	.input-field {
+		color: rgb(97, 97, 97);
+		border: none;
+		padding: 3px 0 3px 4px;
+		width: 100%;
+		&:focus-visible {
+			outline: none;
+		}
+		font-size: 14px;
+	}
+}
