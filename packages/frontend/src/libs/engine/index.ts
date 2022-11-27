@@ -4,10 +4,9 @@ import {
 	SceneParameters,
 } from '@ai-battle/engine'
 import { attach, createStore, combine } from 'effector'
-import { clsx } from 'libs'
 import { createEngineCanvas } from './engine-canvas'
 
-interface SceneParams {
+export interface SceneParams {
 	maxTurnIndex: number
 	animTicksCount: number
 	animTicksTime: number
@@ -75,6 +74,26 @@ const createEngine = ({ sceneParams }: { sceneParams?: SceneParams }) => {
 	const renderFrame = attach({
 		source: $engine,
 		effect: engine => engine.RenderFrame(),
+	})
+
+	init.watch(params => {
+		console.log('init engine with params:', params)
+	})
+
+	start.watch(() => {
+		console.log('start engine')
+	})
+
+	startAutoTurn.watch(() => {
+		console.log('startAutoTurn engine')
+	})
+
+	stopAutoTurn.watch(() => {
+		console.log('stopAutoTurn engine')
+	})
+
+	doNextTurn.watch(() => {
+		console.log('doNextTurn engine')
 	})
 
 	return {

@@ -1,6 +1,6 @@
 import { useUnit } from 'effector-react'
 import { Button, LinkButton, RangeInput } from 'ui'
-import { $autoStep, setAutoStep } from '../model/game'
+import { $autoStep, engine, setAutoStep } from '../model/game'
 import './styles.scss'
 
 export const GameSettings = () => {
@@ -10,7 +10,12 @@ export const GameSettings = () => {
 			<div className={'wrapper-settings'}>
 				<div className={'title'}>Управление</div>
 				<div className={'setting-item'}>
-					<Button className="full-width">Next шаг</Button>
+					<Button
+						className="full-width"
+						onClick={() => engine.methods.doNextTurn()}
+					>
+						Next шаг
+					</Button>
 				</div>
 				<div className={'setting-item'}>
 					<div>Auto шаг</div>

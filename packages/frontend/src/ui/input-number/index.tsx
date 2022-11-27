@@ -9,7 +9,7 @@ export interface InputNumberProps {
 	value?: number
 	min?: number
 	max?: number
-	onChange?: (value: number) => void
+	onChange?: (value: number | null) => void
 	required?: boolean
 	[k: string]: any
 }
@@ -30,23 +30,13 @@ export const InputNumber = ({
 	const ref = useRef<HTMLInputElement | null>(null)
 
 	useEffect(() => {
-		if (ref.current) {
-			if (valueProps !== undefined) {
-				ref.current.value = String(valueProps)
-			} else {
-				ref.current.value = String(value)
-			}
-		}
-	}, [ref, value])
-
-	useEffect(() => {
 		setValue(valueProps ?? '')
 	}, [valueProps])
 
 	const handlerChange = (_value: string) => {
 		if (disabled) return
 		setValue(_value)
-		onChange?.(Number(_value))
+		onChange?.(_value.trim() === '' ? null : Number(_value))
 	}
 
 	return (
@@ -62,7 +52,7 @@ export const InputNumber = ({
 				ref={ref}
 				className={'input-field'}
 				onChange={e => handlerChange(e.currentTarget.value)}
-				value={valueProps ?? value}
+				value={String(valueProps ?? value)}
 				{...props}
 			/>
 		</div>

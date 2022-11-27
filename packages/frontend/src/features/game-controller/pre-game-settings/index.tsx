@@ -8,7 +8,7 @@ export const PreGameSettings = () => {
 			<div className={'wrapper-settings'}>
 				<div className={'setting-item'}>
 					<div>Название реплея</div>
-					<Input required />
+					<Input required name="replay-name" />
 				</div>
 				<div className={'setting-item'}>
 					<div className={'size-tile-title'}>
@@ -18,19 +18,19 @@ export const PreGameSettings = () => {
 				</div>
 				<div className={'setting-item'}>
 					<div className={'input-title'}>maxTurnIndex</div>
-					<InputNumber required name="maxTurnIndex" />
+					<InputNumber required name="sceneParams.maxTurnIndex" min={1} />
 				</div>
 				<div className={'setting-item'}>
 					<div className={'input-title'}>animTicksCount</div>
-					<InputNumber required name="animTicksCount" />
+					<InputNumber required name="sceneParams.animTicksCount" min={1} />
 				</div>
 				<div className={'setting-item'}>
 					<div className={'input-title'}>animTicksTime</div>
-					<InputNumber required name="animTicksTime" />
+					<InputNumber required name="sceneParams.animTicksTime" min={1} />
 				</div>
 				<div className={'setting-item'}>
 					<div className={'input-title'}>autoTurnTime</div>
-					<InputNumber required name="autoTurnTime" />
+					<InputNumber required name="sceneParams.autoTurnTime" min={1} />
 				</div>
 			</div>
 		</div>

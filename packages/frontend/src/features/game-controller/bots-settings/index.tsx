@@ -36,15 +36,16 @@ export const BotsSetting = () => {
 					<div className={'bot-setting-item'}>
 						<div className={'bot-color'} style={{ background: colors[i] }} />
 						<Input
+							name={`bot[${i}].name`}
 							className="bot-name"
 							placeholder="Имя бота"
 							value={`bot#${i}`}
 							required
 						/>
 						<DropDown
+							name={`bot[${i}].controller`}
 							className="bot-controller"
 							options={listCodes}
-							onChange={x => console.log(x)}
 							required
 						/>
 					</div>
