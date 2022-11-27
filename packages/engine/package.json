@@ -1,12 +1,13 @@
 {
-	"name": "engine",
+	"name": "@ai-battle/engine",
 	"main": "build/engine.js",
+	"types": "build/index.d.ts",
 	"version": "1.0.0",
 	"description": "",
 	"private": true,
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "webpack --config webpack.config.js"
+		"build": "webpack --config webpack.config.js && tsc-alias"
 	},
 	"keywords": [],
 	"author": "",
@@ -14,6 +15,7 @@
 	"sideEffects": false,
 	"devDependencies": {
 		"ts-loader": "^9.4.1",
+		"tsc-alias": "^1.7.1",
 		"typescript": "^4.8.4",
 		"uglifyjs-webpack-plugin": "^2.2.0",
 		"webpack": "^5.74.0",

@@ -9,10 +9,10 @@ import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
 import { IScene, SceneParameters } from 'GameEngine/Scene/IScene'
 
 export {
-	IGameEngine,
+	type IGameEngine,
+	type IScene,
 	GameEngine,
 	GameEngineParameters,
-	IScene,
 	SceneParameters,
 	ImageLoader,
 	Vector2,

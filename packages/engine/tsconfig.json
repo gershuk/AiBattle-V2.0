@@ -8,7 +8,9 @@
 		"allowJs": true,
 		"checkJs": true,
 		"moduleResolution": "node",
-		"resolveJsonModule": true
+		"resolveJsonModule": true,
+		"declaration": true,
+		"declarationMap": true
 	},
 	"include": ["src"],
 	"compileOnSave": true
