@@ -26,7 +26,7 @@ export const GameSettings = () => {
 						>
 							{autoStep ? 'Остановить' : 'Запустить'}
 						</Button>
-						<Button>Next step with timer</Button>
+						{/* <Button>Next step with timer</Button> */}
 					</div>
 				</div>
 				<div className={'setting-item'}>

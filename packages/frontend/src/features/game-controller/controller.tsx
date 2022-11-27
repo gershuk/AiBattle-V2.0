@@ -36,6 +36,7 @@ export const GameController = () => {
 				onSubmit={e => {
 					e.preventDefault()
 					const formData = new FormData(e.target as HTMLFormElement)
+					///TODO: описать интерфейс выхода сабмита, добавить парсинг массивов
 					const jsonValue = formDataToJson(formData)
 					console.log('jsonValue', jsonValue)
 					const { sceneParams: sceneParamsStr } = jsonValue
