@@ -290,12 +290,13 @@ export class Scene implements IScene {
 				throw new Error('turnIndex == this.maxTurnIndex')
 			}
 
-			if (!this.autoTurnTimerId)
+			if (!this.autoTurnTimerId) {
+				this.DoNextTurn()
 				this.autoTurnTimerId = window.setInterval(
 					() => this.DoNextTurn(),
 					this.autoTurnTime
 				)
-			else throw new Error('AutoTurn already started')
+			} else throw new Error('AutoTurn already started')
 		}
 	}
 }

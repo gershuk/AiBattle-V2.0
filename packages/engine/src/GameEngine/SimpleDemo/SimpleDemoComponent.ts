@@ -40,7 +40,7 @@ export class SimpleDemoComponent extends AbstractObjectComponent {
 	OnFixedUpdate(index: number): void {
 		this._oldPosition = this.owner.position.Clone()
 		this._newPosition = this.owner.owner.mousePositionOnCanvas.Sub(
-			this._staticRenderComponent.size.DivScalar(2)
+			this._staticRenderComponent.size.DivScalar(1)
 		)
 		console.log(`New position ${this._newPosition.ToString()}`)
 	}
