@@ -26,6 +26,14 @@ export class Scene implements IScene {
 	private _animTicksTime: number
 	private _canvas: HTMLCanvasElement
 
+	private _mousePositionOnCanvas: Vector2
+	public get mousePositionOnCanvas(): Vector2 {
+		return this._mousePositionOnCanvas
+	}
+	protected set mousePositionOnCanvas(v: Vector2) {
+		this._mousePositionOnCanvas = v
+	}
+
 	private _renderOffset: Vector2
 	public get renderOffset(): Vector2 {
 		return this._renderOffset
@@ -128,15 +136,20 @@ export class Scene implements IScene {
 		this.renderOffset = new Vector2(0, 0)
 
 		this.state = SceneState.Init
+
+		this.mousePositionOnCanvas = new Vector2()
+		this.canvas.addEventListener('mousemove', event => {
+			this.mousePositionOnCanvas.SetXY(event.clientX, event.clientY)
+		})
 	}
 
 	public AddGameObject<T extends GameObject>(
 		position: Vector2,
-		gameObjectInits: T,
+		gameObject: T,
 		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
 	): void {
-		this._gameObjects.push(gameObjectInits)
-		gameObjectInits.Init(position, this, ...newComponents)
+		this._gameObjects.push(gameObject)
+		gameObject.Init(position, this, ...newComponents)
 	}
 
 	public AddGameObjects<T extends GameObject>(
@@ -183,21 +196,27 @@ export class Scene implements IScene {
 	}
 
 	private OnFixedUpdate(turnIndex: number): void {
+		console.log(`Fix update turn index : ${turnIndex}`)
 		for (let gameObject of this.gameObjects) gameObject.OnFixedUpdate(turnIndex)
 	}
 
 	public Start(): void {
 		this.state = SceneState.Starting
+		console.log(`Scene starting`)
 		this.OnSceneStart()
 		this.turnIndex = 0
 		this.state = SceneState.ReadyToNextTurn
+		console.log(`Scene ready to next turn`)
 	}
 
 	public RenderFrame(): void {
+		console.log(`Rendering frame`)
 		let renderComponents: StaticRenderComponent[] =
 			new Array<StaticRenderComponent>()
 		for (let gameObject of this.gameObjects) {
-			renderComponents.push(gameObject.GetComponents(StaticRenderComponent))
+			renderComponents = renderComponents.concat(
+				gameObject.GetComponents(StaticRenderComponent)
+			)
 		}
 
 		renderComponents = renderComponents.sort((a, b) => a.zOder - b.zOder)
@@ -208,7 +227,7 @@ export class Scene implements IScene {
 
 		for (let component of renderComponents) {
 			const image = component.Image
-			const pos = component.Owner.position
+			const pos = component.owner.position
 				.Add(component.offset)
 				.Add(this.renderOffset)
 			const dw = component.size.x
@@ -219,10 +238,13 @@ export class Scene implements IScene {
 	}
 
 	private AnimationStep(index: number, animTicksCount: number) {
+		console.log(
+			`Animation step index:${index} animTicksCount:${animTicksCount}`
+		)
 		this.OnBeforeFrameRender(index, this.animTicksCount)
 		this.RenderFrame()
 		this.OnAfterFrameRender(index, this.animTicksCount)
-		if (index + 1 <= animTicksCount) {
+		if (index + 1 < animTicksCount) {
 			setTimeout(
 				() => this.AnimationStep(index + 1, animTicksCount),
 				this.animTicksTime
@@ -237,14 +259,19 @@ export class Scene implements IScene {
 			if (this.turnIndex >= this.maxTurnIndex) {
 				throw new Error('turnIndex == this.maxTurnIndex')
 			}
-			this.state = SceneState.NextTurn
 			this.turnIndex++
+			console.log(`Next turn index:${this.turnIndex} started`)
+			this.state = SceneState.NextTurn
 			this.OnFixedUpdate(this.turnIndex)
 			this.state = SceneState.Animation
-			this.AnimationStep(1, this.animTicksCount)
+			this.AnimationStep(0, this.animTicksCount)
 			if (this.turnIndex == this.maxTurnIndex) {
 				this.StopAutoTurn()
 			}
+		} else {
+			throw new Error(
+				`Expected state==SceneState.ReadyToNextTurn, but got ${this.state}`
+			)
 		}
 	}
 
@@ -265,7 +292,7 @@ export class Scene implements IScene {
 
 			if (!this.autoTurnTimerId)
 				this.autoTurnTimerId = window.setInterval(
-					() => this.DoNextTurn,
+					() => this.DoNextTurn(),
 					this.autoTurnTime
 				)
 			else throw new Error('AutoTurn already started')

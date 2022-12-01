@@ -7,11 +7,17 @@ import {
 } from 'GameEngine/GameEngine'
 import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
 import { IScene, SceneParameters } from 'GameEngine/Scene/IScene'
+import {
+	SimpleDemo,
+	SimpleDemoEngineParameters,
+} from 'GameEngine/SimpleDemo/SimpleDemo'
 
 export {
 	IGameEngine,
 	GameEngine,
 	GameEngineParameters,
+	SimpleDemo,
+	SimpleDemoEngineParameters,
 	IScene,
 	SceneParameters,
 	ImageLoader,

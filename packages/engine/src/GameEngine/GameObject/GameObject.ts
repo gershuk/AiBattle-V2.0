@@ -17,6 +17,10 @@ export class GameObject implements IGameObject {
 		return this._position
 	}
 
+	public set position(v: Vector2) {
+		this._position = v
+	}
+
 	public get owner(): IScene {
 		return this._owner
 	}

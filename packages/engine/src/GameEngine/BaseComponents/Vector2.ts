@@ -11,7 +11,7 @@ export class Vector2 {
 		this.y = y
 	}
 
-	private SetXY(x: number, y: number): Vector2 {
+	public SetXY(x: number, y: number): Vector2 {
 		this.x = x
 		this.y = y
 		return this
@@ -54,11 +54,11 @@ export class Vector2 {
 	}
 
 	public DivScalar(scalar: number): Vector2 {
-		return new Vector2(this.x / scalar, (this.y /= scalar))
+		return new Vector2(this.x / scalar, this.y / scalar)
 	}
 
 	public MulScalar(scalar: number): Vector2 {
-		return new Vector2(this.x * scalar, (this.y *= scalar))
+		return new Vector2(this.x * scalar, this.y * scalar)
 	}
 
 	public Magnitude(): number {
@@ -86,5 +86,13 @@ export class Vector2 {
 
 	public static Lerp(from: Vector2, to: Vector2, by: number): Vector2 {
 		return from.MulScalar(1 - by).Add(to.MulScalar(by))
+	}
+
+	public ToString(): string {
+		return `\{x:${this.x}, y:${this.y}\}`
+	}
+
+	public Clone(): Vector2 {
+		return new Vector2(this.x, this.y)
 	}
 }
