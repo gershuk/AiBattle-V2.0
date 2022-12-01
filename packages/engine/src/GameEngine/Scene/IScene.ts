@@ -6,6 +6,10 @@ import { GameObject } from '../GameObject/GameObject'
 import { Vector2 } from '../BaseComponents/Vector2'
 
 export interface IScene {
+	get mousePositionOnCanvas(): Vector2
+
+	get canvas(): HTMLCanvasElement
+
 	get gameObjects(): GameObject[]
 
 	get renderOffset(): Vector2
@@ -38,7 +42,7 @@ export interface IScene {
 
 	AddGameObject<T extends GameObject>(
 		position: Vector2,
-		gameObjectInits: T,
+		gameObject: T,
 		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
 	): void
 

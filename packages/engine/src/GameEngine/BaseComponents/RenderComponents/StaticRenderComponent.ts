@@ -39,12 +39,18 @@ export class StaticRenderComponent extends AbstractObjectComponent {
 	}
 
 	Init(owner: IGameObject, parameters?: ComponentParameters) {
-		this._owner = owner
-		if (parameters instanceof StaticRenderComponentParameters) {
-			this.size = parameters.size
-			this.offset = parameters.offset
-			this.Image = parameters.image
-			this.zOder = parameters.zOder
+		super.Init(owner, parameters)
+		if (parameters) {
+			if (parameters instanceof StaticRenderComponentParameters) {
+				this.size = parameters.size
+				this.offset = parameters.offset
+				this.Image = parameters.image
+				this.zOder = parameters.zOder
+			} else {
+				throw new Error(
+					'Expect parameters of type StaticRenderComponentParameters'
+				)
+			}
 		}
 	}
 
@@ -63,10 +69,10 @@ export class StaticRenderComponentParameters {
 	zOder: number
 
 	constructor(
-		offset: Vector2,
 		size: Vector2,
 		image: HTMLImageElement,
-		zOder: number
+		zOder: number = 0,
+		offset: Vector2 = new Vector2()
 	) {
 		this.offset = offset
 		this.size = size
