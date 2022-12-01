@@ -3,7 +3,7 @@ import { IGameObject } from '../GameObject/IGameObject'
 export abstract class AbstractObjectComponent {
 	protected _owner: IGameObject | undefined
 
-	public get Owner(): IGameObject {
+	public get owner(): IGameObject {
 		return this._owner
 	}
 

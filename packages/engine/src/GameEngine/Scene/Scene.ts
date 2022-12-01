@@ -26,6 +26,14 @@ export class Scene implements IScene {
 	private _animTicksTime: number
 	private _canvas: HTMLCanvasElement
 
+	private _mousePositionOnCanvas: Vector2
+	public get mousePositionOnCanvas(): Vector2 {
+		return this._mousePositionOnCanvas
+	}
+	protected set mousePositionOnCanvas(v: Vector2) {
+		this._mousePositionOnCanvas = v
+	}
+
 	private _renderOffset: Vector2
 	public get renderOffset(): Vector2 {
 		return this._renderOffset
@@ -128,6 +136,11 @@ export class Scene implements IScene {
 		this.renderOffset = new Vector2(0, 0)
 
 		this.state = SceneState.Init
+
+		this.mousePositionOnCanvas = new Vector2()
+		this.canvas.addEventListener('mousemove', event => {
+			this.mousePositionOnCanvas.SetXY(event.clientX, event.clientY)
+		})
 	}
 
 	public AddGameObject<T extends GameObject>(
@@ -201,7 +214,9 @@ export class Scene implements IScene {
 		let renderComponents: StaticRenderComponent[] =
 			new Array<StaticRenderComponent>()
 		for (let gameObject of this.gameObjects) {
-			renderComponents.concat(gameObject.GetComponents(StaticRenderComponent))
+			renderComponents = renderComponents.concat(
+				gameObject.GetComponents(StaticRenderComponent)
+			)
 		}
 
 		renderComponents = renderComponents.sort((a, b) => a.zOder - b.zOder)
@@ -212,7 +227,7 @@ export class Scene implements IScene {
 
 		for (let component of renderComponents) {
 			const image = component.Image
-			const pos = component.Owner.position
+			const pos = component.owner.position
 				.Add(component.offset)
 				.Add(this.renderOffset)
 			const dw = component.size.x
@@ -253,6 +268,10 @@ export class Scene implements IScene {
 			if (this.turnIndex == this.maxTurnIndex) {
 				this.StopAutoTurn()
 			}
+		} else {
+			throw new Error(
+				`Expected state==SceneState.ReadyToNextTurn, but got ${this.state}`
+			)
 		}
 	}
 

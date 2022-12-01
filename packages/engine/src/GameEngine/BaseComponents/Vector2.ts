@@ -11,7 +11,7 @@ export class Vector2 {
 		this.y = y
 	}
 
-	private SetXY(x: number, y: number): Vector2 {
+	public SetXY(x: number, y: number): Vector2 {
 		this.x = x
 		this.y = y
 		return this
@@ -90,5 +90,9 @@ export class Vector2 {
 
 	public ToString(): string {
 		return `\{x:${this.x}, y:${this.y}\}`
+	}
+
+	public Clone(): Vector2 {
+		return new Vector2(this.x, this.y)
 	}
 }
