@@ -8,7 +8,7 @@ export class ImageLoader {
 	}
 
 	constructor(loadedPngs?: Map<string, HTMLImageElement>) {
-		this.loadedPngs = loadedPngs
+		this.loadedPngs = loadedPngs ?? new Map<string, HTMLImageElement>()
 	}
 
 	LoadPng(path: string) {
