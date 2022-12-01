@@ -38,7 +38,7 @@ export interface IScene {
 
 	AddGameObject<T extends GameObject>(
 		position: Vector2,
-		gameObjectInits: T,
+		gameObject: T,
 		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
 	): void
 

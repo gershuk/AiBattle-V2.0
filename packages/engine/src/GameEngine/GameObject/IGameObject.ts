@@ -12,6 +12,8 @@ export interface IGameObject {
 
 	get position(): Vector2
 
+	set position(v: Vector2)
+
 	Init(
 		position: Vector2,
 		owner?: IScene,
