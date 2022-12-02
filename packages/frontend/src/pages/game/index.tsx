@@ -9,9 +9,15 @@ export const Game = () => {
 		const r = (400 / width) * 100
 		return [r, 100 - r]
 	}, [])
+
+	const handlerDragEnd = () => {
+		window.dispatchEvent(new Event('resize'))
+	}
+
 	return (
 		<div class={'controller-editor'}>
 			<SplitPanel
+				onDragEnd={handlerDragEnd}
 				className={'controller-editor-split'}
 				sizes={sizes}
 				gutterSize={3}

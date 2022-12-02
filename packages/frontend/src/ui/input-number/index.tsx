@@ -7,6 +7,7 @@ export interface InputNumberProps {
 	placeholder?: string
 	className?: string
 	value?: number
+	initValue?: number
 	min?: number
 	max?: number
 	onChange?: (value: number | null) => void
@@ -20,18 +21,23 @@ export const InputNumber = ({
 	placeholder,
 	className,
 	value: valueProps,
+	initValue,
 	min,
 	max,
 	onChange,
 	required,
 	...props
 }: InputNumberProps) => {
-	const [value, setValue] = useState(valueProps ?? '')
+	const [value, setValue] = useState(initValue ?? '')
 	const ref = useRef<HTMLInputElement | null>(null)
 
 	useEffect(() => {
 		setValue(valueProps ?? '')
 	}, [valueProps])
+
+	useEffect(() => {
+		setValue(initValue ?? '')
+	}, [])
 
 	const handlerChange = (_value: string) => {
 		if (disabled) return

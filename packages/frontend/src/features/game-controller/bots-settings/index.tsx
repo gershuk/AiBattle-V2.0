@@ -40,13 +40,11 @@ export const BotsSetting = () => {
 							className="bot-name"
 							placeholder="Имя бота"
 							value={`bot#${i}`}
-							required
 						/>
 						<DropDown
 							name={`bot[${i}].controller`}
 							className="bot-controller"
 							options={listCodes}
-							required
 						/>
 					</div>
 				))}

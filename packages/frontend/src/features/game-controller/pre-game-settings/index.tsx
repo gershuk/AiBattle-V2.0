@@ -18,19 +18,39 @@ export const PreGameSettings = () => {
 				</div>
 				<div className={'setting-item'}>
 					<div className={'input-title'}>maxTurnIndex</div>
-					<InputNumber required name="sceneParams.maxTurnIndex" min={1} />
+					<InputNumber
+						required
+						name="sceneParams.maxTurnIndex"
+						min={1}
+						initValue={1000000}
+					/>
 				</div>
 				<div className={'setting-item'}>
 					<div className={'input-title'}>animTicksCount</div>
-					<InputNumber required name="sceneParams.animTicksCount" min={1} />
+					<InputNumber
+						required
+						name="sceneParams.animTicksCount"
+						min={1}
+						initValue={10}
+					/>
 				</div>
 				<div className={'setting-item'}>
 					<div className={'input-title'}>animTicksTime</div>
-					<InputNumber required name="sceneParams.animTicksTime" min={1} />
+					<InputNumber
+						required
+						name="sceneParams.animTicksTime"
+						min={1}
+						initValue={5}
+					/>
 				</div>
 				<div className={'setting-item'}>
 					<div className={'input-title'}>autoTurnTime</div>
-					<InputNumber required name="sceneParams.autoTurnTime" min={1} />
+					<InputNumber
+						required
+						name="sceneParams.autoTurnTime"
+						min={1}
+						initValue={100}
+					/>
 				</div>
 			</div>
 		</div>

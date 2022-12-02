@@ -1,7 +1,10 @@
 import {
 	GameEngine,
 	GameEngineParameters,
+	ImageLoader,
 	SceneParameters,
+	SimpleDemo,
+	SimpleDemoEngineParameters,
 } from '@ai-battle/engine'
 import { attach, createStore, combine } from 'effector'
 import { createEngineCanvas } from './engine-canvas'
@@ -18,15 +21,17 @@ const createEngine = ({ sceneParams }: { sceneParams?: SceneParams }) => {
 
 	const $canvas = createStore(canvas)
 
-	const engine = new GameEngine(
-		new GameEngineParameters(
+	const imageLoader = new ImageLoader()
+	const engine = new SimpleDemo(
+		new SimpleDemoEngineParameters(
 			new SceneParameters(
 				sceneParams?.maxTurnIndex ?? 1,
 				sceneParams?.animTicksCount ?? 1,
 				sceneParams?.animTicksTime ?? 1,
 				sceneParams?.autoTurnTime ?? 1,
 				canvas
-			)
+			),
+			imageLoader
 		)
 	)
 	const $engine = createStore(engine)
@@ -38,14 +43,15 @@ const createEngine = ({ sceneParams }: { sceneParams?: SceneParams }) => {
 			{ sceneParams }: { sceneParams: SceneParams }
 		) => {
 			engine.Init(
-				new GameEngineParameters(
+				new SimpleDemoEngineParameters(
 					new SceneParameters(
-						sceneParams.maxTurnIndex,
-						sceneParams.animTicksCount,
-						sceneParams.autoTurnTime,
-						sceneParams.autoTurnTime,
+						sceneParams?.maxTurnIndex ?? 1,
+						sceneParams?.animTicksCount ?? 1,
+						sceneParams?.animTicksTime ?? 1,
+						sceneParams?.autoTurnTime ?? 1,
 						canvas
-					)
+					),
+					imageLoader
 				)
 			)
 		},
