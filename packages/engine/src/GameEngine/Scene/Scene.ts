@@ -139,7 +139,9 @@ export class Scene implements IScene {
 
 		this.mousePositionOnCanvas = new Vector2()
 		this.canvas.addEventListener('mousemove', event => {
-			const rect = (event.target as HTMLCanvasElement).getBoundingClientRect()
+			const rect = (
+				event.currentTarget as HTMLCanvasElement
+			).getBoundingClientRect()
 			const x = event.clientX - rect.left
 			const y = event.clientY - rect.top
 			this.mousePositionOnCanvas.SetXY(x, y)
