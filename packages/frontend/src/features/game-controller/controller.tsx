@@ -8,8 +8,7 @@ import { $selectedMap } from './model/select-map'
 import './styles.scss'
 import { GameSettings } from './game-settings'
 import { Button } from 'ui'
-import { formDataToJson, SceneParams } from 'libs'
-
+import { htmlFormToJson, SceneParams } from 'libs'
 export const GameController = () => {
 	const { activeMap, startedGame: startedGameFlag } = useUnit({
 		activeMap: $selectedMap,
@@ -35,16 +34,10 @@ export const GameController = () => {
 				className={'game-controller-start-form'}
 				onSubmit={e => {
 					e.preventDefault()
-					const formData = new FormData(e.target as HTMLFormElement)
-					///TODO: описать интерфейс выхода сабмита, добавить парсинг массивов
-					const jsonValue = formDataToJson(formData)
-					console.log('jsonValue', jsonValue)
-					const { sceneParams: sceneParamsStr } = jsonValue
-					const sceneParams = Object.entries(sceneParamsStr).reduce(
-						(acc, [key, value]) => ({ ...acc, [key]: Number(value) }),
-						{}
-					) as SceneParams
-					startedGame(sceneParams)
+					///TODO: описать интерфейс выхода сабмита
+					const jsonForm = htmlFormToJson(e.target as HTMLFormElement)
+					console.log('jsonForm', jsonForm)
+					startedGame(jsonForm.sceneParams)
 				}}
 			>
 				<div className={'game-controller-metrics'}>
