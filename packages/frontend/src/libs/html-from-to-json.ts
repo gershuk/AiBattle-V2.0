@@ -72,7 +72,7 @@ const buildArray = (jsonData: { [k: string]: any }): { [k: string]: any } => {
 export const htmlFormToJson = <T extends { [k: string]: any }>(
 	htmlForm: HTMLFormElement,
 	config?: {
-		mapValues: (field: Field) => any | undefined
+		mapValues?: (field: Field) => any | undefined
 	}
 ) => {
 	const { mapValues } = config || {}
@@ -115,8 +115,14 @@ export const htmlFormToJson = <T extends { [k: string]: any }>(
 		let value: any = field.srtValue
 		if (mapValues) {
 			const resultMapValue = mapValues(field)
-			if (resultMapValue !== undefined) value = resultMapValue
+			if (resultMapValue !== undefined) {
+				return {
+					...acc,
+					[field.name]: resultMapValue,
+				}
+			}
 		}
+
 		if (field.tagName === 'INPUT') {
 			if (field.type === 'text') value = field.srtValue
 			if (field.type === 'number')
