@@ -150,6 +150,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\components\game\GameBot.cpp" />
+    <ClCompile Include="src\components\game\GameEngine.cpp" />
     <ClCompile Include="src\components\game\GameScene.cpp" />
     <ClCompile Include="src\components\Configurator.cpp" />
     <ClCompile Include="src\components\TestManager.cpp" />
@@ -160,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\components\game\GameBot.h" />
+    <ClInclude Include="src\components\game\GameEngine.h" />
     <ClInclude Include="src\components\game\GameScene.h" />
     <ClInclude Include="src\components\Configurator.h" />
     <ClInclude Include="src\engine\V8Engine.h" />
