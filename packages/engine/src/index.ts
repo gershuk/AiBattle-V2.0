@@ -5,6 +5,8 @@ import {
 	GameEngineParameters,
 	IGameEngine,
 } from 'GameEngine/GameEngine'
+import { Message } from 'GameEngine/MessageBroker/Message'
+import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
 import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
 import { IScene, SceneParameters } from 'GameEngine/Scene/IScene'
 import {
@@ -23,4 +25,6 @@ export {
 	ImageLoader,
 	Vector2,
 	StaticRenderComponentParameters,
+	MessageBroker,
+	Message,
 }
