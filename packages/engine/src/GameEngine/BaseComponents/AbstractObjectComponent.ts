@@ -1,6 +1,15 @@
+import { GenerateUUID } from 'Utilities'
 import { IGameObject } from '../GameObject/IGameObject'
 
 export abstract class AbstractObjectComponent {
+	private _uuid: string
+	public get uuid(): string {
+		return this._uuid
+	}
+	private set uuid(v: string) {
+		this._uuid = v
+	}
+
 	protected _owner: IGameObject | undefined
 
 	public get owner(): IGameObject {
@@ -12,6 +21,7 @@ export abstract class AbstractObjectComponent {
 	}
 
 	Init(owner: IGameObject, parameters?: ComponentParameters) {
+		this._uuid = GenerateUUID()
 		this._owner = owner
 	}
 
