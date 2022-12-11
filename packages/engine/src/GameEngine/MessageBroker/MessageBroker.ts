@@ -1,8 +1,9 @@
 import { AbstractObjectComponent } from 'GameEngine/BaseComponents/AbstractObjectComponent'
 import { Queue } from 'Utilities'
+import { IMessageBroker } from './IMessageBroker'
 import { Message } from './Message'
 
-export class MessageBroker {
+export class MessageBroker implements IMessageBroker {
 	private messages: { [key: string]: Queue<Message> } = {}
 
 	public SendMessage(

@@ -6,6 +6,8 @@ import { GameObject } from '../GameObject/GameObject'
 import { IScene, SceneParameters } from './IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { StaticRenderComponent } from 'GameEngine/BaseComponents/RenderComponents/StaticRenderComponent'
+import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
+import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
 
 enum SceneState {
 	Init,
@@ -25,6 +27,14 @@ export class Scene implements IScene {
 	private _animTicksCount: number
 	private _animTicksTime: number
 	private _canvas: HTMLCanvasElement
+
+	private _messageBroker: IMessageBroker
+	public get messageBroker(): IMessageBroker {
+		return this._messageBroker
+	}
+	private set messageBroker(v: IMessageBroker) {
+		this._messageBroker = v
+	}
 
 	private _mousePositionOnCanvas: Vector2
 	public get mousePositionOnCanvas(): Vector2 {
@@ -125,6 +135,8 @@ export class Scene implements IScene {
 
 	Init(parameters: SceneParameters): void {
 		if (this.autoTurnTimerId) this.StopAutoTurn()
+
+		this.messageBroker = new MessageBroker()
 
 		this.maxTurnIndex = parameters.maxTurnIndex
 		this.autoTurnTime = parameters.autoTurnTime

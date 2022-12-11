@@ -1,4 +1,6 @@
+import { AbstractObjectComponent } from './BaseComponents/AbstractObjectComponent'
 import { Vector2 } from './BaseComponents/Vector2'
+import { Message } from './MessageBroker/Message'
 import { ImageLoader } from './ResourceStorage/ImageLoader'
 import { IScene, SceneParameters } from './Scene/IScene'
 import { Scene } from './Scene/Scene'
@@ -20,6 +22,14 @@ export interface IGameEngine {
 	StartAutoTurn(): void
 
 	LoadImage(path: string): HTMLImageElement | undefined
+
+	SendMessage(
+		component: AbstractObjectComponent,
+		receiverUuid: string,
+		data: any
+	): number
+
+	GetMessage(component: AbstractObjectComponent): [number, Message?]
 }
 
 export class GameEngine implements IGameEngine {
@@ -77,6 +87,18 @@ export class GameEngine implements IGameEngine {
 
 	public LoadImage(path: string): HTMLImageElement | undefined {
 		return this.imageLoader?.LoadPng(path)
+	}
+
+	public SendMessage(
+		component: AbstractObjectComponent,
+		receiverUuid: string,
+		data: any
+	): number {
+		return this.scene.messageBroker.SendMessage(component, receiverUuid, data)
+	}
+
+	public GetMessage(component: AbstractObjectComponent): [number, Message?] {
+		return this.scene.messageBroker.GetMessage(component)
 	}
 }
 

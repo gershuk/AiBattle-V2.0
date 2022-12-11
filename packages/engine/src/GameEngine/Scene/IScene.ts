@@ -4,8 +4,12 @@ import {
 } from '../BaseComponents/AbstractObjectComponent'
 import { GameObject } from '../GameObject/GameObject'
 import { Vector2 } from '../BaseComponents/Vector2'
+import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
+import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
 
 export interface IScene {
+	get messageBroker(): IMessageBroker
+
 	get mousePositionOnCanvas(): Vector2
 
 	get canvas(): HTMLCanvasElement
