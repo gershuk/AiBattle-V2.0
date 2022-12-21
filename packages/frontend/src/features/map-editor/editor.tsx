@@ -47,7 +47,6 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 			Left={
 				<CodeEditor
 					session={activeSession}
-					value={selectMap.modify ? selectMap.cache ?? '' : selectMap.content}
 					fileName={selectMap.name}
 					onSave={value => onSave?.(value)}
 					onChange={value =>

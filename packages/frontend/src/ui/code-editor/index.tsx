@@ -4,7 +4,7 @@ import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/theme-tomorrow'
 import 'ace-builds/src-noconflict/ext-language_tools'
-import { useCallback, useEffect, useRef, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef } from 'preact/hooks'
 import { createAndDownloadFile } from 'api'
 import { Ace, createEditSession } from 'ace-builds'
 
@@ -12,7 +12,6 @@ interface CodeEditorProps {
 	mode?: 'javascript' | 'json'
 	onChange?: (value: string) => void
 	onSave?: (value: string) => void
-	value?: string
 	fileName: string
 	session?: Ace.EditSession
 }
@@ -21,7 +20,6 @@ export const CodeEditor = ({
 	mode,
 	onChange,
 	onSave,
-	value: valueProps,
 	fileName,
 	session,
 }: CodeEditorProps) => {
