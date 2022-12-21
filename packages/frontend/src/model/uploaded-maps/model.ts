@@ -79,6 +79,11 @@ sample({
 	target: addMapsToLocalStorageFx,
 })
 
-readMapsFromLocalStorageFx()
-
-export { $maps, $dataMaps, addMap, removeMap, changeMap }
+export {
+	$maps,
+	$dataMaps,
+	addMap,
+	removeMap,
+	changeMap,
+	readMapsFromLocalStorageFx,
+}

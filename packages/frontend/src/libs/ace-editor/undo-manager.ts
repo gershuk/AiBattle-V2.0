@@ -44,7 +44,7 @@ export const createSessionsManager = ({
 
 	return {
 		$sessions,
-		addUndoManager: addSession,
-		removeUndoManager: removeSession,
+		addSession,
+		removeSession,
 	}
 }

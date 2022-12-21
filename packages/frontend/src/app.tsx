@@ -5,7 +5,11 @@ import { ControllerEditor } from 'pages/controller-editor'
 import { MapEditor } from 'pages/map-editor'
 import './styles.scss'
 import { Replays } from 'pages/replays'
-import { $locationSearch, readCodesFromLocalStorageFx } from 'model'
+import {
+	$locationSearch,
+	readCodesFromLocalStorageFx,
+	readMapsFromLocalStorageFx,
+} from 'model'
 
 export const App = () => {
 	return (
@@ -36,3 +40,4 @@ const SwitchPage = () => {
 }
 
 readCodesFromLocalStorageFx()
+readMapsFromLocalStorageFx()

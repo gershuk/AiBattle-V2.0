@@ -9,11 +9,9 @@ import {
 import { openFileExplorer, readFile } from 'api'
 import { createSessionsManager } from 'libs/ace-editor'
 
-const {
-	$sessions: $sessions,
-	addUndoManager,
-	removeUndoManager,
-} = createSessionsManager({ mode: 'ace/mode/javascript' })
+const { $sessions, addSession, removeSession } = createSessionsManager({
+	mode: 'ace/mode/javascript',
+})
 
 const $cacheSave = createStore<{ [k: string]: string }>({})
 
@@ -84,13 +82,14 @@ sample({
 
 sample({
 	clock: [addCode.map(code => [code]), readCodesFromLocalStorageFx.doneData],
-	target: addUndoManager,
+	fn: codes => codes.map(({ content, name }) => ({ name, value: content })),
+	target: addSession,
 })
 
 sample({
 	clock: removeCode,
 	fn: code => code,
-	target: removeUndoManager,
+	target: removeSession,
 })
 
 //TODO: сделать нормальные коды ошибок и их обработки

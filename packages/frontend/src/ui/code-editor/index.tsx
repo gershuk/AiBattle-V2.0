@@ -9,7 +9,7 @@ import { createAndDownloadFile } from 'api'
 import { Ace, createEditSession } from 'ace-builds'
 
 interface CodeEditorProps {
-	mode: 'javascript' | 'json'
+	mode?: 'javascript' | 'json'
 	onChange?: (value: string) => void
 	onSave?: (value: string) => void
 	value?: string
@@ -25,12 +25,7 @@ export const CodeEditor = ({
 	fileName,
 	session,
 }: CodeEditorProps) => {
-	const [value, setValue] = useState(valueProps || '')
 	const refEditor = useRef<Ace.Editor | null>(null)
-
-	useEffect(() => {
-		setValue(valueProps || '')
-	}, [valueProps])
 
 	useEffect(() => {
 		if (session && refEditor.current) {
@@ -38,14 +33,14 @@ export const CodeEditor = ({
 		}
 	}, [session])
 
-	useEffect(() => {
-		if (refEditor.current) {
-			const activeValue = refEditor.current.getSession().getValue()
-			if (activeValue !== value) {
-				refEditor.current.getSession().setValue(value)
-			}
-		}
-	}, [value])
+	// useEffect(() => {
+	// 	if (valueProps !== undefined && refEditor.current) {
+	// 		const activeValue = refEditor.current.getSession().getValue()
+	// 		if (activeValue !== valueProps) {
+	// 			refEditor.current.getSession().setValue(valueProps)
+	// 		}
+	// 	}
+	// }, [valueProps])
 
 	useEffect(() => {
 		return () => {
@@ -58,26 +53,29 @@ export const CodeEditor = ({
 	}, [])
 
 	const handlerSave = () => {
-		onSave?.(value)
+		onSave?.(refEditor.current?.getSession().getValue() || '')
 	}
 
 	const handlerChange = (value: string) => {
-		setValue(value)
 		onChange?.(value)
 	}
 
 	const handlerSaveDevise = () => {
-		createAndDownloadFile(value, fileName, 'text/plain')
+		createAndDownloadFile(
+			refEditor.current?.getSession().getValue() || '',
+			fileName,
+			'text/plain'
+		)
 	}
 
 	const handlerSaveKeyboard = useCallback(
 		(e?: KeyboardEvent) => {
 			if (e?.ctrlKey && e?.key.toLowerCase() === 's') {
 				e.preventDefault()
-				onSave?.(value)
+				onSave?.(refEditor.current?.getSession().getValue() || '')
 			}
 		},
-		[value]
+		[session]
 	)
 
 	useEffect(() => {
@@ -110,7 +108,6 @@ export const CodeEditor = ({
 					}
 				}}
 				onChange={handlerChange}
-				// value={value}
 				className="ace-editor"
 				height="100%"
 				width="100%"
