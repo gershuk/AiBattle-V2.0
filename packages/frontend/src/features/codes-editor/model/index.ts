@@ -1,6 +1,19 @@
 import { attach, combine, createEvent, createStore, sample } from 'effector'
-import { addCode, $codes, removeCode, $codesData } from 'model'
+import {
+	addCode,
+	$codes,
+	removeCode,
+	$codesData,
+	readCodesFromLocalStorageFx,
+} from 'model'
 import { openFileExplorer, readFile } from 'api'
+import { createSessionsManager } from 'libs/ace-editor'
+
+const {
+	$sessions: $sessions,
+	addUndoManager,
+	removeUndoManager,
+} = createSessionsManager({ mode: 'ace/mode/javascript' })
 
 const $cacheSave = createStore<{ [k: string]: string }>({})
 
@@ -69,12 +82,24 @@ sample({
 	target: addCode,
 })
 
+sample({
+	clock: [addCode.map(code => [code]), readCodesFromLocalStorageFx.doneData],
+	target: addUndoManager,
+})
+
+sample({
+	clock: removeCode,
+	fn: code => code,
+	target: removeUndoManager,
+})
+
 //TODO: сделать нормальные коды ошибок и их обработки
 loadedScriptFx.failData.watch(e => {
 	if (e?.message !== 'cancel-user') alert(e)
 })
 
 export {
+	$sessions,
 	$codesWithCache,
 	uploadedFileCode,
 	removedFileCode,

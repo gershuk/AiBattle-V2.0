@@ -64,6 +64,11 @@ sample({
 	target: addCodesToLocalStorageFx,
 })
 
-readCodesFromLocalStorageFx()
-
-export { $codes, addCode, removeCode, changeCode, $codesData }
+export {
+	$codes,
+	addCode,
+	removeCode,
+	changeCode,
+	$codesData,
+	readCodesFromLocalStorageFx,
+}
