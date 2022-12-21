@@ -1,1 +1,1 @@
-export * from './undo-manager'
+export * from './sessions-manager'
