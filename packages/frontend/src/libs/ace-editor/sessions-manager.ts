@@ -16,7 +16,7 @@ export const createSessionsManager = ({
 	const addSession = createEvent<SessionItem | SessionItem[]>()
 	const removeSession = createEvent<string | string[]>()
 
-	$sessions.on(addSession, (undoManagers, undoName) => {
+	$sessions.on(addSession, (sessions, undoName) => {
 		const array = Array.isArray(undoName) ? undoName : [undoName]
 		const newSessions = array.reduce((acc, { name, value }) => {
 			//@ts-expect-error
@@ -28,12 +28,12 @@ export const createSessionsManager = ({
 			}
 		}, {} as { [name: string]: Ace.EditSession })
 
-		return { ...undoManagers, ...newSessions }
+		return { ...sessions, ...newSessions }
 	})
 
-	$sessions.on(removeSession, (undoManagers, undoName) => {
+	$sessions.on(removeSession, (sessions, undoName) => {
 		const array = Array.isArray(undoName) ? undoName : [undoName]
-		const newSessions = { ...undoManagers }
+		const newSessions = { ...sessions }
 		array.forEach(undoName => {
 			if (undoName in newSessions) {
 				delete newSessions[undoName]
