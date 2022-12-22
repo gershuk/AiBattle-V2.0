@@ -1,7 +1,19 @@
 import { attach, combine, createEvent, createStore, sample } from 'effector'
-import { addMap, removeMap, $maps, $dataMaps, isMapData } from 'model'
+import {
+	addMap,
+	removeMap,
+	$maps,
+	$dataMaps,
+	isMapData,
+	readMapsFromLocalStorageFx,
+} from 'model'
 import { openFileExplorer, readFile } from 'api'
 import { jsonIsValid } from 'libs'
+import { createSessionsManager } from 'libs/ace-editor'
+
+const { $sessions, addSession, removeSession } = createSessionsManager({
+	mode: 'ace/mode/json',
+})
 
 const $cacheSave = createStore<{ [k: string]: string }>({})
 const $mapsWithCache = combine($dataMaps, $cacheSave, (maps, cashed) => {
@@ -85,9 +97,27 @@ sample({
 	target: addMap,
 })
 
+sample({
+	clock: [addMap.map(map => [map]), readMapsFromLocalStorageFx.doneData],
+	fn: maps => maps.map(({ content, name }) => ({ name, value: content })),
+	target: addSession,
+})
+
+sample({
+	clock: removeMap,
+	target: removeSession,
+})
+
 //TODO: сделать нормальные коды ошибок и их обработки
 loadedMapFx.failData.watch(e => {
 	if (e?.message !== 'cancel-user') alert(e)
 })
 
-export { uploadedFile, removedFileMap, createdFile, changedMap, $mapsWithCache }
+export {
+	uploadedFile,
+	removedFileMap,
+	createdFile,
+	changedMap,
+	$mapsWithCache,
+	$sessions,
+}

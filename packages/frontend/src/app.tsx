@@ -1,11 +1,15 @@
 import { useUnit } from 'effector-react'
 import { Game } from 'pages/game'
 import { SideBar } from 'features/side-bar'
-import { $locationSearch } from 'model'
 import { ControllerEditor } from 'pages/controller-editor'
 import { MapEditor } from 'pages/map-editor'
 import './styles.scss'
 import { Replays } from 'pages/replays'
+import {
+	$locationSearch,
+	readCodesFromLocalStorageFx,
+	readMapsFromLocalStorageFx,
+} from 'model'
 
 export const App = () => {
 	return (
@@ -34,3 +38,6 @@ const SwitchPage = () => {
 	}
 	return null
 }
+
+readCodesFromLocalStorageFx()
+readMapsFromLocalStorageFx()
