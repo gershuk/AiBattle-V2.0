@@ -44,27 +44,34 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 	OnOwnerInit(): void {}
 	OnDestroy(): void {}
 	OnSceneStart(): void {
-		throw new Error('Method not implemented.')
+		this._discreteColliderSystem.InitNewObject(this)
+		this.oldPosition = this.owner.position.Clone()
 	}
 
 	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {}
 
 	OnAfterFrameRender(currentFrame: number, frameCount: number): void {
-		this.owner.position = Vector2.Lerp(
-			this.oldPosition,
-			this.newPosition,
-			(currentFrame + 1) / frameCount
-		)
+		if (this.newPosition) {
+			this.owner.position = Vector2.Lerp(
+				this.oldPosition,
+				this.newPosition,
+				(currentFrame + 1) / frameCount
+			)
+		}
 	}
 
 	OnFixedUpdate(index: number): void {
 		this._turn = index
 		this.oldPosition = this.owner.position.Clone()
 		if (
-			this._discreteColliderSystem.TryMove(this, this._bufferNewPosition, 1)
+			this.bufferNewPosition &&
+			this._discreteColliderSystem.TryMove(this, this.bufferNewPosition, 1)
 		) {
-			this.newPosition = this.bufferNewPosition
+			this.newPosition = this.bufferNewPosition.Clone()
+		} else {
+			this.newPosition = undefined
 		}
+		this.bufferNewPosition = undefined
 	}
 }
 

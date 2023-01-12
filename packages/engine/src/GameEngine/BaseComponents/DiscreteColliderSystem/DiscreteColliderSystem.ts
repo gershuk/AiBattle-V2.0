@@ -34,22 +34,36 @@ export class DiscreteColliderSystem extends AbstractObjectComponent {
 	_turn: number
 
 	constructor(
-		width: number,
-		height: number,
 		owner?: IGameObject,
-		parameters?: ComponentParameters
+		parameters?: DiscreteColliderSystemParameters
 	) {
 		super(owner, parameters)
-		this._grid = new Array<Array<CellData>>(width)
-		for (let i = 0; i < width; ++i) {
-			this._grid[i] = new Array<CellData>(height)
-			for (let j = 0; j < width; ++j) {
-				this._grid[i][j] = new CellData()
+	}
+
+	public Init(owner: IGameObject, parameters?: ComponentParameters): void {
+		super.Init(owner, parameters)
+		if (parameters) {
+			if (parameters instanceof DiscreteColliderSystemParameters) {
+				const width = parameters.width
+				const height = parameters.height
+				this._grid = new Array<Array<CellData>>(width)
+				for (let i = 0; i < width; ++i) {
+					this._grid[i] = new Array<CellData>(height)
+					for (let j = 0; j < width; ++j) {
+						this._grid[i][j] = new CellData()
+					}
+				}
+			} else {
+				throw new Error(
+					'Expect parameters of type DiscreteColliderSystemParameters'
+				)
 			}
 		}
 	}
 
-	public InitNewObject(owner: DiscreteMovementComponent, x: number, y: number) {
+	public InitNewObject(owner: DiscreteMovementComponent) {
+		const x = owner.owner.position.x
+		const y = owner.owner.position.y
 		this._grid[x][y].owner = owner
 		this._grid[x][y].startRentTurn = this._turn
 		this._grid[x][y].endRentTurn = undefined
@@ -61,10 +75,14 @@ export class DiscreteColliderSystem extends AbstractObjectComponent {
 		movingTime: number
 	): boolean {
 		const endMovingTime = this._turn + movingTime - 1
+		if (!this._grid[newPos.x] || !this._grid[newPos.x][newPos.y]) {
+			return false
+		}
 		const targetCell = this._grid[newPos.x][newPos.y]
 		const currentCell = this._grid[owner.oldPosition.x][owner.oldPosition.y]
 		const cond =
 			targetCell.owner === owner ||
+			targetCell.owner === undefined ||
 			(targetCell.endRentTurn !== undefined &&
 				targetCell.endRentTurn < endMovingTime)
 		if (cond) {
@@ -75,5 +93,15 @@ export class DiscreteColliderSystem extends AbstractObjectComponent {
 			currentCell.endRentTurn = endMovingTime
 		}
 		return cond
+	}
+}
+
+export class DiscreteColliderSystemParameters extends ComponentParameters {
+	width: number
+	height: number
+	constructor(width: number, height: number) {
+		super()
+		this.width = width
+		this.height = height
 	}
 }
