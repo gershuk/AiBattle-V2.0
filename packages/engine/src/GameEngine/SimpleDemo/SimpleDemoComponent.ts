@@ -13,7 +13,6 @@ export class SimpleDemoComponent extends AbstractObjectComponent {
 			RandomNumber(0, 100),
 			RandomNumber(0, 100)
 		)
-		console.log(`Object init position ${this.owner.position.ToString()}`)
 	}
 
 	OnDestroy(): void {}
@@ -32,9 +31,6 @@ export class SimpleDemoComponent extends AbstractObjectComponent {
 			this._newPosition,
 			(currentFrame + 1) / frameCount
 		)
-		console.log(
-			`Object moving position ${this.owner.position.ToString()} Frame:${currentFrame}`
-		)
 	}
 
 	OnFixedUpdate(index: number): void {
@@ -42,6 +38,5 @@ export class SimpleDemoComponent extends AbstractObjectComponent {
 		this._newPosition = this.owner.owner.mousePositionOnCanvas.Sub(
 			this._staticRenderComponent.size.DivScalar(1)
 		)
-		console.log(`New position ${this._newPosition.ToString()}`)
 	}
 }

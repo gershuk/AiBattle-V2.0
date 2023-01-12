@@ -213,21 +213,17 @@ export class Scene implements IScene {
 	}
 
 	private OnFixedUpdate(turnIndex: number): void {
-		console.log(`Fix update turn index : ${turnIndex}`)
 		for (let gameObject of this.gameObjects) gameObject.OnFixedUpdate(turnIndex)
 	}
 
 	public Start(): void {
 		this.state = SceneState.Starting
-		console.log(`Scene starting`)
 		this.OnSceneStart()
 		this.turnIndex = 0
 		this.state = SceneState.ReadyToNextTurn
-		console.log(`Scene ready to next turn`)
 	}
 
 	public RenderFrame(): void {
-		console.log(`Rendering frame`)
 		let renderComponents: StaticRenderComponent[] =
 			new Array<StaticRenderComponent>()
 		for (let gameObject of this.gameObjects) {
@@ -255,9 +251,6 @@ export class Scene implements IScene {
 	}
 
 	private AnimationStep(index: number, animTicksCount: number) {
-		console.log(
-			`Animation step index:${index} animTicksCount:${animTicksCount}`
-		)
 		this.OnBeforeFrameRender(index, this.animTicksCount)
 		this.RenderFrame()
 		this.OnAfterFrameRender(index, this.animTicksCount)
@@ -277,7 +270,6 @@ export class Scene implements IScene {
 				throw new Error('turnIndex == this.maxTurnIndex')
 			}
 			this.turnIndex++
-			console.log(`Next turn index:${this.turnIndex} started`)
 			this.state = SceneState.NextTurn
 			this.OnFixedUpdate(this.turnIndex)
 			this.state = SceneState.Animation
