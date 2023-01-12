@@ -18,6 +18,7 @@ enum SceneState {
 }
 
 export class Scene implements IScene {
+	private _tileSize: number
 	private _gameObjects: GameObject[]
 	private _turnIndex: number
 	private _maxTurnIndex: number
@@ -133,6 +134,15 @@ export class Scene implements IScene {
 		this.Init(parameters)
 	}
 
+	get tileSize(): number {
+		return this._tileSize
+	}
+
+	set tileSize(v: number) {
+		this._tileSize = v
+		if (this.state && this.state !== SceneState.Starting) this.RenderFrame()
+	}
+
 	Init(parameters: SceneParameters): void {
 		if (this.autoTurnTimerId) this.StopAutoTurn()
 
@@ -143,6 +153,7 @@ export class Scene implements IScene {
 		this.animTicksCount = parameters.animTicksCount
 		this.animTicksTime = parameters.animTicksTime
 		this.canvas = parameters.canvas
+		this.tileSize = parameters.tileSize
 
 		this.gameObjects = new Array<GameObject>()
 		this.renderOffset = new Vector2(0, 0)
@@ -221,6 +232,7 @@ export class Scene implements IScene {
 		this.OnSceneStart()
 		this.turnIndex = 0
 		this.state = SceneState.ReadyToNextTurn
+		this.RenderFrame()
 	}
 
 	public RenderFrame(): void {
@@ -245,7 +257,13 @@ export class Scene implements IScene {
 				.Add(this.renderOffset)
 			const dw = component.size.x
 			const dh = component.size.y
-			context.drawImage(image, pos.x, pos.y, dw, dh)
+			context.drawImage(
+				image,
+				pos.x * this.tileSize,
+				pos.y * this.tileSize,
+				dw * this.tileSize,
+				dh * this.tileSize
+			)
 			context.save()
 		}
 	}

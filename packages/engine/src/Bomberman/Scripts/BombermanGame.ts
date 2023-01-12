@@ -1,4 +1,12 @@
 import {
+	DiscreteColliderSystem,
+	DiscreteColliderSystemParameters,
+} from 'GameEngine/BaseComponents/DiscreteColliderSystem/DiscreteColliderSystem'
+import {
+	DiscreteMovementComponent,
+	DiscreteMovementComponentParameters,
+} from 'GameEngine/BaseComponents/DiscreteColliderSystem/DiscreteMovementComponent'
+import {
 	StaticRenderComponent,
 	StaticRenderComponentParameters,
 } from 'GameEngine/BaseComponents/RenderComponents/StaticRenderComponent'
@@ -11,32 +19,29 @@ import { Scene } from 'GameEngine/Scene/Scene'
 
 export class BombermanGame extends GameEngine {
 	private _map: BombermanMap
-	constructor(parameters: BombermanGameParameters) {
-		super(parameters)
-	}
 
-	Init(parameters: GameEngineParameters): void {
+	async Init(parameters: BombermanGameParameters) {
 		super.Init(parameters)
-
 		if (parameters instanceof BombermanGameParameters) {
 			this._map = parameters.map
+
 			const height = this._map.field.length
 			const width = this._map.field[0].length
+			const colliderSystem = this.CreateColliderSystem(width, height)
+
 			for (let y = 0; y < height; ++y) {
 				for (let x = 0; x < width; ++x) {
 					switch (this._map.field[y][x]) {
-						case 0:
-							this.CreateGrass(new Vector2(x, y))
-							break
 						case 1:
-							this.CreateWall(new Vector2(x, y))
+							await this.CreateWall(new Vector2(x, y), colliderSystem)
 							break
 						case 2:
-							this.CreateMetal(new Vector2(x, y))
+							await this.CreateMetal(new Vector2(x, y), colliderSystem)
 							break
 						default:
 							break
 					}
+					await this.CreateGrass(new Vector2(x, y))
 				}
 			}
 		} else {
@@ -46,40 +51,75 @@ export class BombermanGame extends GameEngine {
 		}
 	}
 
-	private CreateGrass(position: Vector2) {
+	private async CreateGrass(position: Vector2) {
 		const gameObject = new GameObject(new Vector2())
 		this.scene.AddGameObject(position, gameObject, [
 			new StaticRenderComponent(),
 			new StaticRenderComponentParameters(
 				new Vector2(1, 1),
-				this.imageLoader.LoadPng('./Resources/Grass.png'),
+				await this.imageLoader.LoadPng('./Resources/Grass.png'),
 				-1
 			),
 		])
 	}
 
-	private CreateWall(position: Vector2) {
+	private async CreateWall(
+		position: Vector2,
+		discreteColliderSystem: DiscreteColliderSystem
+	) {
 		const gameObject = new GameObject(new Vector2())
-		this.scene.AddGameObject(position, gameObject, [
-			new StaticRenderComponent(),
-			new StaticRenderComponentParameters(
-				new Vector2(1, 1),
-				this.imageLoader.LoadPng('./Resources/Wall.png'),
-				0
-			),
-		])
+		this.scene.AddGameObject(
+			position,
+			gameObject,
+			[
+				new StaticRenderComponent(),
+				new StaticRenderComponentParameters(
+					new Vector2(1, 1),
+					await this.imageLoader.LoadPng('./Resources/Wall.png'),
+					0
+				),
+			],
+			[
+				new DiscreteMovementComponent(),
+				new DiscreteMovementComponentParameters(discreteColliderSystem),
+			]
+		)
 	}
 
-	private CreateMetal(position: Vector2) {
+	private async CreateMetal(
+		position: Vector2,
+		discreteColliderSystem: DiscreteColliderSystem
+	) {
 		const gameObject = new GameObject(new Vector2())
-		this.scene.AddGameObject(position, gameObject, [
-			new StaticRenderComponent(),
-			new StaticRenderComponentParameters(
-				new Vector2(1, 1),
-				this.imageLoader.LoadPng('./Resources/Metal.png'),
-				0
-			),
+		this.scene.AddGameObject(
+			position,
+			gameObject,
+			[
+				new StaticRenderComponent(),
+				new StaticRenderComponentParameters(
+					new Vector2(1, 1),
+					await this.imageLoader.LoadPng('./Resources/Metal.png'),
+					0
+				),
+			],
+			[
+				new DiscreteMovementComponent(),
+				new DiscreteMovementComponentParameters(discreteColliderSystem),
+			]
+		)
+	}
+
+	private CreateColliderSystem(
+		width: number,
+		height: number
+	): DiscreteColliderSystem {
+		const gameObject = new GameObject(new Vector2())
+		const discreteColliderSystem = new DiscreteColliderSystem()
+		this.scene.AddGameObject(new Vector2(0, 0), gameObject, [
+			discreteColliderSystem,
+			new DiscreteColliderSystemParameters(width, height),
 		])
+		return discreteColliderSystem
 	}
 }
 

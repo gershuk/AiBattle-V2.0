@@ -15,28 +15,29 @@ import { Scene } from 'GameEngine/Scene/Scene'
 import { SimpleDemoComponent } from './SimpleDemoComponent'
 
 export class SimpleDemo extends GameEngine {
-	constructor(parameters: SimpleDemoEngineParameters) {
-		super(parameters)
-	}
+	// constructor(parameters: SimpleDemoEngineParameters) {
+	// 	super(parameters)
+	// }
 
-	Init(parameters: GameEngineParameters): void {
+	async Init(parameters: GameEngineParameters) {
 		super.Init(parameters)
 
 		if (parameters instanceof SimpleDemoEngineParameters) {
 			this.scene = new Scene(parameters.sceneParameters)
 			const gameObject = new GameObject(new Vector2())
-			this.scene.AddGameObject(
-				new Vector2(),
-				gameObject,
-				[new SimpleDemoComponent()],
-				[
-					new StaticRenderComponent(),
-					new StaticRenderComponentParameters(
-						new Vector2(5, 5),
-						this.imageLoader.LoadPng('./Resources/test.png')
-					),
-				]
-			)
+			this.imageLoader
+				.LoadPng('./Resources/test.png')
+				.then(image =>
+					this.scene.AddGameObject(
+						new Vector2(),
+						gameObject,
+						[new SimpleDemoComponent()],
+						[
+							new StaticRenderComponent(),
+							new StaticRenderComponentParameters(new Vector2(5, 5), image),
+						]
+					)
+				)
 		} else {
 			throw new Error(
 				'Wrong parameters type. Expected SimpleDemoEngineParameters.'
