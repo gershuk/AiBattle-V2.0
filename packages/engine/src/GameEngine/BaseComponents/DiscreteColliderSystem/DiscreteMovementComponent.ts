@@ -34,6 +34,10 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 		this._bufferNewPosition = v
 	}
 
+	public get currentPosition(): Vector2 {
+		return this._owner.position.Clone()
+	}
+
 	Init(owner: IGameObject, parameters?: ComponentParameters) {
 		super.Init(owner, parameters)
 		if (parameters instanceof DiscreteMovementComponentParameters) {

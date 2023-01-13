@@ -16,6 +16,8 @@ import { GameObject } from 'GameEngine/GameObject/GameObject'
 import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
 import { SceneParameters } from 'GameEngine/Scene/IScene'
 import { Scene } from 'GameEngine/Scene/Scene'
+import { shuffle } from 'Utilities/ShuffleArray'
+import { ManBody, ManBodyParameters } from './ManBody'
 
 export class BombermanGame extends GameEngine {
 	private _map: BombermanMap
@@ -28,6 +30,11 @@ export class BombermanGame extends GameEngine {
 			const height = this._map.field.length
 			const width = this._map.field[0].length
 			const colliderSystem = this.CreateColliderSystem(width, height)
+			const shuffledSpawns = shuffle(this._map.spawns)
+
+			if (parameters.map.spawns.length < parameters.controllers.length) {
+				throw Error('Spawn less then controllers')
+			}
 
 			for (let y = 0; y < height; ++y) {
 				for (let x = 0; x < width; ++x) {
@@ -43,6 +50,11 @@ export class BombermanGame extends GameEngine {
 					}
 					await this.CreateGrass(new Vector2(x, y))
 				}
+			}
+			let i = 0
+			for (let controller of parameters.controllers) {
+				await this.CreateMan(shuffledSpawns[i], colliderSystem, controller)
+				++i
 			}
 		} else {
 			throw new Error(
@@ -109,6 +121,31 @@ export class BombermanGame extends GameEngine {
 		)
 	}
 
+	private async CreateMan(
+		position: Vector2,
+		discreteColliderSystem: DiscreteColliderSystem,
+		controllerText: string
+	) {
+		const gameObject = new GameObject(new Vector2())
+		this.scene.AddGameObject(
+			position,
+			gameObject,
+			[
+				new StaticRenderComponent(),
+				new StaticRenderComponentParameters(
+					new Vector2(1, 1),
+					await this.imageLoader.LoadPng('./Resources/Man.png'),
+					1
+				),
+			],
+			[
+				new DiscreteMovementComponent(),
+				new DiscreteMovementComponentParameters(discreteColliderSystem),
+			],
+			[new ManBody(), new ManBodyParameters(controllerText)]
+		)
+	}
+
 	private CreateColliderSystem(
 		width: number,
 		height: number
@@ -135,12 +172,15 @@ export class BombermanMap {
 
 export class BombermanGameParameters extends GameEngineParameters {
 	map: BombermanMap
+	controllers: string[]
 	constructor(
 		sceneParameters: SceneParameters,
 		map: BombermanMap,
+		controllers: string[],
 		imageLoader?: ImageLoader
 	) {
 		super(sceneParameters, imageLoader)
 		this.map = map
+		this.controllers = controllers
 	}
 }
