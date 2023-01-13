@@ -64,9 +64,22 @@ export class DiscreteColliderSystem extends AbstractObjectComponent {
 	public InitNewObject(owner: DiscreteMovementComponent) {
 		const x = owner.owner.position.x
 		const y = owner.owner.position.y
-		this._grid[x][y].owner = owner
-		this._grid[x][y].startRentTurn = this._turn
-		this._grid[x][y].endRentTurn = undefined
+
+		if (!this._grid[x] || !this._grid[x][y]) {
+			throw new Error('Cell is not exist')
+		}
+
+		if (
+			this._grid[x][y].owner === undefined ||
+			this._grid[x][y].owner === owner ||
+			this._grid[x][y].endRentTurn <= this._turn
+		) {
+			this._grid[x][y].owner = owner
+			this._grid[x][y].startRentTurn = this._turn
+			this._grid[x][y].endRentTurn = undefined
+		} else {
+			throw new Error('Can not init in this cell')
+		}
 	}
 
 	public TryMove(
