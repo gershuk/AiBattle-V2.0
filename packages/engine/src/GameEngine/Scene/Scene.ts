@@ -264,7 +264,6 @@ export class Scene implements IScene {
 				dw * this.tileSize,
 				dh * this.tileSize
 			)
-			context.save()
 		}
 	}
 
