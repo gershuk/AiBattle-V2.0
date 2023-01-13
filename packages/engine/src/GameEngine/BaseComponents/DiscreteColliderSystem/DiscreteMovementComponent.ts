@@ -48,9 +48,7 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 		this.oldPosition = this.owner.position.Clone()
 	}
 
-	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {}
-
-	OnAfterFrameRender(currentFrame: number, frameCount: number): void {
+	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {
 		if (this.newPosition) {
 			this.owner.position = Vector2.Lerp(
 				this.oldPosition,
@@ -59,6 +57,8 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 			)
 		}
 	}
+
+	OnAfterFrameRender(currentFrame: number, frameCount: number): void {}
 
 	OnFixedUpdate(index: number): void {
 		this._turn = index
