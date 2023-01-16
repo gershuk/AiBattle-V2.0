@@ -31,6 +31,7 @@ export abstract class AbstractObjectComponent {
 	abstract OnBeforeFrameRender(currentFrame: number, frameCount: number): void
 	abstract OnAfterFrameRender(currentFrame: number, frameCount: number): void
 	abstract OnFixedUpdate(index: number): void
+	abstract OnFixedUpdateEnded(index: number): void
 }
 
 export abstract class ComponentParameters {}
