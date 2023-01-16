@@ -3,6 +3,7 @@ import { Vector2 } from '../Vector2'
 import { DiscreteColliderSystem } from './DiscreteColliderSystem'
 import { ComponentParameters } from '../AbstractObjectComponent'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
+import { GameObject } from 'GameEngine/GameObject/GameObject'
 
 //ToDo : Add a number of moves for the transition and update all the moving methods.
 export class DiscreteMovementComponent extends AbstractObjectComponent {
@@ -38,19 +39,36 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 		return this._owner.position.Clone()
 	}
 
+	public SetReceiver(receiver: GameObject) {
+		const position = this.currentPosition
+		this._discreteColliderSystem.SetReceiver(
+			this,
+			position.x,
+			position.y,
+			receiver
+		)
+	}
+
 	Init(owner: IGameObject, parameters?: ComponentParameters) {
 		super.Init(owner, parameters)
 		if (parameters instanceof DiscreteMovementComponentParameters) {
 			this._discreteColliderSystem = parameters.discreteColliderSystem
+			this._discreteColliderSystem.InitNewObject(this)
+			this.oldPosition = this.owner.position.Clone()
 		}
 	}
 
 	OnOwnerInit(): void {}
-	OnDestroy(): void {}
-	OnSceneStart(): void {
-		this._discreteColliderSystem.InitNewObject(this)
-		this.oldPosition = this.owner.position.Clone()
+
+	OnDestroy(): void {
+		this._discreteColliderSystem.ClearCell(
+			this,
+			this.currentPosition.x,
+			this.currentPosition.y
+		)
 	}
+
+	OnSceneStart(): void {}
 
 	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {
 		if (this.newPosition) {
@@ -66,7 +84,6 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 
 	OnFixedUpdate(index: number): void {
 		this._turn = index
-		this.oldPosition = this.owner.position.Clone()
 		if (
 			this.bufferNewPosition &&
 			this._discreteColliderSystem.TryMove(this, this.bufferNewPosition, 1)
@@ -76,6 +93,23 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 			this.newPosition = undefined
 		}
 		this.bufferNewPosition = undefined
+	}
+
+	OnFixedUpdateEnded(index: number): void {
+		if (
+			this.newPosition &&
+			this._discreteColliderSystem.GetCellData(
+				this.oldPosition.x,
+				this.oldPosition.y
+			).owner === this
+		) {
+			this._discreteColliderSystem.ClearCell(
+				this,
+				this.oldPosition.x,
+				this.oldPosition.y
+			)
+		}
+		this.oldPosition = this.owner.position.Clone()
 	}
 }
 
