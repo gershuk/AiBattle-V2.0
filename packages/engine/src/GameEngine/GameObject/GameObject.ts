@@ -98,4 +98,8 @@ export class GameObject implements IGameObject {
 	public OnFixedUpdate(index: number): void {
 		for (let component of this._components) component.OnFixedUpdate(index)
 	}
+
+	public OnFixedUpdateEnded(index: number): void {
+		for (let component of this._components) component.OnFixedUpdateEnded(index)
+	}
 }

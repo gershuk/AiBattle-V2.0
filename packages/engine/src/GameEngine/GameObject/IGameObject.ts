@@ -34,5 +34,7 @@ export interface IGameObject {
 
 	OnAfterFrameRender(currentFrame: number, frameCount: number): void
 
+	OnFixedUpdateEnded(index: number): void
+
 	OnFixedUpdate(index: number): void
 }
