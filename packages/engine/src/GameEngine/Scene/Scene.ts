@@ -202,6 +202,8 @@ export class Scene implements IScene {
 	}
 
 	public RemoveGameObjectsByFilter(filter: (g: GameObject) => boolean): void {
+		const destroyedObjects = this._gameObjects.filter(g => filter(g))
+		for (let object of destroyedObjects) object.OnDestroy()
 		this._gameObjects = this._gameObjects.filter(g => !filter(g))
 	}
 
@@ -225,6 +227,11 @@ export class Scene implements IScene {
 
 	private OnFixedUpdate(turnIndex: number): void {
 		for (let gameObject of this.gameObjects) gameObject.OnFixedUpdate(turnIndex)
+	}
+
+	private OnFixedUpdateEnded(turnIndex: number): void {
+		for (let gameObject of this.gameObjects)
+			gameObject.OnFixedUpdateEnded(turnIndex)
 	}
 
 	public Start(): void {
@@ -277,6 +284,7 @@ export class Scene implements IScene {
 				this.animTicksTime
 			)
 		} else {
+			this.OnFixedUpdateEnded(this.turnIndex)
 			this.state = SceneState.ReadyToNextTurn
 		}
 	}
