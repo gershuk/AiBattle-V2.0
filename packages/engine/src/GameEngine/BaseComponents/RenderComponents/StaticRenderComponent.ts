@@ -11,7 +11,7 @@ export class StaticRenderComponent extends AbstractObjectComponent {
 	public get offset(): Vector2 {
 		return this._offset
 	}
-	protected set offset(o: Vector2) {
+	public set offset(o: Vector2) {
 		this._offset = o
 	}
 
@@ -19,7 +19,7 @@ export class StaticRenderComponent extends AbstractObjectComponent {
 	public get size(): Vector2 {
 		return this._size
 	}
-	protected set size(s: Vector2) {
+	public set size(s: Vector2) {
 		this._size = s
 	}
 

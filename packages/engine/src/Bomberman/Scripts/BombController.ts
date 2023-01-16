@@ -10,6 +10,8 @@ import {
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import { HealthComponent } from './Health'
+import { Wall } from './Wall'
+import { Metal } from './Metal'
 
 export class BombController extends AbstractObjectComponent {
 	OnFixedUpdateEnded(index: number): void {}
@@ -61,9 +63,20 @@ export class BombController extends AbstractObjectComponent {
 			this.owner.owner.RemoveGameObjectsByFilter(g => this.owner === g)
 			this.DamageTile(this.owner.position)
 
-			for (let i = 1; i <= this._range; ++i) {
-				for (let dir of this._pattern) {
+			for (let dir of this._pattern) {
+				for (let i = 1; i <= this._range; ++i) {
 					const pos = this.owner.position.Add(dir.MulScalar(i))
+					const owner = this._discreteColliderSystem.GetCellData(
+						pos.x,
+						pos.y
+					).owner
+					const wall = owner?.owner?.GetComponents(Wall)
+					const metal = owner?.owner?.GetComponents(Metal)
+					if (metal && metal.length > 0) break
+					if (wall && wall.length > 0) {
+						this.DamageTile(pos)
+						break
+					}
 					this.DamageTile(pos)
 				}
 			}
