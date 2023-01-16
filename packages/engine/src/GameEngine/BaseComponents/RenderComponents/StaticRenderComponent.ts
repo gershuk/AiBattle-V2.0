@@ -6,6 +6,7 @@ import {
 import { Vector2 } from '../Vector2'
 
 export class StaticRenderComponent extends AbstractObjectComponent {
+	OnFixedUpdateEnded(index: number): void {}
 	private _offset: Vector2
 	public get offset(): Vector2 {
 		return this._offset
