@@ -29,7 +29,6 @@ export class Blast extends AbstractObjectComponent {
 		if (this._renderComponent) {
 			const renderScale = (frameCount - currentFrame + 1) / frameCount
 			const offset = (currentFrame + 1) / (frameCount * 2)
-			console.log(offset)
 			this._renderComponent.size = new Vector2(renderScale, renderScale)
 			this._renderComponent.offset = new Vector2(offset, offset)
 		}
