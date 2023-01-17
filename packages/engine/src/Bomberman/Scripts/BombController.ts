@@ -13,6 +13,25 @@ import { HealthComponent } from './Health'
 import { Wall } from './Wall'
 import { Metal } from './Metal'
 
+export class BombData {
+	position: Vector2
+	turnToExplosion: number
+	damage: number
+	range: number
+
+	constructor(
+		position: Vector2,
+		turnToExplosion: number,
+		damage: number,
+		range: number
+	) {
+		this.position = position
+		this.turnToExplosion = turnToExplosion
+		this.damage = damage
+		this.range = range
+	}
+}
+
 export class BombController extends AbstractObjectComponent {
 	OnFixedUpdateEnded(index: number): void {}
 
@@ -28,6 +47,15 @@ export class BombController extends AbstractObjectComponent {
 	private _damage: number
 	private _range: number
 	private _blastSpawnFunction: Function
+
+	public GetInfo(): BombData {
+		return new BombData(
+			this.owner.position.Clone(),
+			this._turnToExplosion,
+			this._damage,
+			this._range
+		)
+	}
 
 	Init(owner: IGameObject, parameters?: BombControllerParameters): void {
 		super.Init(owner, parameters)

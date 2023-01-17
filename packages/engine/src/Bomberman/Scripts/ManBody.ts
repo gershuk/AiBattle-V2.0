@@ -8,6 +8,19 @@ import { GameObject } from 'GameEngine/GameObject/GameObject'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 import { AbstractController } from 'GameEngine/UserAIRuner/AbstractController'
 import { LoadControllerFromString } from 'GameEngine/UserAIRuner/SafeEval'
+import { HealthComponent } from './Health'
+
+export class BodyData {
+	position: Vector2
+	health: number
+	uuid: string
+
+	constructor(position: Vector2, health: number, uuid: string) {
+		this.position = position
+		this.health = health
+		this.uuid = uuid
+	}
+}
 
 export class ManBody extends AbstractObjectComponent {
 	OnFixedUpdateEnded(index: number): void {}
@@ -25,6 +38,7 @@ export class ManBody extends AbstractObjectComponent {
 	private _bombsRestoreTicks: number
 	private _bombsRestoreCount: number
 	private _lastRestoreTurn: number
+	private _healthComponent: HealthComponent
 
 	Init(owner: IGameObject, parameters?: ManBodyParameters): void {
 		super.Init(owner, parameters)
@@ -36,7 +50,19 @@ export class ManBody extends AbstractObjectComponent {
 			this._bombsCount = this._bombsMaxCount
 			this._bombsRestoreTicks = parameters.bombsRestoreTicks
 			this._bombsRestoreCount = parameters.bombsRestoreCount
+
+			this._healthComponent = this.owner.GetComponents(
+				HealthComponent
+			)[0] as any
 		}
+	}
+
+	public BodyData(): BodyData {
+		return new BodyData(
+			this.owner.position.Clone(),
+			this._healthComponent.health,
+			this.uuid
+		)
 	}
 
 	OnOwnerInit(): void {}
