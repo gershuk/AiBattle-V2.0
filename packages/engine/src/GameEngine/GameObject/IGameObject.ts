@@ -17,11 +17,12 @@ export interface IGameObject {
 	Init(
 		position: Vector2,
 		owner?: IScene,
-		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		id?: string
 	): void
 
 	AddComponents(
-		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents: [AbstractObjectComponent, ComponentParameters?][]
 	): void
 
 	RemoveComponents<T extends typeof AbstractObjectComponent>(type: T): void

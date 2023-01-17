@@ -83,8 +83,10 @@ export class BombController extends AbstractObjectComponent {
 			)
 		) {
 			this.owner.AddComponents([
-				new DiscreteMovementComponent(),
-				new DiscreteMovementComponentParameters(this._discreteColliderSystem),
+				[
+					new DiscreteMovementComponent(),
+					new DiscreteMovementComponentParameters(this._discreteColliderSystem),
+				],
 			])
 		}
 		if (index === this._turnToExplosion) {

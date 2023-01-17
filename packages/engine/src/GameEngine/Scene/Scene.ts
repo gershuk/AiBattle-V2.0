@@ -174,10 +174,11 @@ export class Scene implements IScene {
 	public AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,
-		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		id?: string
 	): void {
 		this._gameObjects.push(gameObject)
-		gameObject.Init(position, this, ...newComponents)
+		gameObject.Init(position, this, newComponents, id)
 	}
 
 	public AddGameObjects<T extends GameObject>(
@@ -191,7 +192,7 @@ export class Scene implements IScene {
 			this.AddGameObject(
 				gameObjectInit[0],
 				gameObjectInit[1],
-				...gameObjectInit[2]
+				gameObjectInit[2]
 			)
 	}
 

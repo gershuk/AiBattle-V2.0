@@ -50,7 +50,8 @@ export interface IScene {
 	AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,
-		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		id?: string
 	): void
 
 	AddGameObjects<T extends GameObject>(

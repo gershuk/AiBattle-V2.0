@@ -21,8 +21,12 @@ export abstract class AbstractObjectComponent {
 	}
 
 	Init(owner: IGameObject, parameters?: ComponentParameters) {
-		this._uuid = GenerateUUID()
 		this._owner = owner
+		if (parameters) {
+			this._uuid = parameters.uuid
+		} else {
+			this._uuid = GenerateUUID()
+		}
 	}
 
 	abstract OnOwnerInit(): void
@@ -34,4 +38,9 @@ export abstract class AbstractObjectComponent {
 	abstract OnFixedUpdateEnded(index: number): void
 }
 
-export abstract class ComponentParameters {}
+export class ComponentParameters {
+	uuid: string
+	constructor(uuid?: string) {
+		this.uuid = uuid ?? GenerateUUID()
+	}
+}

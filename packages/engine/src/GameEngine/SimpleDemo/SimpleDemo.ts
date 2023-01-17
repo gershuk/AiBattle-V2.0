@@ -28,15 +28,13 @@ export class SimpleDemo extends GameEngine {
 			this.imageLoader
 				.LoadPng('./Resources/test.png')
 				.then(image =>
-					this.scene.AddGameObject(
-						new Vector2(),
-						gameObject,
+					this.scene.AddGameObject(new Vector2(), gameObject, [
 						[new SimpleDemoComponent()],
 						[
 							new StaticRenderComponent(),
 							new StaticRenderComponentParameters(new Vector2(5, 5), image),
-						]
-					)
+						],
+					])
 				)
 		} else {
 			throw new Error(

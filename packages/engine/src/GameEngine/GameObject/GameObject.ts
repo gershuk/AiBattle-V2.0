@@ -36,30 +36,34 @@ export class GameObject implements IGameObject {
 	constructor(
 		position: Vector2,
 		owner?: IScene,
-		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		id?: string
 	) {
-		this.Init(position, owner, ...newComponents)
+		this.Init(position, owner, newComponents, id)
 	}
 
 	Init(
 		position: Vector2,
 		owner?: IScene,
-		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		id?: string
 	) {
 		this._position = position
 		this._components = new Array<AbstractObjectComponent>()
-		this.id = Utilities.GenerateUUID()
+		this.id = id ?? Utilities.GenerateUUID()
 		this._owner = owner
-		this.AddComponents(...newComponents)
+		this.AddComponents(newComponents)
 		this.OnInit()
 	}
 
 	public AddComponents(
-		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents?: [AbstractObjectComponent, ComponentParameters?][]
 	): void {
-		for (let component of newComponents) {
-			component[0].Init(this, component[1])
-			this._components.push(component[0])
+		if (newComponents) {
+			for (let component of newComponents) {
+				component[0].Init(this, component[1])
+				this._components.push(component[0])
+			}
 		}
 	}
 
