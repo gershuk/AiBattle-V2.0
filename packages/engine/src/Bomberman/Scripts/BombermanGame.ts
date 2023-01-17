@@ -225,6 +225,7 @@ export class BombermanGame extends GameEngine {
 				new ManBody(),
 				new ManBodyParameters(
 					controllerText,
+					discreteColliderSystem,
 					async (
 						position: Vector2,
 						damage: number,

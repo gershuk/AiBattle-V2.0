@@ -12,25 +12,7 @@ import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import { HealthComponent } from './Health'
 import { Wall } from './Wall'
 import { Metal } from './Metal'
-
-export class BombData {
-	position: Vector2
-	turnToExplosion: number
-	damage: number
-	range: number
-
-	constructor(
-		position: Vector2,
-		turnToExplosion: number,
-		damage: number,
-		range: number
-	) {
-		this.position = position
-		this.turnToExplosion = turnToExplosion
-		this.damage = damage
-		this.range = range
-	}
-}
+import { BombData } from './MapData'
 
 export class BombController extends AbstractObjectComponent {
 	OnFixedUpdateEnded(index: number): void {}
@@ -48,12 +30,13 @@ export class BombController extends AbstractObjectComponent {
 	private _range: number
 	private _blastSpawnFunction: Function
 
-	public GetInfo(): BombData {
+	public GetData(): BombData {
 		return new BombData(
 			this.owner.position.Clone(),
 			this._turnToExplosion,
 			this._damage,
-			this._range
+			this._range,
+			this.uuid
 		)
 	}
 
