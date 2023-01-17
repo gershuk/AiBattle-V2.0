@@ -5,9 +5,9 @@ import {
 import { GameObject } from '../GameObject/GameObject'
 import { IScene, SceneParameters } from './IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
-import { StaticRenderComponent } from 'GameEngine/BaseComponents/RenderComponents/StaticRenderComponent'
 import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
+import { AbstractRenderComponent } from 'GameEngine/BaseComponents/RenderComponents/AbstractRenderComponent'
 
 enum SceneState {
 	Init,
@@ -243,11 +243,11 @@ export class Scene implements IScene {
 	}
 
 	public RenderFrame(): void {
-		let renderComponents: StaticRenderComponent[] =
-			new Array<StaticRenderComponent>()
+		let renderComponents: AbstractRenderComponent[] =
+			new Array<AbstractRenderComponent>()
 		for (let gameObject of this.gameObjects) {
 			renderComponents = renderComponents.concat(
-				gameObject.GetComponents(StaticRenderComponent)
+				gameObject.GetComponents(AbstractRenderComponent)
 			)
 		}
 
