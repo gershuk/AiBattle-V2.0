@@ -23,6 +23,11 @@ import { Blast } from './Blast'
 import { HealthComponent, HealthComponentParameters } from './Health'
 import { Wall } from './Wall'
 import { Metal } from './Metal'
+import {
+	AnimationFrame,
+	AnimationRenderComponent,
+	AnimationRenderComponentParameters,
+} from 'GameEngine/BaseComponents/RenderComponents/AnimationRenderComponent'
 
 export class BombermanGame extends GameEngine {
 	private _map: BombermanMap
@@ -169,12 +174,25 @@ export class BombermanGame extends GameEngine {
 			position,
 			gameObject,
 			[
-				new StaticRenderComponent(),
-				new StaticRenderComponentParameters(
-					new Vector2(1, 1),
-					await this.imageLoader.LoadPng('./Resources/Bomb.png'),
-					0
-				),
+				new AnimationRenderComponent(),
+				new AnimationRenderComponentParameters([
+					new AnimationFrame(
+						new StaticRenderComponentParameters(
+							new Vector2(1, 1),
+							await this.imageLoader.LoadPng('./Resources/Bomb.png'),
+							0
+						),
+						0.5
+					),
+					new AnimationFrame(
+						new StaticRenderComponentParameters(
+							new Vector2(1, 1),
+							await this.imageLoader.LoadPng('./Resources/BombRed.png'),
+							0
+						),
+						1
+					),
+				]),
 			],
 			[
 				new BombController(),
