@@ -36,6 +36,17 @@ export class CellData {
 }
 
 export class DiscreteColliderSystem extends AbstractObjectComponent {
+	private _width: number
+	private _height: number
+
+	public get width(): number {
+		return this._width
+	}
+
+	public get height(): number {
+		return this._height
+	}
+
 	OnFixedUpdateEnded(index: number): void {}
 
 	OnOwnerInit(): void {
@@ -63,12 +74,12 @@ export class DiscreteColliderSystem extends AbstractObjectComponent {
 		super.Init(owner, parameters)
 		if (parameters) {
 			if (parameters instanceof DiscreteColliderSystemParameters) {
-				const width = parameters.width
-				const height = parameters.height
-				this._grid = new Array<Array<CellData>>(width)
-				for (let i = 0; i < width; ++i) {
-					this._grid[i] = new Array<CellData>(height)
-					for (let j = 0; j < height; ++j) {
+				this._width = parameters.width
+				this._height = parameters.height
+				this._grid = new Array<Array<CellData>>(this._width)
+				for (let i = 0; i < this._width; ++i) {
+					this._grid[i] = new Array<CellData>(this._height)
+					for (let j = 0; j < this._height; ++j) {
 						this._grid[i][j] = new CellData()
 					}
 				}
