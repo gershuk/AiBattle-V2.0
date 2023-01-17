@@ -108,6 +108,6 @@ export class GameEngineParameters {
 
 	constructor(sceneParameters: SceneParameters, imageLoader?: ImageLoader) {
 		this.sceneParameters = sceneParameters
-		this.imageLoader = imageLoader
+		this.imageLoader = imageLoader ?? new ImageLoader()
 	}
 }
