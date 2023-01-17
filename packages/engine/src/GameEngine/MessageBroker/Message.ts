@@ -42,9 +42,9 @@ export class Message {
 	}
 
 	constructor(
-		senderUuid: string,
 		data: any,
 		receiverUuid: string,
+		senderUuid?: string,
 		messageUuid?: string
 	) {
 		this.creationTime = Date.now()

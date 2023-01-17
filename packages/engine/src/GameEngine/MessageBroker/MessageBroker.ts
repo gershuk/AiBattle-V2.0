@@ -15,8 +15,16 @@ export class MessageBroker implements IMessageBroker {
 			this.messages[receiverUuid] = new Queue<Message>()
 		}
 		this.messages[receiverUuid].Enqueue(
-			new Message(component.uuid, data, receiverUuid)
+			new Message(data, receiverUuid, component.uuid)
 		)
+		return this.messages[receiverUuid].Size()
+	}
+
+	public SendMessageUnsigned(receiverUuid: string, data: any): number {
+		if (!this.messages[receiverUuid]) {
+			this.messages[receiverUuid] = new Queue<Message>()
+		}
+		this.messages[receiverUuid].Enqueue(new Message(data, receiverUuid))
 		return this.messages[receiverUuid].Size()
 	}
 
