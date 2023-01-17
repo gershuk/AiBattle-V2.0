@@ -21,7 +21,7 @@ export interface IGameEngine {
 
 	StartAutoTurn(): void
 
-	LoadImage(path: string): HTMLImageElement | undefined
+	LoadImage(path: string): Promise<HTMLImageElement>
 
 	SendMessage(
 		component: AbstractObjectComponent,
@@ -56,11 +56,11 @@ export class GameEngine implements IGameEngine {
 		this._imageLoader = v
 	}
 
-	constructor(parameters: GameEngineParameters) {
-		this.Init(parameters)
-	}
+	// constructor(parameters: GameEngineParameters) {
+	// 	this.Init(parameters)
+	// }
 
-	public Init(parameters: GameEngineParameters): void {
+	public async Init(parameters: GameEngineParameters) {
 		this.scene = new Scene(parameters.sceneParameters)
 		this.imageLoader = parameters.imageLoader
 	}
@@ -85,8 +85,8 @@ export class GameEngine implements IGameEngine {
 		this.scene?.StartAutoTurn()
 	}
 
-	public LoadImage(path: string): HTMLImageElement | undefined {
-		return this.imageLoader?.LoadPng(path)
+	public LoadImage(path: string): Promise<HTMLImageElement> {
+		return this.imageLoader.LoadPng(path)
 	}
 
 	public SendMessage(
@@ -108,6 +108,6 @@ export class GameEngineParameters {
 
 	constructor(sceneParameters: SceneParameters, imageLoader?: ImageLoader) {
 		this.sceneParameters = sceneParameters
-		this.imageLoader = imageLoader
+		this.imageLoader = imageLoader ?? new ImageLoader()
 	}
 }

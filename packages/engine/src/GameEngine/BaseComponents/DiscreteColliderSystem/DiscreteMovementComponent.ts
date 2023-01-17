@@ -3,6 +3,7 @@ import { Vector2 } from '../Vector2'
 import { DiscreteColliderSystem } from './DiscreteColliderSystem'
 import { ComponentParameters } from '../AbstractObjectComponent'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
+import { GameObject } from 'GameEngine/GameObject/GameObject'
 
 //ToDo : Add a number of moves for the transition and update all the moving methods.
 export class DiscreteMovementComponent extends AbstractObjectComponent {
@@ -34,37 +35,81 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 		this._bufferNewPosition = v
 	}
 
+	public get currentPosition(): Vector2 {
+		return this._owner.position.Clone()
+	}
+
+	public SetReceiver(receiver: GameObject) {
+		const position = this.currentPosition
+		this._discreteColliderSystem.SetReceiver(
+			this,
+			position.x,
+			position.y,
+			receiver
+		)
+	}
+
 	Init(owner: IGameObject, parameters?: ComponentParameters) {
 		super.Init(owner, parameters)
 		if (parameters instanceof DiscreteMovementComponentParameters) {
 			this._discreteColliderSystem = parameters.discreteColliderSystem
+			this._discreteColliderSystem.InitNewObject(this)
+			this.oldPosition = this.owner.position.Clone()
 		}
 	}
 
 	OnOwnerInit(): void {}
-	OnDestroy(): void {}
-	OnSceneStart(): void {
-		throw new Error('Method not implemented.')
-	}
 
-	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {}
-
-	OnAfterFrameRender(currentFrame: number, frameCount: number): void {
-		this.owner.position = Vector2.Lerp(
-			this.oldPosition,
-			this.newPosition,
-			(currentFrame + 1) / frameCount
+	OnDestroy(): void {
+		this._discreteColliderSystem.ClearCell(
+			this,
+			this.currentPosition.x,
+			this.currentPosition.y
 		)
 	}
 
+	OnSceneStart(): void {}
+
+	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {
+		if (this.newPosition) {
+			this.owner.position = Vector2.Lerp(
+				this.oldPosition,
+				this.newPosition,
+				(currentFrame + 1) / frameCount
+			)
+		}
+	}
+
+	OnAfterFrameRender(currentFrame: number, frameCount: number): void {}
+
 	OnFixedUpdate(index: number): void {
 		this._turn = index
-		this.oldPosition = this.owner.position.Clone()
 		if (
-			this._discreteColliderSystem.TryMove(this, this._bufferNewPosition, 1)
+			this.bufferNewPosition &&
+			this._discreteColliderSystem.TryMove(this, this.bufferNewPosition, 1)
 		) {
-			this.newPosition = this.bufferNewPosition
+			this.newPosition = this.bufferNewPosition.Clone()
+		} else {
+			this.newPosition = undefined
 		}
+		this.bufferNewPosition = undefined
+	}
+
+	OnFixedUpdateEnded(index: number): void {
+		if (
+			this.newPosition &&
+			this._discreteColliderSystem.GetCellData(
+				this.oldPosition.x,
+				this.oldPosition.y
+			).owner === this
+		) {
+			this._discreteColliderSystem.ClearCell(
+				this,
+				this.oldPosition.x,
+				this.oldPosition.y
+			)
+		}
+		this.oldPosition = this.owner.position.Clone()
 	}
 }
 

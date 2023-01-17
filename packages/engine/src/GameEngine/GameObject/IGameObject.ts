@@ -17,11 +17,12 @@ export interface IGameObject {
 	Init(
 		position: Vector2,
 		owner?: IScene,
-		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		id?: string
 	): void
 
 	AddComponents(
-		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents: [AbstractObjectComponent, ComponentParameters?][]
 	): void
 
 	RemoveComponents<T extends typeof AbstractObjectComponent>(type: T): void
@@ -33,6 +34,8 @@ export interface IGameObject {
 	OnBeforeFrameRender(currentFrame: number, frameCount: number): void
 
 	OnAfterFrameRender(currentFrame: number, frameCount: number): void
+
+	OnFixedUpdateEnded(index: number): void
 
 	OnFixedUpdate(index: number): void
 }

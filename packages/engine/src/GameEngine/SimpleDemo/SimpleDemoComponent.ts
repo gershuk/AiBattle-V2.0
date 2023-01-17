@@ -4,6 +4,7 @@ import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import { RandomNumber } from 'Utilities'
 
 export class SimpleDemoComponent extends AbstractObjectComponent {
+	OnFixedUpdateEnded(index: number): void {}
 	private _newPosition: Vector2
 	private _oldPosition: Vector2
 	private _staticRenderComponent: any

@@ -10,9 +10,23 @@ import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
 import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
 import { IScene, SceneParameters } from 'GameEngine/Scene/IScene'
 import {
+	BombermanGame,
+	BombermanGameParameters,
+	BombermanMap,
+} from './Bomberman/Scripts/BombermanGame'
+import {
 	SimpleDemo,
 	SimpleDemoEngineParameters,
 } from 'GameEngine/SimpleDemo/SimpleDemo'
+import {
+	BodyData,
+	BombData,
+	MapData,
+	MapObjectData,
+	MetalData,
+	PlayerData,
+	WallData,
+} from 'Bomberman/Scripts/MapData'
 
 export {
 	IGameEngine,
@@ -20,6 +34,16 @@ export {
 	GameEngineParameters,
 	SimpleDemo,
 	SimpleDemoEngineParameters,
+	BombermanGame,
+	BombermanMap,
+	BombermanGameParameters,
+	MapObjectData,
+	MapData,
+	BodyData,
+	MetalData,
+	WallData,
+	PlayerData,
+	BombData,
 	IScene,
 	SceneParameters,
 	ImageLoader,

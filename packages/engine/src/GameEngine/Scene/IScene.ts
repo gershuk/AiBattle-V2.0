@@ -4,10 +4,13 @@ import {
 } from '../BaseComponents/AbstractObjectComponent'
 import { GameObject } from '../GameObject/GameObject'
 import { Vector2 } from '../BaseComponents/Vector2'
-import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
 
 export interface IScene {
+	get tileSize(): Number
+
+	set tileSize(v: Number)
+
 	get messageBroker(): IMessageBroker
 
 	get mousePositionOnCanvas(): Vector2
@@ -47,7 +50,8 @@ export interface IScene {
 	AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,
-		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		id?: string
 	): void
 
 	AddGameObjects<T extends GameObject>(
@@ -81,18 +85,21 @@ export class SceneParameters {
 	animTicksTime: number
 	autoTurnTime: number
 	canvas: HTMLCanvasElement
+	tileSize: number
 
 	constructor(
 		maxTurnIndex: number,
 		animTicksCount: number,
 		animTicksTime: number,
 		autoTurnTime: number,
-		canvas: HTMLCanvasElement
+		canvas: HTMLCanvasElement,
+		tileSize: number = 1
 	) {
 		this.maxTurnIndex = maxTurnIndex
 		this.animTicksCount = animTicksCount
 		this.animTicksTime = animTicksTime
 		this.autoTurnTime = autoTurnTime
 		this.canvas = canvas
+		this.tileSize = tileSize
 	}
 }

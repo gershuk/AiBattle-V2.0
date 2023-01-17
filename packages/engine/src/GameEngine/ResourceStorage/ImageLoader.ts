@@ -11,12 +11,19 @@ export class ImageLoader {
 		this.loadedPngs = loadedPngs ?? new Map<string, HTMLImageElement>()
 	}
 
-	LoadPng(path: string) {
-		if (!this.loadedPngs.has(path)) {
-			const image = new Image()
-			image.src = path
-			this.loadedPngs.set(path, image)
-		}
-		return this.loadedPngs.get(path)
+	LoadPng(path: string): Promise<HTMLImageElement> {
+		return new Promise((resolve, reject) => {
+			if (!this.loadedPngs.has(path)) {
+				const img = new Image()
+				img.addEventListener('load', () => {
+					this.loadedPngs.set(path, img)
+					resolve(img)
+				})
+				img.addEventListener('error', err => reject(err))
+				img.src = path
+			} else {
+				resolve(this.loadedPngs.get(path))
+			}
+		})
 	}
 }

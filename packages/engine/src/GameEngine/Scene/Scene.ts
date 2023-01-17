@@ -5,9 +5,9 @@ import {
 import { GameObject } from '../GameObject/GameObject'
 import { IScene, SceneParameters } from './IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
-import { StaticRenderComponent } from 'GameEngine/BaseComponents/RenderComponents/StaticRenderComponent'
 import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
+import { AbstractRenderComponent } from 'GameEngine/BaseComponents/RenderComponents/AbstractRenderComponent'
 
 enum SceneState {
 	Init,
@@ -18,6 +18,7 @@ enum SceneState {
 }
 
 export class Scene implements IScene {
+	private _tileSize: number
 	private _gameObjects: GameObject[]
 	private _turnIndex: number
 	private _maxTurnIndex: number
@@ -133,6 +134,15 @@ export class Scene implements IScene {
 		this.Init(parameters)
 	}
 
+	get tileSize(): number {
+		return this._tileSize
+	}
+
+	set tileSize(v: number) {
+		this._tileSize = v
+		if (this.state && this.state !== SceneState.Starting) this.RenderFrame()
+	}
+
 	Init(parameters: SceneParameters): void {
 		if (this.autoTurnTimerId) this.StopAutoTurn()
 
@@ -143,6 +153,7 @@ export class Scene implements IScene {
 		this.animTicksCount = parameters.animTicksCount
 		this.animTicksTime = parameters.animTicksTime
 		this.canvas = parameters.canvas
+		this.tileSize = parameters.tileSize
 
 		this.gameObjects = new Array<GameObject>()
 		this.renderOffset = new Vector2(0, 0)
@@ -163,10 +174,11 @@ export class Scene implements IScene {
 	public AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,
-		...newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		id?: string
 	): void {
 		this._gameObjects.push(gameObject)
-		gameObject.Init(position, this, ...newComponents)
+		gameObject.Init(position, this, newComponents, id)
 	}
 
 	public AddGameObjects<T extends GameObject>(
@@ -180,7 +192,7 @@ export class Scene implements IScene {
 			this.AddGameObject(
 				gameObjectInit[0],
 				gameObjectInit[1],
-				...gameObjectInit[2]
+				gameObjectInit[2]
 			)
 	}
 
@@ -191,6 +203,8 @@ export class Scene implements IScene {
 	}
 
 	public RemoveGameObjectsByFilter(filter: (g: GameObject) => boolean): void {
+		const destroyedObjects = this._gameObjects.filter(g => filter(g))
+		for (let object of destroyedObjects) object.OnDestroy()
 		this._gameObjects = this._gameObjects.filter(g => !filter(g))
 	}
 
@@ -216,19 +230,25 @@ export class Scene implements IScene {
 		for (let gameObject of this.gameObjects) gameObject.OnFixedUpdate(turnIndex)
 	}
 
+	private OnFixedUpdateEnded(turnIndex: number): void {
+		for (let gameObject of this.gameObjects)
+			gameObject.OnFixedUpdateEnded(turnIndex)
+	}
+
 	public Start(): void {
 		this.state = SceneState.Starting
 		this.OnSceneStart()
 		this.turnIndex = 0
 		this.state = SceneState.ReadyToNextTurn
+		this.RenderFrame()
 	}
 
 	public RenderFrame(): void {
-		let renderComponents: StaticRenderComponent[] =
-			new Array<StaticRenderComponent>()
+		let renderComponents: AbstractRenderComponent[] =
+			new Array<AbstractRenderComponent>()
 		for (let gameObject of this.gameObjects) {
 			renderComponents = renderComponents.concat(
-				gameObject.GetComponents(StaticRenderComponent)
+				gameObject.GetComponents(AbstractRenderComponent)
 			)
 		}
 
@@ -245,8 +265,13 @@ export class Scene implements IScene {
 				.Add(this.renderOffset)
 			const dw = component.size.x
 			const dh = component.size.y
-			context.drawImage(image, pos.x, pos.y, dw, dh)
-			context.save()
+			context.drawImage(
+				image,
+				pos.x * this.tileSize,
+				pos.y * this.tileSize,
+				dw * this.tileSize,
+				dh * this.tileSize
+			)
 		}
 	}
 
@@ -260,6 +285,7 @@ export class Scene implements IScene {
 				this.animTicksTime
 			)
 		} else {
+			this.OnFixedUpdateEnded(this.turnIndex)
 			this.state = SceneState.ReadyToNextTurn
 		}
 	}
