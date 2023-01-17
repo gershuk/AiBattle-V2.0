@@ -69,7 +69,6 @@ export class BombermanGame extends GameEngine {
 				await this.CreateMan(shuffledSpawns[i], colliderSystem, controller)
 				++i
 			}
-			await this.CreateBomb(new Vector2(7, 8), colliderSystem)
 		} else {
 			throw new Error(
 				'Wrong parameters type. Expected SimpleDemoEngineParameters.'
