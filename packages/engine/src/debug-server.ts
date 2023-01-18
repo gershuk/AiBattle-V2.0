@@ -34,8 +34,36 @@ engine
 				[new Vector2(1, 1), new Vector2(8, 8)]
 			),
 			[
-				'class Controller { Init(info) {} GetCommand(info) { console.log(info);return 5;}} new Controller()',
-				'class Controller { Init(info) {} GetCommand(info) { console.log(info);return 5;}} new Controller()',
+				'class Controller { \
+					Init(info) {}\
+					\
+					GetRandomInt(min, max) {\
+						min = Math.ceil(min);\
+						max = Math.floor(max);\
+						return Math.floor(Math.random() * (max - min)) + min;\
+					}\
+					\
+					GetCommand(info) { \
+						return this.GetRandomInt(0, 6);\
+					}\
+					\
+				} \
+				new Controller()',
+				'class Controller { \
+					Init(info) {}\
+					\
+					GetRandomInt(min, max) {\
+						min = Math.ceil(min);\
+						max = Math.floor(max);\
+						return Math.floor(Math.random() * (max - min)) + min;\
+					}\
+					\
+					GetCommand(info) { \
+						return this.GetRandomInt(0, 6);\
+					}\
+					\
+				} \
+				new Controller()',
 			]
 		)
 	)

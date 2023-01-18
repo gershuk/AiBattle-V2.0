@@ -108,6 +108,7 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 				this.oldPosition.x,
 				this.oldPosition.y
 			)
+			this.oldPosition = this.newPosition.Clone()
 		}
 		this.oldPosition = this.owner.position.Clone()
 	}
@@ -116,8 +117,12 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 export class DiscreteMovementComponentParameters extends ComponentParameters {
 	discreteColliderSystem: DiscreteColliderSystem
 
-	constructor(discreteColliderSystem: DiscreteColliderSystem) {
-		super()
+	constructor(
+		discreteColliderSystem: DiscreteColliderSystem,
+		qNumber: number = 100,
+		uuid?: string
+	) {
+		super(qNumber, uuid)
 		this.discreteColliderSystem = discreteColliderSystem
 	}
 }

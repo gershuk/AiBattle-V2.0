@@ -2,6 +2,15 @@ import { GenerateUUID } from 'Utilities'
 import { IGameObject } from '../GameObject/IGameObject'
 
 export abstract class AbstractObjectComponent {
+	private _qNumber: number
+
+	protected set qNumber(v: number) {
+		this._qNumber = v
+	}
+	public get qNumber(): number {
+		return this._qNumber
+	}
+
 	private _uuid: string
 	public get uuid(): string {
 		return this._uuid
@@ -24,8 +33,10 @@ export abstract class AbstractObjectComponent {
 		this._owner = owner
 		if (parameters) {
 			this._uuid = parameters.uuid
+			this.qNumber = parameters.qNumber
 		} else {
 			this._uuid = GenerateUUID()
+			this.qNumber = 0
 		}
 	}
 
@@ -40,7 +51,9 @@ export abstract class AbstractObjectComponent {
 
 export class ComponentParameters {
 	uuid: string
-	constructor(uuid?: string) {
+	qNumber: number
+	constructor(qNumber: number = 0, uuid?: string) {
+		this.qNumber = qNumber
 		this.uuid = uuid ?? GenerateUUID()
 	}
 }
