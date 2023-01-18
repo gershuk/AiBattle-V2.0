@@ -99,11 +99,14 @@ export class GameObject implements IGameObject {
 			component.OnAfterFrameRender(currentFrame, frameCount)
 	}
 
+	//sort only on add\delete
 	public OnFixedUpdate(index: number): void {
-		for (let component of this._components) component.OnFixedUpdate(index)
+		const sortedArray = this._components.sort((a, b) => a.qNumber - b.qNumber)
+		for (let component of sortedArray) component.OnFixedUpdate(index)
 	}
 
 	public OnFixedUpdateEnded(index: number): void {
-		for (let component of this._components) component.OnFixedUpdateEnded(index)
+		const sortedArray = this._components.sort((a, b) => a.qNumber - b.qNumber)
+		for (let component of sortedArray) component.OnFixedUpdateEnded(index)
 	}
 }

@@ -117,8 +117,12 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 export class DiscreteMovementComponentParameters extends ComponentParameters {
 	discreteColliderSystem: DiscreteColliderSystem
 
-	constructor(discreteColliderSystem: DiscreteColliderSystem) {
-		super()
+	constructor(
+		discreteColliderSystem: DiscreteColliderSystem,
+		qNumber: number = 100,
+		uuid?: string
+	) {
+		super(qNumber, uuid)
 		this.discreteColliderSystem = discreteColliderSystem
 	}
 }
