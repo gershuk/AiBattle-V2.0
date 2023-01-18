@@ -1,32 +1,36 @@
 import { clsx } from 'libs'
-import { JSXInternal } from 'preact/src/jsx'
 import './styles.scss'
 
-interface ButtonProps {
+interface LinkButtonProps {
 	onClick?: () => void
 	children: string | number
 	className?: string
-	color?: 'primary' | 'warning' | 'danger'
 	disabled?: boolean
+	color?: 'primary' | 'warning' | 'danger'
 	type?: 'button' | 'reset' | 'submit'
 	[k: string]: any
 }
 
-export const Button = ({
+export const LinkButton = ({
 	onClick,
 	children,
 	className,
-	color = 'primary',
 	disabled,
+	color = 'primary',
 	type = 'button',
 	...props
-}: ButtonProps) => {
+}: LinkButtonProps) => {
 	return (
 		<button
 			{...props}
 			type={type}
 			disabled={disabled}
-			className={clsx('button', className, color, disabled ? 'disabled' : null)}
+			className={clsx(
+				'link-button',
+				color,
+				className,
+				disabled ? 'disabled' : null
+			)}
 			onClick={disabled ? undefined : onClick}
 		>
 			{children}

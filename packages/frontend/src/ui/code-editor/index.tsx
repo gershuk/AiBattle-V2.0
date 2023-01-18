@@ -4,51 +4,76 @@ import 'ace-builds/src-noconflict/mode-javascript'
 import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/theme-tomorrow'
 import 'ace-builds/src-noconflict/ext-language_tools'
-import { useCallback, useEffect, useState } from 'preact/hooks'
+import { useCallback, useEffect, useRef } from 'preact/hooks'
 import { createAndDownloadFile } from 'api'
+import { Ace, createEditSession } from 'ace-builds'
 
 interface CodeEditorProps {
-	mode: 'javascript' | 'json'
+	mode?: 'javascript' | 'json'
 	onChange?: (value: string) => void
 	onSave?: (value: string) => void
-	value?: string
 	fileName: string
+	session?: Ace.EditSession
 }
 
 export const CodeEditor = ({
 	mode,
 	onChange,
 	onSave,
-	value: valueProps,
 	fileName,
+	session,
 }: CodeEditorProps) => {
-	const [value, setValue] = useState(valueProps || '')
+	const refEditor = useRef<Ace.Editor | null>(null)
 
 	useEffect(() => {
-		setValue(valueProps || '')
-	}, [valueProps])
+		if (session && refEditor.current) {
+			refEditor.current.setSession(session)
+		}
+	}, [session])
+
+	// useEffect(() => {
+	// 	if (valueProps !== undefined && refEditor.current) {
+	// 		const activeValue = refEditor.current.getSession().getValue()
+	// 		if (activeValue !== valueProps) {
+	// 			refEditor.current.getSession().setValue(valueProps)
+	// 		}
+	// 	}
+	// }, [valueProps])
+
+	useEffect(() => {
+		return () => {
+			if (refEditor.current) {
+				//TODO: почему то при анмаунте ace едитора он портит текущую сессию и её потом нельзя использовать
+				//@ts-expect-error
+				refEditor.current.setSession(createEditSession('', undefined))
+			}
+		}
+	}, [])
 
 	const handlerSave = () => {
-		onSave?.(value)
+		onSave?.(refEditor.current?.getSession().getValue() || '')
 	}
 
 	const handlerChange = (value: string) => {
-		setValue(value)
 		onChange?.(value)
 	}
 
 	const handlerSaveDevise = () => {
-		createAndDownloadFile(value, fileName, 'text/plain')
+		createAndDownloadFile(
+			refEditor.current?.getSession().getValue() || '',
+			fileName,
+			'text/plain'
+		)
 	}
 
 	const handlerSaveKeyboard = useCallback(
 		(e?: KeyboardEvent) => {
 			if (e?.ctrlKey && e?.key.toLowerCase() === 's') {
 				e.preventDefault()
-				onSave?.(value)
+				onSave?.(refEditor.current?.getSession().getValue() || '')
 			}
 		},
-		[value]
+		[session]
 	)
 
 	useEffect(() => {
@@ -74,8 +99,13 @@ export const CodeEditor = ({
 				</div>
 			</div>
 			<AceEditor
+				onLoad={editor => {
+					refEditor.current = editor
+					if (session) {
+						editor.setSession(session)
+					}
+				}}
 				onChange={handlerChange}
-				value={value}
 				className="ace-editor"
 				height="100%"
 				width="100%"

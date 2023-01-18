@@ -5,7 +5,7 @@ const $selectedNameMap = createStore<string | null>(null)
 
 const $selectedMap = combine($dataMaps, $selectedNameMap, (maps, nameMap) => {
 	if (nameMap && maps[nameMap]) {
-		return maps[nameMap].valid ? maps[nameMap] : null
+		return maps[nameMap].valid ? maps[nameMap] || null : null
 	}
 	return null
 })

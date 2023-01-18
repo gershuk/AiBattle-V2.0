@@ -29,7 +29,8 @@ import {
 } from 'Bomberman/Scripts/MapData'
 
 export {
-	IGameEngine,
+	type IGameEngine,
+	type IScene,
 	GameEngine,
 	GameEngineParameters,
 	SimpleDemo,
@@ -44,7 +45,6 @@ export {
 	WallData,
 	PlayerData,
 	BombData,
-	IScene,
 	SceneParameters,
 	ImageLoader,
 	Vector2,
