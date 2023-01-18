@@ -2,15 +2,12 @@ import {
 	BombermanGame,
 	BombermanGameParameters,
 	BombermanMap,
-	GameEngine,
-	GameEngineParameters,
 	ImageLoader,
 	SceneParameters,
-	SimpleDemo,
-	SimpleDemoEngineParameters,
 	Vector2,
 } from '@ai-battle/engine'
 import { attach, createStore, combine } from 'effector'
+import { MapData } from 'model'
 import { createEngineCanvas } from './engine-canvas'
 
 export interface SceneParams {
@@ -34,39 +31,27 @@ const createEngine = () => {
 		source: combine({ engine: $engine, canvas: $canvas }),
 		effect: async (
 			{ engine, canvas },
-			{ sceneParams }: { sceneParams: SceneParams }
+			{ sceneParams, mapData }: { sceneParams: SceneParams; mapData: MapData }
 		) => {
-			return engine
-			  .Init(
+			return engine.Init(
 				new BombermanGameParameters(
-				  new SceneParameters(
-					sceneParams?.maxTurnIndex ?? 1,
-					sceneParams?.animTicksCount ?? 1,
-					sceneParams?.animTicksTime ?? 1,
-					sceneParams?.autoTurnTime ?? 1,
-					canvas,
-					50
-				  ),
-				  new BombermanMap(
+					new SceneParameters(
+						sceneParams?.maxTurnIndex ?? 1,
+						sceneParams?.animTicksCount ?? 1,
+						sceneParams?.animTicksTime ?? 1,
+						sceneParams?.autoTurnTime ?? 1,
+						canvas,
+						50
+					),
+					new BombermanMap(
+						mapData.map,
+						mapData.spawns.map(({ x, y }) => new Vector2(x, y))
+					),
 					[
-					  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-					  [2, 0, 0, 1, 0, 0, 0, 0, 0, 2],
-					  [2, 0, 0, 1, 0, 0, 0, 0, 0, 2],
-					  [2, 1, 1, 1, 0, 0, 0, 0, 0, 2],
-					  [2, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-					  [2, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-					  [2, 0, 0, 0, 0, 0, 1, 1, 1, 2],
-					  [2, 0, 0, 0, 0, 0, 1, 0, 0, 2],
-					  [2, 0, 0, 0, 0, 0, 1, 0, 0, 2],
-					  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-					],
-					[new Vector2(1, 1), new Vector2(8, 8)]
-				  ),
-				  [
-					'class Controller { Init(info) {} GetCommand(info) { console.log(info);return 5;}} new Controller()',
-				  ]
+						'class Controller { Init(info) {} GetCommand(info) { console.log(info);return 5;}} new Controller()',
+					]
 				)
-			  )
+			)
 		},
 	})
 

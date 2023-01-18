@@ -1,5 +1,6 @@
 import { createEvent, createStore, sample } from 'effector'
 import { createEngine, SceneParams } from 'libs/engine'
+import { $selectedMap } from './select-map'
 
 const engine = createEngine()
 
@@ -19,8 +20,10 @@ $autoStep.on(setAutoStep, (_, x) => x)
 $autoStep.on([startedGame, stoppedGame], () => false)
 
 sample({
+	source: $selectedMap.map(selectedMap => selectedMap?.data || null),
 	clock: startedGame,
-	fn: sceneParams => ({ sceneParams }),
+	filter: Boolean,
+	fn: (mapData, sceneParams) => ({ sceneParams, mapData }),
 	target: engine.methods.init,
 })
 
