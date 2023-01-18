@@ -105,7 +105,7 @@ export class ManBody extends AbstractObjectComponent {
 			const wallData = object.GetComponents(Wall)[0]?.GetData()
 			const metalData = object.GetComponents(Metal)[0]?.GetData()
 			const bombData = object.GetComponents(BombController)[0]?.GetData()
-			const bodyData = object.GetComponents(ManBody)[0]?.GetData()
+			const bodyData = object.GetComponents(ManBody)[0]?.GetBodyData()
 
 			if (wallData) wallsData.push(wallData)
 			if (metalData) metalsData.push(metalData)
