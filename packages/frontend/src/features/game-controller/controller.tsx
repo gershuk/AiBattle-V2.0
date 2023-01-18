@@ -8,7 +8,9 @@ import { $selectedMap } from './model/select-map'
 import './styles.scss'
 import { GameSettings } from './game-settings'
 import { Button } from 'ui'
-import { htmlFormToJson, SceneParams } from 'libs'
+import { htmlFormToJson } from 'libs'
+import { ISubmitForm } from './types'
+
 export const GameController = () => {
 	const { activeMap, startedGame: startedGameFlag } = useUnit({
 		activeMap: $selectedMap,
@@ -34,10 +36,9 @@ export const GameController = () => {
 				className={'game-controller-start-form'}
 				onSubmit={e => {
 					e.preventDefault()
-					///TODO: описать интерфейс выхода сабмита
-					const jsonForm = htmlFormToJson(e.target as HTMLFormElement)
+					const jsonForm = htmlFormToJson<ISubmitForm>(e.target as HTMLFormElement)
 					console.log('jsonForm', jsonForm)
-					startedGame(jsonForm.sceneParams)
+					startedGame(jsonForm)
 				}}
 			>
 				<div className={'game-controller-metrics'}>

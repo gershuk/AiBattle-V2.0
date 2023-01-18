@@ -31,7 +31,7 @@ const createEngine = () => {
 		source: combine({ engine: $engine, canvas: $canvas }),
 		effect: async (
 			{ engine, canvas },
-			{ sceneParams, mapData }: { sceneParams: SceneParams; mapData: MapData }
+			{ sceneParams, mapData, codesBot }: { sceneParams: SceneParams; mapData: MapData, codesBot: string[] }
 		) => {
 			return engine.Init(
 				new BombermanGameParameters(
@@ -47,9 +47,7 @@ const createEngine = () => {
 						mapData.map,
 						mapData.spawns.map(({ x, y }) => new Vector2(x, y))
 					),
-					[
-						'class Controller { Init(info) {} GetCommand(info) { console.log(info);return 5;}} new Controller()',
-					]
+					codesBot
 				)
 			)
 		},

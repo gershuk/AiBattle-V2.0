@@ -1,5 +1,7 @@
-import { createEvent, createStore, sample } from 'effector'
-import { createEngine, SceneParams } from 'libs/engine'
+import { combine, createEvent, createStore, sample } from 'effector'
+import { createEngine } from 'libs/engine'
+import { $codesData, MapData } from 'model'
+import { ISubmitForm } from '../types'
 import { $selectedMap } from './select-map'
 
 const engine = createEngine()
@@ -8,7 +10,7 @@ const $activeGame = createStore(false)
 
 const $autoStep = createStore(false)
 
-const startedGame = createEvent<SceneParams>()
+const startedGame = createEvent<ISubmitForm>()
 const stoppedGame = createEvent()
 
 const setAutoStep = createEvent<boolean>()
@@ -20,10 +22,24 @@ $autoStep.on(setAutoStep, (_, x) => x)
 $autoStep.on([startedGame, stoppedGame], () => false)
 
 sample({
-	source: $selectedMap.map(selectedMap => selectedMap?.data || null),
+	source: combine({
+		mapData: $selectedMap.map(
+			selectedMap => (selectedMap?.data || null) as MapData
+		),
+		codes: $codesData,
+	}),
 	clock: startedGame,
-	filter: Boolean,
-	fn: (mapData, sceneParams) => ({ sceneParams, mapData }),
+	filter: ({ mapData }) => !!mapData,
+	fn: ({ mapData, codes }, { sceneParams, bot }) => {
+		const codesBot = bot
+			.map(({ controller }) => codes[controller]?.content)
+			.filter(Boolean)
+		return {
+			sceneParams,
+			mapData,
+			codesBot
+		}
+	},
 	target: engine.methods.init,
 })
 
