@@ -8,10 +8,9 @@ export const MapInfo = () => {
 		<div className={'map-info'}>
 			<div className={'title'}>Информация о карте</div>
 			<div className={'infos-list'}>
-				<div>Ширина - {activeMap?.data?.width}</div>
-				<div>Высота - {activeMap?.data?.height}</div>
+				<div>Ширина - {activeMap?.data?.map?.[0]?.length}</div>
+				<div>Высота - {activeMap?.data?.map?.length}</div>
 				<div>Количество ботов - {activeMap?.data?.spawns.length}</div>
-				<div>Ходов на игру - {activeMap?.data?.turns}</div>
 			</div>
 		</div>
 	)
