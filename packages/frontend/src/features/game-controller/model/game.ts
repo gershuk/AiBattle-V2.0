@@ -1,7 +1,7 @@
 import { createEvent, createStore, sample } from 'effector'
 import { createEngine, SceneParams } from 'libs/engine'
 
-const engine = createEngine({})
+const engine = createEngine()
 
 const $activeGame = createStore(false)
 
@@ -21,7 +21,12 @@ $autoStep.on([startedGame, stoppedGame], () => false)
 sample({
 	clock: startedGame,
 	fn: sceneParams => ({ sceneParams }),
-	target: [engine.methods.init, engine.methods.start.prepend(() => {})],
+	target: engine.methods.init,
+})
+
+sample({
+	clock: engine.methods.init.done,
+	target: engine.methods.start,
 })
 
 sample({

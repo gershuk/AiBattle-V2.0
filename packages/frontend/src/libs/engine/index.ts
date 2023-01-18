@@ -1,10 +1,14 @@
 import {
+	BombermanGame,
+	BombermanGameParameters,
+	BombermanMap,
 	GameEngine,
 	GameEngineParameters,
 	ImageLoader,
 	SceneParameters,
 	SimpleDemo,
 	SimpleDemoEngineParameters,
+	Vector2,
 } from '@ai-battle/engine'
 import { attach, createStore, combine } from 'effector'
 import { createEngineCanvas } from './engine-canvas'
@@ -16,44 +20,53 @@ export interface SceneParams {
 	autoTurnTime: number
 }
 
-const createEngine = ({ sceneParams }: { sceneParams?: SceneParams }) => {
+const createEngine = () => {
 	const { canvas, CanvasComponent } = createEngineCanvas()
 
 	const $canvas = createStore(canvas)
 
 	const imageLoader = new ImageLoader()
-	const engine = new SimpleDemo(
-		new SimpleDemoEngineParameters(
-			new SceneParameters(
-				sceneParams?.maxTurnIndex ?? 1,
-				sceneParams?.animTicksCount ?? 1,
-				sceneParams?.animTicksTime ?? 1,
-				sceneParams?.autoTurnTime ?? 1,
-				canvas
-			),
-			imageLoader
-		)
-	)
+	const engine = new BombermanGame()
+
 	const $engine = createStore(engine)
 
 	const init = attach({
 		source: combine({ engine: $engine, canvas: $canvas }),
-		effect: (
+		effect: async (
 			{ engine, canvas },
 			{ sceneParams }: { sceneParams: SceneParams }
 		) => {
-			engine.Init(
-				new SimpleDemoEngineParameters(
-					new SceneParameters(
-						sceneParams?.maxTurnIndex ?? 1,
-						sceneParams?.animTicksCount ?? 1,
-						sceneParams?.animTicksTime ?? 1,
-						sceneParams?.autoTurnTime ?? 1,
-						canvas
-					),
-					imageLoader
+			return engine
+			  .Init(
+				new BombermanGameParameters(
+				  new SceneParameters(
+					sceneParams?.maxTurnIndex ?? 1,
+					sceneParams?.animTicksCount ?? 1,
+					sceneParams?.animTicksTime ?? 1,
+					sceneParams?.autoTurnTime ?? 1,
+					canvas,
+					50
+				  ),
+				  new BombermanMap(
+					[
+					  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+					  [2, 0, 0, 1, 0, 0, 0, 0, 0, 2],
+					  [2, 0, 0, 1, 0, 0, 0, 0, 0, 2],
+					  [2, 1, 1, 1, 0, 0, 0, 0, 0, 2],
+					  [2, 0, 0, 0, 0, 0, 0, 0, 0, 2],
+					  [2, 0, 0, 0, 0, 0, 0, 0, 0, 2],
+					  [2, 0, 0, 0, 0, 0, 1, 1, 1, 2],
+					  [2, 0, 0, 0, 0, 0, 1, 0, 0, 2],
+					  [2, 0, 0, 0, 0, 0, 1, 0, 0, 2],
+					  [2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+					],
+					[new Vector2(1, 1), new Vector2(8, 8)]
+				  ),
+				  [
+					'class Controller { Init(info) {} GetCommand(info) { console.log(info);return 5;}} new Controller()',
+				  ]
 				)
-			)
+			  )
 		},
 	})
 

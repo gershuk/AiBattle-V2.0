@@ -31,7 +31,7 @@ export const PreGameSettings = () => {
 						required
 						name="sceneParams.animTicksCount"
 						min={1}
-						initValue={10}
+						initValue={60}
 					/>
 				</div>
 				<div className={'setting-item'}>
@@ -40,7 +40,7 @@ export const PreGameSettings = () => {
 						required
 						name="sceneParams.animTicksTime"
 						min={1}
-						initValue={5}
+						initValue={12}
 					/>
 				</div>
 				<div className={'setting-item'}>
@@ -49,7 +49,7 @@ export const PreGameSettings = () => {
 						required
 						name="sceneParams.autoTurnTime"
 						min={1}
-						initValue={100}
+						initValue={1100}
 					/>
 				</div>
 			</div>
