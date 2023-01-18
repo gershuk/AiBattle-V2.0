@@ -108,6 +108,7 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 				this.oldPosition.x,
 				this.oldPosition.y
 			)
+			this.oldPosition = this.newPosition.Clone()
 		}
 		this.oldPosition = this.owner.position.Clone()
 	}
