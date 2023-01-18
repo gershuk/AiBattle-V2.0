@@ -1,6 +1,6 @@
 import { AbstractController } from './AbstractController'
 
-export function RunEval(input: string) {
+export function RunEval(input: string): AbstractController {
 	return eval(input)
 }
 
@@ -20,10 +20,10 @@ function ValidateController(controller: AbstractController) {
 	}
 }
 
-export function LoadControllerFromString(input: string) {
+export function LoadControllerFromString(input: string): AbstractController {
 	const controller = RunEval(input)
 	if (!ValidateController(controller)) {
 		throw 'Controller broken'
 	}
-	return { controllerObj: controller, text: input }
+	return controller
 }

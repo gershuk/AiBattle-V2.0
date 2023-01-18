@@ -4,6 +4,7 @@ import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import { RandomNumber } from 'Utilities'
 
 export class SimpleDemoComponent extends AbstractObjectComponent {
+	OnFixedUpdateEnded(index: number): void {}
 	private _newPosition: Vector2
 	private _oldPosition: Vector2
 	private _staticRenderComponent: any
@@ -13,7 +14,6 @@ export class SimpleDemoComponent extends AbstractObjectComponent {
 			RandomNumber(0, 100),
 			RandomNumber(0, 100)
 		)
-		console.log(`Object init position ${this.owner.position.ToString()}`)
 	}
 
 	OnDestroy(): void {}
@@ -32,9 +32,6 @@ export class SimpleDemoComponent extends AbstractObjectComponent {
 			this._newPosition,
 			(currentFrame + 1) / frameCount
 		)
-		console.log(
-			`Object moving position ${this.owner.position.ToString()} Frame:${currentFrame}`
-		)
 	}
 
 	OnFixedUpdate(index: number): void {
@@ -42,6 +39,5 @@ export class SimpleDemoComponent extends AbstractObjectComponent {
 		this._newPosition = this.owner.owner.mousePositionOnCanvas.Sub(
 			this._staticRenderComponent.size.DivScalar(1)
 		)
-		console.log(`New position ${this._newPosition.ToString()}`)
 	}
 }

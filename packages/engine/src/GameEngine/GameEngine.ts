@@ -1,4 +1,6 @@
+import { AbstractObjectComponent } from './BaseComponents/AbstractObjectComponent'
 import { Vector2 } from './BaseComponents/Vector2'
+import { Message } from './MessageBroker/Message'
 import { ImageLoader } from './ResourceStorage/ImageLoader'
 import { IScene, SceneParameters } from './Scene/IScene'
 import { Scene } from './Scene/Scene'
@@ -19,7 +21,15 @@ export interface IGameEngine {
 
 	StartAutoTurn(): void
 
-	LoadImage(path: string): HTMLImageElement | undefined
+	LoadImage(path: string): Promise<HTMLImageElement>
+
+	SendMessage(
+		component: AbstractObjectComponent,
+		receiverUuid: string,
+		data: any
+	): number
+
+	GetMessage(component: AbstractObjectComponent): [number, Message?]
 }
 
 export class GameEngine implements IGameEngine {
@@ -46,11 +56,11 @@ export class GameEngine implements IGameEngine {
 		this._imageLoader = v
 	}
 
-	constructor(parameters: GameEngineParameters) {
-		this.Init(parameters)
-	}
+	// constructor(parameters: GameEngineParameters) {
+	// 	this.Init(parameters)
+	// }
 
-	public Init(parameters: GameEngineParameters): void {
+	public async Init(parameters: GameEngineParameters) {
 		this.scene = new Scene(parameters.sceneParameters)
 		this.imageLoader = parameters.imageLoader
 	}
@@ -75,8 +85,20 @@ export class GameEngine implements IGameEngine {
 		this.scene?.StartAutoTurn()
 	}
 
-	public LoadImage(path: string): HTMLImageElement | undefined {
-		return this.imageLoader?.LoadPng(path)
+	public LoadImage(path: string): Promise<HTMLImageElement> {
+		return this.imageLoader.LoadPng(path)
+	}
+
+	public SendMessage(
+		component: AbstractObjectComponent,
+		receiverUuid: string,
+		data: any
+	): number {
+		return this.scene.messageBroker.SendMessage(component, receiverUuid, data)
+	}
+
+	public GetMessage(component: AbstractObjectComponent): [number, Message?] {
+		return this.scene.messageBroker.GetMessage(component)
 	}
 }
 
@@ -86,6 +108,6 @@ export class GameEngineParameters {
 
 	constructor(sceneParameters: SceneParameters, imageLoader?: ImageLoader) {
 		this.sceneParameters = sceneParameters
-		this.imageLoader = imageLoader
+		this.imageLoader = imageLoader ?? new ImageLoader()
 	}
 }

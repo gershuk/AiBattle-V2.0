@@ -4,13 +4,15 @@ import {
 	ComponentParameters,
 } from '../AbstractObjectComponent'
 import { Vector2 } from '../Vector2'
+import { AbstractRenderComponent } from './AbstractRenderComponent'
 
-export class StaticRenderComponent extends AbstractObjectComponent {
+export class StaticRenderComponent extends AbstractRenderComponent {
+	OnFixedUpdateEnded(index: number): void {}
 	private _offset: Vector2
 	public get offset(): Vector2 {
 		return this._offset
 	}
-	protected set offset(o: Vector2) {
+	public set offset(o: Vector2) {
 		this._offset = o
 	}
 
@@ -18,7 +20,7 @@ export class StaticRenderComponent extends AbstractObjectComponent {
 	public get size(): Vector2 {
 		return this._size
 	}
-	protected set size(s: Vector2) {
+	public set size(s: Vector2) {
 		this._size = s
 	}
 
@@ -62,7 +64,7 @@ export class StaticRenderComponent extends AbstractObjectComponent {
 	OnFixedUpdate(index: number): void {}
 }
 
-export class StaticRenderComponentParameters {
+export class StaticRenderComponentParameters extends ComponentParameters {
 	offset: Vector2
 	size: Vector2
 	image: HTMLImageElement
@@ -74,6 +76,7 @@ export class StaticRenderComponentParameters {
 		zOder: number = 0,
 		offset: Vector2 = new Vector2()
 	) {
+		super()
 		this.offset = offset
 		this.size = size
 		this.image = image
