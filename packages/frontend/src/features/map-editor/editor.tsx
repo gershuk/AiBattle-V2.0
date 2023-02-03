@@ -1,9 +1,11 @@
 import { createEvent, createStore } from 'effector'
 import { useUnit } from 'effector-react'
+import { MapData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor, SplitPanel } from 'ui'
 import { $mapsWithCache, $sessions, changedMap } from './model'
 import './styles.scss'
+import { TileEditor } from './tile-editor'
 
 export interface EditorCode {
 	active?: string | null
@@ -63,14 +65,15 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 								? 'JSON не валиден'
 								: 'структура JSON не соответствует карте'}
 						</div>
-					) : (
-						<>
-							<div className={'title'}>Предпросмотр</div>
-							<div className={'text-content'}>
-								когда-нибудь это будет сделано
-							</div>
-						</>
-					)}
+					) : activeSession ? (
+						<TileEditor
+							mapData={selectMap.cacheMapData as MapData}
+							onChange={value => {
+								console.log('value', value)
+								activeSession.doc.setValue(value)
+							}}
+						/>
+					) : null}
 				</div>
 			}
 		/>

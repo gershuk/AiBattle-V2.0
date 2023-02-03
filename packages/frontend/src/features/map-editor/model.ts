@@ -6,6 +6,7 @@ import {
 	$dataMaps,
 	isMapData,
 	readMapsFromLocalStorageFx,
+	MapData,
 } from 'model'
 import { openFileExplorer, readFile } from 'api'
 import { jsonIsValid } from 'libs'
@@ -20,15 +21,16 @@ const $mapsWithCache = combine($dataMaps, $cacheSave, (maps, cashed) => {
 	return Object.values(maps).map(code => {
 		if (code.name in cashed) {
 			const modifyJsonValid = jsonIsValid(cashed[code.name])
-			const modifyValidDataMap = modifyJsonValid
-				? isMapData(JSON.parse(cashed[code.name]))
-				: false
+			const parseCache = modifyJsonValid ? JSON.parse(cashed[code.name]) : null
+			const modifyValidDataMap = modifyJsonValid ? isMapData(parseCache) : false
+			const cacheMapData = modifyValidDataMap ? (parseCache) as MapData : null
 			return {
 				...code,
 				cache: cashed[code.name],
 				modify: cashed[code.name] !== code.content,
 				modifyJsonValid,
 				modifyValidDataMap,
+				cacheMapData: cacheMapData,
 			}
 		}
 		return {
@@ -37,6 +39,7 @@ const $mapsWithCache = combine($dataMaps, $cacheSave, (maps, cashed) => {
 			modify: false,
 			modifyJsonValid: code.validJson,
 			modifyValidDataMap: code.validDataMap,
+			cacheMapData: code.data,
 		}
 	})
 })

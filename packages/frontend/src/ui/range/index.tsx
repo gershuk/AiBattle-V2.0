@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import './styles.scss'
 
 interface RangeInputProps {
-	value?: number
+	initialValue?: number
 	min?: number
 	max?: number
 	onChange?: (value: number) => void
@@ -11,7 +11,7 @@ interface RangeInputProps {
 }
 
 export const RangeInput = ({
-	value: valueProps,
+	initialValue: initialValue,
 	min,
 	max,
 	className,
@@ -19,24 +19,16 @@ export const RangeInput = ({
 	...props
 }: RangeInputProps) => {
 	const ref = useRef<HTMLInputElement>(null)
-	const [value, setValue] = useState<null | number>(null)
+	const [value, setValue] = useState<null | number>(initialValue ?? null)
 
 	useEffect(() => {
 		if (ref.current) {
-			if (valueProps !== undefined) {
-				ref.current.value = String(valueProps)
-			} else {
-				ref.current.value = String(value ?? '')
-			}
+			ref.current.value = String(value ?? '')
 		}
 	}, [value])
 
 	useEffect(() => {
-		setValue(valueProps ?? null)
-	}, [valueProps])
-
-	useEffect(() => {
-		if (ref.current && valueProps === undefined) {
+		if (ref.current) {
 			setValue(Number(ref.current.value || ''))
 		}
 	}, [])
@@ -49,7 +41,7 @@ export const RangeInput = ({
 	return (
 		<div className={`range-input ${className ?? ''}`}>
 			<input
-				value={valueProps ?? value ?? undefined}
+				value={value ?? undefined}
 				ref={ref}
 				type="range"
 				min={min}
