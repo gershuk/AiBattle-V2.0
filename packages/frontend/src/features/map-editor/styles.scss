@@ -56,8 +56,9 @@
 			font-size: 12px;
 		}
 	}
-	.tile-editor {
+	.tile-map {
 		height: 100%;
+		width: 100%;
 		overflow: auto;
 		table,
 		th,
@@ -130,7 +131,7 @@
 	.tile-editor-wrapper {
 		height: 100%;
 		display: flex;
-		flex-flow: column;
+		gap: 32px;
 	}
 	.type-cell-wrapper {
 		display: flex;
@@ -170,5 +171,28 @@
 			top: 0;
 			left: 0;
 		}
+	}
+	.tile-editor-toolbar {
+		margin-bottom: 16px;
+		width: 300px;
+		min-width: 300px;
+		.tile-editor-toolbar-row {
+			& + & {
+				margin-top: 8px;
+			}
+		}
+	}
+	.tile-scale-wrapper {
+		display: flex;
+		align-items: center;
+		
+	}
+	.tile-scale-title {
+		font-size: 14px;
+		white-space: nowrap;
+		margin-right: 8px;
+	}
+	.type-cell-title {
+		font-size: 14px;
 	}
 }

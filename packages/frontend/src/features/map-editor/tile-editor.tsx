@@ -21,7 +21,7 @@ const codesImgMap = typeCells.reduce(
 )
 
 export const TileEditor = ({ mapData, onChange }: TileEditorProps) => {
-	const [cellSize, setCellSize] = useState(50)
+	const [cellSize, setCellSize] = useState(25)
 	const [visibleCode, setVisibleCode] = useState(false)
 	const [selectedCode, selectCode] = useState<null | number>(null)
 	const [visibleGrid, setVisibleGrid] = useState(false)
@@ -52,56 +52,61 @@ export const TileEditor = ({ mapData, onChange }: TileEditorProps) => {
 	}
 
 	const onMouseUpHandler = () => {
-		console.log('onMouseUpHandler')
 		setMouseDown(false)
 	}
 
 	return (
 		<div className={'tile-editor-wrapper'}>
 			<div className={'tile-editor-toolbar'}>
-				<div>
+				<div className={'tile-editor-toolbar-row tile-scale-wrapper'}>
+					<span className={'tile-scale-title'}>Размер тайла</span>
 					<RangeInput
 						min={1}
 						max={100}
-						initialValue={50}
+						initialValue={25}
 						step={1}
 						className={'tile-scale'}
 						onChange={setCellSize}
 					/>
 				</div>
-				<div>
+				<div className={'tile-editor-toolbar-row'}>
 					<Checkbox
 						label="Показать коды ячеек"
 						initialChecked={false}
 						onChange={setVisibleCode}
 					/>
 				</div>
-				<div>
+				<div className={'tile-editor-toolbar-row'}>
 					<Checkbox
 						label="Включить сетку"
 						initialChecked={false}
 						onChange={setVisibleGrid}
 					/>
 				</div>
-				<div className={'type-cell-wrapper'}>
-					{typeCells.map(({ code, uriImg }) => (
-						<div
-							className={clsx({
-								'type-cell': true,
-								active: code === selectedCode,
-							})}
-							onClick={() => selectCode(code === selectedCode ? null : code)}
-						>
-							<img src={uriImg} className={'type-cell-img'} />
-							{visibleCode ? (
-								<div className={'type-cell-code'}>{code}</div>
-							) : null}
-						</div>
-					))}
+				<div className={'tile-editor-toolbar-row'}>
+					<span className={'type-cell-title'}>
+						Выберите активный тайл для рисования:
+					</span>
+					<div className={'type-cell-wrapper'}>
+						{typeCells.map(({ code, uriImg }) => (
+							<div
+								className={clsx({
+									'type-cell': true,
+									active: code === selectedCode,
+								})}
+								onClick={() => selectCode(code === selectedCode ? null : code)}
+							>
+								<img src={uriImg} className={'type-cell-img'} />
+								{visibleCode ? (
+									<div className={'type-cell-code'}>{code}</div>
+								) : null}
+							</div>
+						))}
+					</div>
 				</div>
 			</div>
 			<div
-				className={clsx({ 'tile-editor': true, 'visible-grid': visibleGrid })}
+				className={clsx({ 'tile-map': true, 'visible-grid': visibleGrid })}
 			>
 				<table>
 					{mapData.map.map((row, i) => (
