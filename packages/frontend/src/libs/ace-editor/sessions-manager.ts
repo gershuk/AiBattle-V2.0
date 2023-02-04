@@ -16,8 +16,8 @@ export const createSessionsManager = ({
 	const addSession = createEvent<SessionItem | SessionItem[]>()
 	const removeSession = createEvent<string | string[]>()
 
-	$sessions.on(addSession, (sessions, undoName) => {
-		const array = Array.isArray(undoName) ? undoName : [undoName]
+	$sessions.on(addSession, (sessions, nweSession) => {
+		const array = Array.isArray(nweSession) ? nweSession : [nweSession]
 		const newSessions = array.reduce((acc, { name, value }) => {
 			//@ts-expect-error
 			const session = createEditSession(value || '', mode)
@@ -31,8 +31,8 @@ export const createSessionsManager = ({
 		return { ...sessions, ...newSessions }
 	})
 
-	$sessions.on(removeSession, (sessions, undoName) => {
-		const array = Array.isArray(undoName) ? undoName : [undoName]
+	$sessions.on(removeSession, (sessions, removeSession) => {
+		const array = Array.isArray(removeSession) ? removeSession : [removeSession]
 		const newSessions = { ...sessions }
 		array.forEach(undoName => {
 			if (undoName in newSessions) {
