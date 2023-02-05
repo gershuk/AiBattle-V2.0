@@ -18,8 +18,8 @@ export const useKeyboard = ({
 	dependencies,
 }: UseKeyboardParams) => {
 	const handlerKeyboard = useCallback((e: KeyboardEvent) => {
-		e.preventDefault()
 		if (guard({ key: e.key, ctrlKey: e.ctrlKey, event: e })) {
+			e.preventDefault()
 			fn()
 		}
 	}, dependencies ?? [guard, fn])

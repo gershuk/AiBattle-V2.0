@@ -12,7 +12,9 @@ import {
 	selectedActiveCode,
 	toggleVisibleCode,
 	toggleVisibleGrid,
-} from './model'
+} from '../model'
+import { ListSpawns, ListSpawnsProps } from './list-spawns'
+import './styles.scss'
 
 interface TileEditorProps {
 	mapData: MapData
@@ -61,14 +63,14 @@ export const TileEditor = ({
 		guard: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 'z',
 		fn: onUndo,
 		targetElement: htmlRef,
-		dependencies: [onUndo],
+		dependencies: [onUndo, htmlRef],
 	})
 
 	useKeyboard({
 		guard: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 's',
 		fn: () => onSave(mapDataToString(mapData)),
 		targetElement: htmlRef,
-		dependencies: [onSave],
+		dependencies: [onSave, htmlRef],
 	})
 
 	const changeMap = useCallback(
@@ -80,21 +82,27 @@ export const TileEditor = ({
 		[onChange, mapData]
 	)
 
-	const onMouseDownHandler = (params: { i: number; j: number }) => {
+	const changeSpawn: ListSpawnsProps['onChangeSpawn'] = spawns => {
+		const cloneMapData = deepCopyJson(mapData)
+		cloneMapData.spawns = spawns
+		onChange(mapDataToString(cloneMapData))
+	}
+
+	const onStartDraw = (params: { i: number; j: number }) => {
 		if (activeCode !== null) {
 			setMouseDown(true)
 			changeMap({ ...params, code: activeCode })
 		}
 	}
 
-	const onMouseEnterHandler = (params: { i: number; j: number }) => {
+	const onDraw = (params: { i: number; j: number }) => {
 		if (activeCode !== null && mouseDown) {
 			setMouseDown(true)
 			changeMap({ ...params, code: activeCode })
 		}
 	}
 
-	const onMouseUpHandler = () => {
+	const onStopDraw = () => {
 		setMouseDown(false)
 	}
 
@@ -173,9 +181,17 @@ export const TileEditor = ({
 							</div>
 						))}
 					</div>
+					<ListSpawns
+						spawns={mapData.spawns}
+						classNameWrapper={'tile-editor-toolbar-row'}
+						onChangeSpawn={changeSpawn}
+					/>
 				</div>
 			</div>
-			<div className={clsx({ 'tile-map': true, 'visible-grid': visibleGrid })}>
+			<div
+				className={clsx({ 'tile-map': true, 'visible-grid': visibleGrid })}
+				onMouseLeave={onStopDraw}
+			>
 				<table>
 					{mapData.map.map((row, i) => (
 						<tr>
@@ -187,9 +203,9 @@ export const TileEditor = ({
 										height: cellSize,
 										minWidth: cellSize,
 									}}
-									onMouseDown={() => onMouseDownHandler({ i, j })}
-									onMouseUp={onMouseUpHandler}
-									onMouseEnter={() => onMouseEnterHandler({ i, j })}
+									onMouseDown={() => onStartDraw({ i, j })}
+									onMouseUp={onStopDraw}
+									onMouseEnter={() => onDraw({ i, j })}
 									title={`i: ${i}; j: ${j}; code: ${code}`}
 								>
 									<span

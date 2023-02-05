@@ -32,11 +32,11 @@ export const InputNumber = ({
 	const ref = useRef<HTMLInputElement | null>(null)
 
 	useEffect(() => {
-		setValue(valueProps ?? '')
+		if (typeof valueProps === 'number') setValue(valueProps ?? '')
 	}, [valueProps])
 
 	useEffect(() => {
-		setValue(initValue ?? '')
+		if (typeof initValue === 'number') setValue(initValue ?? '')
 	}, [])
 
 	const handlerChange = (_value: string) => {
@@ -58,7 +58,7 @@ export const InputNumber = ({
 				ref={ref}
 				className={'input-field'}
 				onChange={e => handlerChange(e.currentTarget.value)}
-				value={String(valueProps ?? value)}
+				value={String(value)}
 				{...props}
 			/>
 		</div>
