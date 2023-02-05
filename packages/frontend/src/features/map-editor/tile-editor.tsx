@@ -12,7 +12,7 @@ import {
 	selectedActiveCode,
 	toggleVisibleCode,
 	toggleVisibleGrid,
-} from './model/tile-editor'
+} from './model'
 
 interface TileEditorProps {
 	mapData: MapData

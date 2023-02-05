@@ -3,7 +3,7 @@ import { useUnit } from 'effector-react'
 import { MapData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor, SplitPanel } from 'ui'
-import { $mapsWithCache, $sessions, changedMap } from './model/data'
+import { $mapsWithCache, $sessions, changedMap } from './model'
 import './styles.scss'
 import { TileEditor } from './tile-editor'
 
