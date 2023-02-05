@@ -37,6 +37,11 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 		window.dispatchEvent(new Event('resize'))
 	}
 
+	const undoManager = useMemo(() => {
+		if (activeSession) return activeSession.getUndoManager()
+		return undefined
+	}, [activeSession])
+
 	if (!selectMap) return null
 	return (
 		<SplitPanel
@@ -69,13 +74,15 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 						<TileEditor
 							mapData={selectMap.cacheMapData as MapData}
 							onChange={value => activeSession.doc.setValue(value)}
-							onUndo={() => activeSession.getUndoManager().undo(activeSession)}
+							onUndo={() => undoManager!.undo(activeSession)}
+							onRedo={() => undoManager!.redo(activeSession)}
 							onSave={value => {
 								activeSession.doc.setValue(value)
 								onSave?.(value)
 							}}
 							modify={selectMap.modify}
-							canUndo={activeSession.getUndoManager().canUndo()}
+							canUndo={undoManager!.canUndo()}
+							canRedo={undoManager!.canRedo()}
 						/>
 					) : null}
 				</div>
