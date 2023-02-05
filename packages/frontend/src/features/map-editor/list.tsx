@@ -7,7 +7,7 @@ import {
 	createdFile,
 	removedFileMap,
 	uploadedFile,
-} from './model'
+} from './model/data'
 import './styles.scss'
 
 interface MapsListProps {

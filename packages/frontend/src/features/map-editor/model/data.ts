@@ -23,7 +23,7 @@ const $mapsWithCache = combine($dataMaps, $cacheSave, (maps, cashed) => {
 			const modifyJsonValid = jsonIsValid(cashed[code.name])
 			const parseCache = modifyJsonValid ? JSON.parse(cashed[code.name]) : null
 			const modifyValidDataMap = modifyJsonValid ? isMapData(parseCache) : false
-			const cacheMapData = modifyValidDataMap ? (parseCache) as MapData : null
+			const cacheMapData = modifyValidDataMap ? (parseCache as MapData) : null
 			return {
 				...code,
 				cache: cashed[code.name],
@@ -111,7 +111,7 @@ sample({
 	target: removeSession,
 })
 
-//TODO: сделать нормальные коды ошибок и их обработки
+//TODO: сделать нормальную обработку ошибок и их обработки
 loadedMapFx.failData.watch(e => {
 	if (e?.message !== 'cancel-user') alert(e)
 })

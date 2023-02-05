@@ -4,7 +4,7 @@ import './styles.scss'
 
 interface ButtonProps {
 	onClick?: () => void
-	children: string | number
+	children: string | number | JSXInternal.Element
 	className?: string
 	color?: 'primary' | 'warning' | 'danger'
 	disabled?: boolean

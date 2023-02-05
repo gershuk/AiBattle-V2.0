@@ -3,7 +3,7 @@ import { useUnit } from 'effector-react'
 import { MapData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor, SplitPanel } from 'ui'
-import { $mapsWithCache, $sessions, changedMap } from './model'
+import { $mapsWithCache, $sessions, changedMap } from './model/data'
 import './styles.scss'
 import { TileEditor } from './tile-editor'
 
@@ -68,10 +68,14 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 					) : activeSession ? (
 						<TileEditor
 							mapData={selectMap.cacheMapData as MapData}
-							onChange={value => {
-								console.log('value', value)
+							onChange={value => activeSession.doc.setValue(value)}
+							onUndo={() => activeSession.getUndoManager().undo(activeSession)}
+							onSave={value => {
 								activeSession.doc.setValue(value)
+								onSave?.(value)
 							}}
+							modify={selectMap.modify}
+							canUndo={activeSession.getUndoManager().canUndo()}
 						/>
 					) : null}
 				</div>
