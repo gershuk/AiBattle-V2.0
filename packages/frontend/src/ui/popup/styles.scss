@@ -1,0 +1,28 @@
+.popup-overlay {
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	position: fixed;
+	z-index: 100;
+	left: 0;
+	top: 0;
+	background: rgba(0, 0, 0, 0.3);
+}
+
+.popup-body {
+	min-width: 300px;
+	background: #f3f3f3;
+}
+
+.popup-footer {
+	display: flex;
+	gap: 8px;
+	justify-content: flex-end;
+	padding: 8px;
+}
+
+.popup-content {
+	padding: 8px;
+}

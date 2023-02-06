@@ -57,3 +57,16 @@
 		}
 	}
 }
+
+.create-map-popup {
+	font-size: 14px;
+	display: flex;
+	flex-flow: column;
+	gap: 8px;
+}
+
+.create-map-popup-item {
+	* + * {
+		margin-top: 4px;
+	}
+}

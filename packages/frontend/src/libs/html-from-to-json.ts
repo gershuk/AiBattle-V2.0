@@ -109,7 +109,6 @@ export const htmlFormToJson = <T extends { [k: string]: any }>(
 			}
 		}
 	})
-	console.log('fields', elements)
 
 	const values = fields.reduce((acc, field) => {
 		let value: any = field.srtValue

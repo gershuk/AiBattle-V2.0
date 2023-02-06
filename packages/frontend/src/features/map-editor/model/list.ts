@@ -5,7 +5,7 @@ import {
 	ReadFileError,
 } from 'api'
 import { attach, createEvent, sample } from 'effector'
-import { alertErrors } from 'libs'
+import { alertErrors, make2dArray } from 'libs'
 import {
 	$dataMaps,
 	$maps,
@@ -19,7 +19,11 @@ const errorReadStringFile = new Error('Невозможно преобразов
 const errorReadJson = new Error('Невалидный json')
 
 const uploadedFile = createEvent()
-const createdFile = createEvent<string>()
+const createdFile = createEvent<{
+	name: string
+	rows: number
+	columns: number
+}>()
 const removedFileMap = createEvent<string>()
 
 const loadMapFx = attach({
@@ -63,8 +67,11 @@ sample({
 sample({
 	source: $maps,
 	clock: createdFile,
-	filter: (maps, name) => !!name && !maps.find(code => code.name === name),
-	fn: (_, name) => ({ name, content: '{}' }),
+	filter: (maps, { name }) => !!name && !maps.find(code => code.name === name),
+	fn: (_, { name, rows, columns }) => ({
+		name,
+		content: JSON.stringify({ map: make2dArray(rows, columns, 0), spawns: [] }),
+	}),
 	target: addMap,
 })
 

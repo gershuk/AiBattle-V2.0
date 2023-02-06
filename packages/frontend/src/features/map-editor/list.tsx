@@ -1,6 +1,7 @@
 import { createAndDownloadFile } from 'api'
 import { useUnit } from 'effector-react'
-import { List, ListItem } from 'ui'
+import { htmlFormToJson } from 'libs'
+import { Input, InputNumber, List, ListItem, showPopup } from 'ui'
 import { AddIcon, UploadIcon } from './assets/icons'
 import {
 	$mapsWithCache,
@@ -27,11 +28,37 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 		}
 	}
 
-	const createCodeFile = () => {
-		const res = prompt('Введите название файла')
-		if (res?.trim()) {
-			createdFile(res.trim())
-		}
+	const createCodeFile = async () => {
+		const { status, htmlElement } = await showPopup({
+			content: (
+				<form className={'create-map-popup'}>
+					<div className={'create-map-popup-item'}>
+						<div>Имя файла</div>
+						<Input required name={'name'} />
+					</div>
+					<div className={'create-map-popup-item'}>
+						<div>Ширина карты</div>
+						<InputNumber required min={2} max={50} name={'rows'} />
+					</div>
+					<div className={'create-map-popup-item'}>
+						<div>Высота карты</div>
+						<InputNumber required min={2} max={50} name={'columns'} />
+					</div>
+				</form>
+			),
+			okButtonText: 'Ок',
+			cancelButtonText: 'Отмена',
+			okButtonClick: ({ htmlElement }) =>
+				htmlElement.querySelector('form')?.reportValidity(),
+		})
+		if (status !== 'ok') return
+		const form = htmlElement.querySelector('form')
+		const dataForm = htmlFormToJson<{
+			name: string
+			rows: number
+			columns: number
+		}>(form!)
+		createdFile(dataForm)
 	}
 
 	const handlerDeviceSave = (item: ListItem) => {

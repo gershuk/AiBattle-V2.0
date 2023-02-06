@@ -3,13 +3,13 @@ import { Game } from 'pages/game'
 import { SideBar } from 'features/side-bar'
 import { ControllerEditor } from 'pages/controller-editor'
 import { MapEditor } from 'pages/map-editor'
-import './styles.scss'
 import { Replays } from 'pages/replays'
 import {
 	$locationSearch,
 	readCodesFromLocalStorageFx,
 	readMapsFromLocalStorageFx,
 } from 'model'
+import './styles.scss'
 
 export const App = () => {
 	return (
