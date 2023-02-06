@@ -34,3 +34,164 @@
 		}
 	}
 }
+
+.tile-map {
+	height: 100%;
+	width: 100%;
+	overflow: auto;
+	table,
+	th,
+	td {
+		border-collapse: collapse;
+	}
+	&.visible-grid {
+		table,
+		th,
+		td {
+			border: 1px solid black;
+		}
+	}
+	.tile-editor-cell {
+		position: relative;
+		cursor: pointer;
+		&:before {
+			content: '';
+			position: absolute;
+			display: block;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100%;
+			background: transparent;
+			z-index: 2;
+		}
+
+		&:hover {
+			&:before {
+				background: rgba(0, 0, 0, 0.3);
+			}
+		}
+	}
+	.tile-editor-cell-content {
+		width: 100%;
+		height: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: absolute;
+		left: 0;
+		top: 0;
+		z-index: 1;
+		-webkit-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+		.tile-editor-cell-content-img {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+		}
+		.tile-editor-cell-content-code {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			background: rgba(255, 255, 255, 0.5);
+		}
+		.tile-editor-cell-content-man {
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+			position: absolute;
+		}
+	}
+}
+.tile-scale {
+	width: 100%;
+	.label {
+		width: 25px;
+	}
+}
+.tile-editor-wrapper {
+	height: 100%;
+	display: flex;
+	gap: 32px;
+}
+.type-cell-wrapper {
+	display: flex;
+	gap: 8px;
+}
+.type-cell {
+	width: 50px;
+	height: 50px;
+	position: relative;
+	cursor: pointer;
+	border: 4px solid transparent;
+
+	&.active {
+		border-color: rgb(0, 122, 204);
+	}
+
+	.type-cell-code {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		position: absolute;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		font-size: 24px;
+		background: rgba(255, 255, 255, 0.5);
+	}
+	.type-cell-img {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+	}
+	.type-cell-indicator {
+		position: absolute;
+		top: 0;
+		left: 0;
+	}
+}
+.tile-editor-toolbar {
+	margin-bottom: 16px;
+	width: 300px;
+	min-width: 300px;
+	.tile-editor-toolbar-row {
+		& + & {
+			margin-top: 8px;
+		}
+	}
+}
+.tile-scale-wrapper {
+	display: flex;
+	align-items: center;
+}
+.tile-scale-title {
+	font-size: 14px;
+	white-space: nowrap;
+	margin-right: 8px;
+}
+.type-cell-title {
+	font-size: 14px;
+}
+.tile-editor-toolbar-actions {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-bottom: 8px;
+
+	.button {
+		width: 24px;
+		height: 24px;
+		padding: 0;
+		svg {
+			width: 16px;
+			color: white;
+			fill: white;
+		}
+	}
+}

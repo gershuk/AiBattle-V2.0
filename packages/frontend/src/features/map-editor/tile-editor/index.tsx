@@ -2,6 +2,7 @@ import { useUnit } from 'effector-react'
 import { clsx, debounce, deepCopyJson, useKeyboard } from 'libs'
 import { MapData } from 'model'
 import { useCallback, useState } from 'preact/hooks'
+import { useMemo } from 'react'
 import { Button, Checkbox, RangeInput } from 'ui'
 import {
 	$activeCode,
@@ -105,6 +106,11 @@ export const TileEditor = ({
 	const onStopDraw = () => {
 		setMouseDown(false)
 	}
+
+	const spawns = useMemo(
+		() => mapData.spawns.map(({ x, y }) => `${y}-${x}`),
+		[mapData]
+	)
 
 	return (
 		<div
@@ -221,6 +227,12 @@ export const TileEditor = ({
 											src={codesImgMap[code]}
 											className={'tile-editor-cell-content-img'}
 										/>
+										{spawns.includes(`${i}-${j}`) ? (
+											<img
+												src={'./Resources/Man.png'}
+												className={'tile-editor-cell-content-man'}
+											/>
+										) : null}
 									</span>
 								</td>
 							))}
