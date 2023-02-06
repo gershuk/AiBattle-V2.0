@@ -1,5 +1,11 @@
-import { openFileExplorer, readFile } from 'api'
+import {
+	openFileExplorer,
+	OpenFileExplorerError,
+	readFile,
+	ReadFileError,
+} from 'api'
 import { attach, createEvent, sample } from 'effector'
+import { alertErrors } from 'libs'
 import {
 	$dataMaps,
 	$maps,
@@ -9,11 +15,14 @@ import {
 } from 'model'
 import { addSession, removeSession } from './session'
 
+const errorReadStringFile = new Error('Невозможно преобразовать файл в строку')
+const errorReadJson = new Error('Невалидный json')
+
 const uploadedFile = createEvent()
 const createdFile = createEvent<string>()
 const removedFileMap = createEvent<string>()
 
-const loadedMapFx = attach({
+const loadMapFx = attach({
 	source: $dataMaps,
 	effect: async maps => {
 		const file = await openFileExplorer({ accept: '.json' })
@@ -22,7 +31,7 @@ const loadedMapFx = attach({
 			try {
 				JSON.parse(content)
 			} catch (e) {
-				return Promise.reject(new Error('invalid json'))
+				return Promise.reject(errorReadJson)
 			}
 			const fileIsExits = !!maps[file.name]
 			if (fileIsExits)
@@ -32,17 +41,17 @@ const loadedMapFx = attach({
 				name: file.name,
 			}
 		}
-		return Promise.reject(new Error('не возможно преобразовать файл в строку'))
+		return Promise.reject(errorReadStringFile)
 	},
 })
 
 sample({
 	clock: uploadedFile,
-	target: loadedMapFx,
+	target: loadMapFx,
 })
 
 sample({
-	clock: loadedMapFx.doneData,
+	clock: loadMapFx.doneData,
 	target: addMap,
 })
 
@@ -70,8 +79,27 @@ sample({
 	target: removeSession,
 })
 
-loadedMapFx.failData.watch(e => {
-	if (e?.message !== 'cancel-user') alert(e)
+alertErrors({
+	fxs: [loadMapFx],
+	errorList: [
+		{
+			guard: error => error instanceof OpenFileExplorerError,
+			ignore: true,
+		},
+		{
+			guard: error => error instanceof ReadFileError,
+			msg: 'Произошла ошибка при чтении файла',
+		},
+		{
+			guard: error => error === errorReadStringFile,
+			msg: errorReadStringFile.message,
+		},
+		{
+			guard: error => error === errorReadJson,
+			msg: errorReadJson.message,
+		},
+	],
+	defaultMessage: 'Произошла ошибка',
 })
 
 export { uploadedFile, removedFileMap, createdFile }
