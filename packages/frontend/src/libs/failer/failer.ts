@@ -29,7 +29,6 @@ export const alertErrors = (config: {
 	fxs.forEach(fx => {
 		fx.failData.watch(error => {
 			const findError = errorList.find(({ guard }) => guard(error))
-			console.warn('findError', findError)
 			if (findError) {
 				if (isIgnoreError(findError)) return
 				else if (isDisplayedError(findError)) {
