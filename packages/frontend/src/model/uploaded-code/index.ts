@@ -5,7 +5,6 @@ import {
 	createStore,
 	sample,
 } from 'effector'
-import { jsIsValid } from 'libs'
 
 export interface UploadedCode {
 	name: string
@@ -19,13 +18,11 @@ const $codesData = $codes.map(codes =>
 		[k: string]: {
 			name: string
 			content: string
-			valid: boolean
 		}
 	}>((acc, { name, content }) => {
 		return {
 			...acc,
 			[name]: {
-				valid: jsIsValid(content),
 				name,
 				content,
 			},

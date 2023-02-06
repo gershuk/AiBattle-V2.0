@@ -23,9 +23,10 @@ export const BotsSetting = () => {
 	})
 
 	const listCodes = useMemo(() => {
-		return Object.values(codesData)
-			.filter(({ valid }) => valid)
-			.map(({ name }) => ({ id: name, text: name }))
+		return Object.values(codesData).map(({ name }) => ({
+			id: name,
+			text: name,
+		}))
 	}, [codesData])
 
 	return (

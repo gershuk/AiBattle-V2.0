@@ -13,33 +13,35 @@ const { $sessions, addSession, removeSession } = createSessionsManager({
 	mode: 'ace/mode/javascript',
 })
 
-const $cacheSave = createStore<{ [k: string]: string }>({})
+const $editorTexts = createStore<{ [fileName: string]: string }>({})
 
-const $codesWithCache = combine($codesData, $cacheSave, (codes, cashed) => {
-	return Object.values(codes).map(code => ({
-		...code,
-		cache: code.name in cashed ? cashed[code.name] : null,
-		modify: code.name in cashed && cashed[code.name] !== code.content,
-	}))
-})
+//TODO: ПЛОХА бижим по всем файлам
+const $codesWithCache = combine(
+	$codesData,
+	$editorTexts,
+	(codes, editorTexts) => {
+		return Object.values(codes).map(code => ({
+			...code,
+			cache: code.name in editorTexts ? editorTexts[code.name] : null,
+			modify:
+				code.name in editorTexts && editorTexts[code.name] !== code.content,
+		}))
+	}
+)
 
 const uploadedFileCode = createEvent()
 const createdFileCode = createEvent<string>()
 const removedFileCode = createEvent<string>()
 const changedCode = createEvent<{ name: string; content: string }>()
 
-const loadedScriptFx = attach({
+const loadScriptFx = attach({
 	source: $codes,
 	effect: async codes => {
 		const file = await openFileExplorer({ accept: '.js' })
 		const content = await readFile(file)
 		if (typeof content === 'string') {
-			try {
-				eval('function f () {' + content + '}')
-			} catch (e) {
-				return Promise.reject(new Error('invalid js'))
-			}
 			const fileIsExits = !!codes.find(code => code.name === file.name)
+			//TODO:
 			if (fileIsExits)
 				return Promise.reject(new Error('Файл с таким именем уже загружен'))
 			return {
@@ -51,18 +53,18 @@ const loadedScriptFx = attach({
 	},
 })
 
-$cacheSave.on(changedCode, (cache, { name, content }) => ({
+$editorTexts.on(changedCode, (cache, { name, content }) => ({
 	...cache,
 	[name]: content,
 }))
 
 sample({
 	clock: uploadedFileCode,
-	target: loadedScriptFx,
+	target: loadScriptFx,
 })
 
 sample({
-	clock: loadedScriptFx.doneData,
+	clock: loadScriptFx.doneData,
 	target: addCode,
 })
 
@@ -93,7 +95,7 @@ sample({
 })
 
 //TODO: сделать нормальные коды ошибок и их обработки
-loadedScriptFx.failData.watch(e => {
+loadScriptFx.failData.watch(e => {
 	if (e?.message !== 'cancel-user') alert(e)
 })
 
