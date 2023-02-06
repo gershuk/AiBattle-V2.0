@@ -6,7 +6,7 @@ import {
 	sample,
 } from 'effector'
 import { MapData } from './type'
-import { jsonIsValid } from 'libs'
+import { stringToJson } from 'libs'
 import { isMapData } from './type.guard'
 
 const $maps = createStore<{ content: string; name: string }[]>([])
@@ -23,7 +23,7 @@ const $dataMaps = $maps.map(maps =>
 		}
 	}>((acc, { content, name }) => {
 		const { status: validJson, parsedJson: jsonParseResult } =
-			jsonIsValid(content)
+			stringToJson(content)
 		const validDataMap = validJson ? isMapData(jsonParseResult) : false
 		return {
 			...acc,

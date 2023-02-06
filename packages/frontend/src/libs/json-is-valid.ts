@@ -1,4 +1,4 @@
-export const jsonIsValid = (data: string) => {
+export const stringToJson = (data: string) => {
 	try {
 		JSON.parse(data)
 		return { status: true, parsedJson: JSON.parse(data) }

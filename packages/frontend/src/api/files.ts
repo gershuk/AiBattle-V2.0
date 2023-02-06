@@ -1,3 +1,18 @@
+export class ReadFileError extends Error {
+	constructor(message: string) {
+		super(message)
+
+		Object.setPrototypeOf(this, ReadFileError.prototype)
+	}
+}
+export class OpenFileExplorerError extends Error {
+	constructor(message: string) {
+		super(message)
+
+		Object.setPrototypeOf(this, OpenFileExplorerError.prototype)
+	}
+}
+
 export const readFile = (file: File) => {
 	return new Promise<string | ArrayBuffer>((resolve, reject) => {
 		var reader = new FileReader()
@@ -6,9 +21,12 @@ export const readFile = (file: File) => {
 				const content = readerEvent?.target?.result || ''
 				resolve(content)
 			}
+			reader.onerror = () => {
+				reject(new ReadFileError('read-error'))
+			}
 			reader.readAsText(file, 'UTF-8')
 		} catch (error) {
-			reject(new Error('read-error'))
+			reject(new ReadFileError('read-error'))
 		}
 	})
 }
@@ -30,7 +48,7 @@ export const openFileExplorer = <T extends boolean = false>({
 		input.onchange = () => {
 			lock = true
 			const files = Array.from(input.files as FileList)
-			if (!files.length) reject(new Error('cancel-user'))
+			if (!files.length) reject(new OpenFileExplorerError('cancel-user'))
 			const file = files[0]
 			resolve((multiple ? files : file) as PromiseType)
 		}
@@ -39,7 +57,7 @@ export const openFileExplorer = <T extends boolean = false>({
 			() => {
 				setTimeout(() => {
 					if (!lock) {
-						reject(new Error('cancel-user'))
+						reject(new OpenFileExplorerError('cancel-user'))
 					}
 				}, 300)
 			},

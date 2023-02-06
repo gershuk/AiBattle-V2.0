@@ -1,12 +1,12 @@
 import { combine, createEvent, createStore } from 'effector'
 import { $dataMaps, isMapData, MapData } from 'model'
-import { jsonIsValid } from 'libs'
+import { stringToJson } from 'libs'
 
 const $editorTexts = createStore<{ [k: string]: string }>({})
 const $mapsWithCache = combine($dataMaps, $editorTexts, (maps, editorTexts) => {
 	return Object.values(maps).map(code => {
 		if (code.name in editorTexts) {
-			const { status: modifyJsonValid, parsedJson: parseCache } = jsonIsValid(
+			const { status: modifyJsonValid, parsedJson: parseCache } = stringToJson(
 				editorTexts[code.name]
 			)
 			const modifyValidDataMap = modifyJsonValid ? isMapData(parseCache) : false

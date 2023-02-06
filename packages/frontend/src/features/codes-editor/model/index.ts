@@ -6,8 +6,16 @@ import {
 	$codesData,
 	readCodesFromLocalStorageFx,
 } from 'model'
-import { openFileExplorer, readFile } from 'api'
+import {
+	openFileExplorer,
+	OpenFileExplorerError,
+	readFile,
+	ReadFileError,
+} from 'api'
 import { createSessionsManager } from 'libs/ace-editor'
+import { alertErrors } from 'libs/failer/failer'
+
+const errorReadStringFile = new Error('Невозможно преобразовать файл в строку')
 
 const { $sessions, addSession, removeSession } = createSessionsManager({
 	mode: 'ace/mode/javascript',
@@ -39,16 +47,16 @@ const loadScriptFx = attach({
 		const file = await openFileExplorer({ accept: '.js' })
 		const content = await readFile(file)
 		if (typeof content === 'string') {
-			const fileIsExits = !!codes.find(code => code.name === file.name)
+			const fileExits = !!codes.find(code => code.name === file.name)
 			//TODO: убрать запрещение загружать файл с таким файлом
-			if (fileIsExits)
+			if (fileExits)
 				return Promise.reject(new Error('Файл с таким именем уже загружен'))
 			return {
 				content,
 				name: file.name,
 			}
 		}
-		return Promise.reject(new Error('не возможно преобразовать файл в строку'))
+		return Promise.reject(errorReadStringFile)
 	},
 })
 
@@ -93,9 +101,23 @@ sample({
 	target: removeSession,
 })
 
-//TODO: сделать нормальные коды ошибок и их обработки
-loadScriptFx.failData.watch(e => {
-	if (e?.message !== 'cancel-user') alert(e)
+alertErrors({
+	fxs: [loadScriptFx],
+	errorList: [
+		{
+			guard: error => error instanceof OpenFileExplorerError,
+			ignore: true,
+		},
+		{
+			guard: error => error instanceof ReadFileError,
+			msg: 'Произошла ошибка при чтении файла',
+		},
+		{
+			guard: error => error === errorReadStringFile,
+			msg: errorReadStringFile.message,
+		},
+	],
+	defaultMessage: 'Произошла ошибка',
 })
 
 export {
