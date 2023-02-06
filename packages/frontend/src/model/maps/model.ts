@@ -6,19 +6,10 @@ import {
 	sample,
 } from 'effector'
 import { MapData } from './type'
-// import SIMPLE_MAP from './assets/simple_map.json'
-// import FOREST from './assets/forest.json'
-// import SHORT_MAZE from './assets/short_maze.json'
-// import KING_OF_THE_HILL from './assets/king_of_the_hill.json'
 import { jsonIsValid } from 'libs'
 import { isMapData } from './type.guard'
 
-const $maps = createStore<{ content: string; name: string }[]>([
-	// { content: JSON.stringify(SIMPLE_MAP), name: 'simple_map.json' },
-	// { content: JSON.stringify(FOREST), name: 'forest.json' },
-	// { content: JSON.stringify(SHORT_MAZE), name: 'short_maze.json' },
-	// { content: JSON.stringify(KING_OF_THE_HILL), name: 'king_of_the_hill.json' },
-])
+const $maps = createStore<{ content: string; name: string }[]>([])
 
 const $dataMaps = $maps.map(maps =>
 	maps.reduce<{
@@ -31,8 +22,8 @@ const $dataMaps = $maps.map(maps =>
 			content: string
 		}
 	}>((acc, { content, name }) => {
-		const validJson = jsonIsValid(content)
-		const jsonParseResult = validJson ? JSON.parse(content) : null
+		const { status: validJson, parsedJson: jsonParseResult } =
+			jsonIsValid(content)
 		const validDataMap = validJson ? isMapData(jsonParseResult) : false
 		return {
 			...acc,

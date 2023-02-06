@@ -6,8 +6,9 @@ const $cacheSave = createStore<{ [k: string]: string }>({})
 const $mapsWithCache = combine($dataMaps, $cacheSave, (maps, cashed) => {
 	return Object.values(maps).map(code => {
 		if (code.name in cashed) {
-			const modifyJsonValid = jsonIsValid(cashed[code.name])
-			const parseCache = modifyJsonValid ? JSON.parse(cashed[code.name]) : null
+			const { status: modifyJsonValid, parsedJson: parseCache } = jsonIsValid(
+				cashed[code.name]
+			)
 			const modifyValidDataMap = modifyJsonValid ? isMapData(parseCache) : false
 			const cacheMapData = modifyValidDataMap ? (parseCache as MapData) : null
 			return {

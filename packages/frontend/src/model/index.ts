@@ -1,4 +1,4 @@
-export * from './uploaded-code'
+export * from './codes'
 export * from './history'
-export * from './uploaded-maps'
+export * from './maps'
 export * from './replays'

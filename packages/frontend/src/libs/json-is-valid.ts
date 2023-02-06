@@ -1,8 +1,8 @@
 export const jsonIsValid = (data: string) => {
 	try {
 		JSON.parse(data)
-		return true
+		return { status: true, parsedJson: JSON.parse(data) }
 	} catch (_) {
-		return false
+		return { status: false }
 	}
 }
