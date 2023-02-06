@@ -22,8 +22,7 @@ const $codesWithCache = combine(
 	(codes, editorTexts) => {
 		return Object.values(codes).map(code => ({
 			...code,
-			cache: code.name in editorTexts ? editorTexts[code.name] : null,
-			modify:
+			modified:
 				code.name in editorTexts && editorTexts[code.name] !== code.content,
 		}))
 	}
@@ -41,7 +40,7 @@ const loadScriptFx = attach({
 		const content = await readFile(file)
 		if (typeof content === 'string') {
 			const fileIsExits = !!codes.find(code => code.name === file.name)
-			//TODO:
+			//TODO: убрать запрещение загружать файл с таким файлом
 			if (fileIsExits)
 				return Promise.reject(new Error('Файл с таким именем уже загружен'))
 			return {

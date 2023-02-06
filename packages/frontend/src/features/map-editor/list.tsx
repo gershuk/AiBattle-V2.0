@@ -58,7 +58,7 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 				</div>
 			</div>
 			<List
-				items={maps.map(({ name, valid, modify }) => ({
+				items={maps.map(({ name, valid, modified: modify }) => ({
 					htmlTitle: !valid ? 'invalid data' : undefined,
 					text: (
 						<span className={`maps-list-item ${modify ? 'modify' : ''}`}>

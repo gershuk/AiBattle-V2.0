@@ -59,10 +59,10 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 				</div>
 			</div>
 			<List
-				items={codes.map(({ name, modify }) => ({
+				items={codes.map(({ name, modified }) => ({
 					// htmlTitle: !valid ? 'invalid js' : undefined,
 					text: (
-						<span className={`codes-list-item ${modify ? 'modify' : ''}`}>
+						<span className={`codes-list-item ${modified ? 'modify' : ''}`}>
 							{/* {!valid ? <div className={'error-indicator'} /> : null} */}
 							{name}
 						</span>

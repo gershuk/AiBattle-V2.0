@@ -80,7 +80,7 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 								activeSession.doc.setValue(value)
 								onSave?.(value)
 							}}
-							modify={selectMap.modify}
+							modify={selectMap.modified}
 							canUndo={undoManager!.canUndo()}
 							canRedo={undoManager!.canRedo()}
 						/>

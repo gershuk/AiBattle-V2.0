@@ -2,19 +2,19 @@ import { combine, createEvent, createStore } from 'effector'
 import { $dataMaps, isMapData, MapData } from 'model'
 import { jsonIsValid } from 'libs'
 
-const $cacheSave = createStore<{ [k: string]: string }>({})
-const $mapsWithCache = combine($dataMaps, $cacheSave, (maps, cashed) => {
+const $editorTexts = createStore<{ [k: string]: string }>({})
+const $mapsWithCache = combine($dataMaps, $editorTexts, (maps, editorTexts) => {
 	return Object.values(maps).map(code => {
-		if (code.name in cashed) {
+		if (code.name in editorTexts) {
 			const { status: modifyJsonValid, parsedJson: parseCache } = jsonIsValid(
-				cashed[code.name]
+				editorTexts[code.name]
 			)
 			const modifyValidDataMap = modifyJsonValid ? isMapData(parseCache) : false
 			const cacheMapData = modifyValidDataMap ? (parseCache as MapData) : null
 			return {
 				...code,
-				cache: cashed[code.name],
-				modify: cashed[code.name] !== code.content,
+				cache: editorTexts[code.name],
+				modified: editorTexts[code.name] !== code.content,
 				modifyJsonValid,
 				modifyValidDataMap,
 				cacheMapData: cacheMapData,
@@ -23,7 +23,7 @@ const $mapsWithCache = combine($dataMaps, $cacheSave, (maps, cashed) => {
 		return {
 			...code,
 			cache: null,
-			modify: false,
+			modified: false,
 			modifyJsonValid: code.validJson,
 			modifyValidDataMap: code.validDataMap,
 			cacheMapData: code.data,
@@ -33,7 +33,7 @@ const $mapsWithCache = combine($dataMaps, $cacheSave, (maps, cashed) => {
 
 const changedMap = createEvent<{ name: string; content: string }>()
 
-$cacheSave.on(changedMap, (cache, { name, content }) => ({
+$editorTexts.on(changedMap, (cache, { name, content }) => ({
 	...cache,
 	[name]: content,
 }))
