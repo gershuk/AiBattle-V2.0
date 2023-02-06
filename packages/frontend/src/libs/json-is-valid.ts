@@ -1,8 +1,8 @@
-export const stringToJson = (data: string) => {
+export const stringToJson = <T = any>(data: string) => {
 	try {
-		JSON.parse(data)
-		return { status: true, parsedJson: JSON.parse(data) }
+		const result = { status: true as const, parsedJson: JSON.parse(data) as T }
+		return result
 	} catch (_) {
-		return { status: false }
+		return { status: false as const, parsedJson: null }
 	}
 }

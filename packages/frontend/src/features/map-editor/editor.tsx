@@ -72,7 +72,7 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 						</div>
 					) : activeSession ? (
 						<TileEditor
-							mapData={selectMap.cacheMapData as MapData}
+							mapData={selectMap.textEditorMapData as MapData}
 							onChange={value => activeSession.doc.setValue(value)}
 							onUndo={() => undoManager!.undo(activeSession)}
 							onRedo={() => undoManager!.redo(activeSession)}

@@ -6,27 +6,28 @@ const $editorTexts = createStore<{ [k: string]: string }>({})
 const $mapsWithCache = combine($dataMaps, $editorTexts, (maps, editorTexts) => {
 	return Object.values(maps).map(code => {
 		if (code.name in editorTexts) {
-			const { status: modifyJsonValid, parsedJson: parseCache } = stringToJson(
-				editorTexts[code.name]
-			)
-			const modifyValidDataMap = modifyJsonValid ? isMapData(parseCache) : false
-			const cacheMapData = modifyValidDataMap ? (parseCache as MapData) : null
+			const { status: modifyJsonValid, parsedJson: parseTextEditor } =
+				stringToJson(editorTexts[code.name])
+			const modifyValidDataMap = modifyJsonValid
+				? isMapData(parseTextEditor)
+				: false
+			const cacheMapData = modifyValidDataMap
+				? (parseTextEditor as MapData)
+				: null
 			return {
 				...code,
-				cache: editorTexts[code.name],
 				modified: editorTexts[code.name] !== code.content,
 				modifyJsonValid,
 				modifyValidDataMap,
-				cacheMapData: cacheMapData,
+				textEditorMapData: cacheMapData,
 			}
 		}
 		return {
 			...code,
-			cache: null,
 			modified: false,
 			modifyJsonValid: code.validJson,
 			modifyValidDataMap: code.validDataMap,
-			cacheMapData: code.data,
+			textEditorMapData: code.data,
 		}
 	})
 })
