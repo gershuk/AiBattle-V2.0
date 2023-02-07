@@ -1,4 +1,5 @@
 import { Effect } from 'effector'
+import { showMessage } from 'ui'
 import { ErrorItem, isDisplayedError, isIgnoreError } from './type'
 
 // export interface FailedList<T = any> {
@@ -32,10 +33,16 @@ export const alertErrors = (config: {
 			if (findError) {
 				if (isIgnoreError(findError)) return
 				else if (isDisplayedError(findError)) {
-					alert(findError.msg)
+					showMessage({
+						content: findError.msg,
+						okButtonText: 'Ок',
+					})
 				}
 			} else if (defaultMessage) {
-				alert(defaultMessage)
+				showMessage({
+					content: defaultMessage,
+					okButtonText: 'Ок',
+				})
 			}
 		})
 	})

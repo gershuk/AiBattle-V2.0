@@ -9,7 +9,7 @@ import { UploadedCode } from '../../model'
 import { AddIcon, UploadIcon } from './assets/icons'
 import { createAndDownloadFile } from '../../api'
 import './styles.scss'
-import { Input, List, ListItem, showPopup } from 'ui'
+import { Input, List, ListItem, showConfirm } from 'ui'
 import { htmlFormToJson } from 'libs'
 
 export interface LoaderScriptProps {
@@ -21,7 +21,7 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 	const codes = useUnit($codesWithCache)
 
 	const createCodeFile = async () => {
-		const { status, htmlElement } = await showPopup({
+		const { status, htmlElement } = await showConfirm({
 			title: 'Создать скрипт',
 			content: (
 				<form className={'create-map-popup'}>

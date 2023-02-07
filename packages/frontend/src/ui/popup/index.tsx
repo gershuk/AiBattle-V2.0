@@ -3,7 +3,22 @@ import { Button } from 'ui/button'
 import { createRef, RefObject, render } from 'preact'
 import './styles.scss'
 
-export const showPopup = ({
+const createPopup = () => {
+	const rootNode = document.querySelector('#popups')!
+	const popupContainer = document.createElement('div')
+	rootNode.appendChild(popupContainer)
+	return {
+		open: (element: JSXInternal.Element) => {
+			render(element, popupContainer)
+		},
+		close: () => {
+			render(null, popupContainer)
+			popupContainer.remove()
+		},
+	}
+}
+
+export const showConfirm = ({
 	content,
 	okButtonText,
 	cancelButtonText,
@@ -11,7 +26,7 @@ export const showPopup = ({
 	cancelButtonClick,
 	title,
 }: {
-	content: JSXInternal.Element
+	content: JSXInternal.Element | string
 	okButtonText: string
 	cancelButtonText: string
 	okButtonClick?: (data: { htmlElement: HTMLDivElement }) => boolean | void
@@ -20,16 +35,8 @@ export const showPopup = ({
 }) => {
 	return new Promise<{ status: 'ok' | 'cancel'; htmlElement: HTMLDivElement }>(
 		resolve => {
-			const rootNode = document.querySelector('#popups')!
-			const popupContainer = document.createElement('div')
-			rootNode.appendChild(popupContainer)
-
+			const { open, close } = createPopup()
 			const ref = createRef<HTMLDivElement>()
-
-			const closePopup = () => {
-				render(null, popupContainer)
-				popupContainer.remove()
-			}
 
 			const okButtonClickHandler = () => {
 				if (okButtonClick?.({ htmlElement: ref.current! }) === false) return
@@ -37,7 +44,7 @@ export const showPopup = ({
 					status: 'ok',
 					htmlElement: ref.current!,
 				})
-				closePopup()
+				close()
 			}
 
 			const cancelButtonClickHandler = () => {
@@ -46,21 +53,64 @@ export const showPopup = ({
 					status: 'cancel',
 					htmlElement: ref.current!,
 				})
-				closePopup()
+				close()
 			}
 
-			render(
+			open(
 				<PopupComponent
-					okButtonText={okButtonText}
-					cancelButtonText={cancelButtonText}
-					okButtonClick={okButtonClickHandler}
-					cancelButtonClick={cancelButtonClickHandler}
 					htmlRef={ref}
 					title={title}
+					footerContent={
+						<>
+							<Button color="danger" onClick={cancelButtonClickHandler}>
+								{cancelButtonText}
+							</Button>
+							<Button onClick={okButtonClickHandler}>{okButtonText}</Button>
+						</>
+					}
 				>
-					{content}
-				</PopupComponent>,
-				popupContainer
+					<>{content}</>
+				</PopupComponent>
+			)
+		}
+	)
+}
+
+export const showMessage = ({
+	content,
+	okButtonText,
+	okButtonClick,
+	title,
+}: {
+	content: JSXInternal.Element | string
+	okButtonText: string
+	okButtonClick?: (data: { htmlElement: HTMLDivElement }) => boolean | void
+	title?: string
+}) => {
+	return new Promise<{ status: 'ok' | 'cancel'; htmlElement: HTMLDivElement }>(
+		resolve => {
+			const { open, close } = createPopup()
+			const ref = createRef<HTMLDivElement>()
+
+			const okButtonClickHandler = () => {
+				if (okButtonClick?.({ htmlElement: ref.current! }) === false) return
+				resolve({
+					status: 'ok',
+					htmlElement: ref.current!,
+				})
+				close()
+			}
+
+			open(
+				<PopupComponent
+					htmlRef={ref}
+					title={title}
+					footerContent={
+						<Button onClick={okButtonClickHandler}>{okButtonText}</Button>
+					}
+				>
+					<>{content}</>
+				</PopupComponent>
 			)
 		}
 	)
@@ -68,34 +118,25 @@ export const showPopup = ({
 
 export interface PopupComponentProps {
 	children: JSXInternal.Element
-	okButtonText: string
-	cancelButtonText: string
-	okButtonClick: () => void
-	cancelButtonClick: () => void
 	htmlRef?: RefObject<HTMLDivElement>
 	title?: string
+	footerContent?: JSXInternal.Element
 }
 
 export const PopupComponent = ({
 	children,
-	okButtonText,
-	cancelButtonText,
-	okButtonClick,
-	cancelButtonClick,
 	htmlRef,
 	title,
+	footerContent,
 }: PopupComponentProps) => {
 	return (
 		<div ref={htmlRef} className={'popup-overlay'}>
 			<div className={'popup-body'}>
 				{title ? <div className={'popup-header'}>{title}</div> : null}
 				<div className={'popup-content'}>{children}</div>
-				<div className={'popup-footer'}>
-					<Button color="danger" onClick={cancelButtonClick}>
-						{cancelButtonText}
-					</Button>
-					<Button onClick={okButtonClick}>{okButtonText}</Button>
-				</div>
+				{footerContent ? (
+					<div className={'popup-footer'}>{footerContent}</div>
+				) : null}
 			</div>
 		</div>
 	)

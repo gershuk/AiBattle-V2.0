@@ -1,7 +1,7 @@
 import { createAndDownloadFile } from 'api'
 import { useUnit } from 'effector-react'
 import { htmlFormToJson } from 'libs'
-import { Input, InputNumber, List, ListItem, showPopup } from 'ui'
+import { Input, InputNumber, List, ListItem, showConfirm } from 'ui'
 import { AddIcon, UploadIcon } from './assets/icons'
 import {
 	$mapsWithCache,
@@ -29,7 +29,7 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 	}
 
 	const createCodeFile = async () => {
-		const { status, htmlElement } = await showPopup({
+		const { status, htmlElement } = await showConfirm({
 			title: 'Создать карту',
 			content: (
 				<form className={'create-map-popup'}>
