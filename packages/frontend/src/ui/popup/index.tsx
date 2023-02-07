@@ -9,17 +9,27 @@ export const showPopup = ({
 	cancelButtonText,
 	okButtonClick,
 	cancelButtonClick,
+	title,
 }: {
 	content: JSXInternal.Element
 	okButtonText: string
 	cancelButtonText: string
 	okButtonClick?: (data: { htmlElement: HTMLDivElement }) => boolean | void
 	cancelButtonClick?: (data: { htmlElement: HTMLDivElement }) => boolean | void
+	title?: string
 }) => {
 	return new Promise<{ status: 'ok' | 'cancel'; htmlElement: HTMLDivElement }>(
 		resolve => {
-			const ref = createRef<HTMLDivElement>()
 			const rootNode = document.querySelector('#popups')!
+			const popupContainer = document.createElement('div')
+			rootNode.appendChild(popupContainer)
+
+			const ref = createRef<HTMLDivElement>()
+
+			const closePopup = () => {
+				render(null, popupContainer)
+				popupContainer.remove()
+			}
 
 			const okButtonClickHandler = () => {
 				if (okButtonClick?.({ htmlElement: ref.current! }) === false) return
@@ -27,7 +37,7 @@ export const showPopup = ({
 					status: 'ok',
 					htmlElement: ref.current!,
 				})
-				render(null, rootNode)
+				closePopup()
 			}
 
 			const cancelButtonClickHandler = () => {
@@ -36,7 +46,7 @@ export const showPopup = ({
 					status: 'cancel',
 					htmlElement: ref.current!,
 				})
-				render(null, rootNode)
+				closePopup()
 			}
 
 			render(
@@ -46,10 +56,11 @@ export const showPopup = ({
 					okButtonClick={okButtonClickHandler}
 					cancelButtonClick={cancelButtonClickHandler}
 					htmlRef={ref}
+					title={title}
 				>
 					{content}
 				</PopupComponent>,
-				rootNode
+				popupContainer
 			)
 		}
 	)
@@ -62,6 +73,7 @@ export interface PopupComponentProps {
 	okButtonClick: () => void
 	cancelButtonClick: () => void
 	htmlRef?: RefObject<HTMLDivElement>
+	title?: string
 }
 
 export const PopupComponent = ({
@@ -71,10 +83,12 @@ export const PopupComponent = ({
 	okButtonClick,
 	cancelButtonClick,
 	htmlRef,
+	title,
 }: PopupComponentProps) => {
 	return (
 		<div ref={htmlRef} className={'popup-overlay'}>
 			<div className={'popup-body'}>
+				{title ? <div className={'popup-header'}>{title}</div> : null}
 				<div className={'popup-content'}>{children}</div>
 				<div className={'popup-footer'}>
 					<Button color="danger" onClick={cancelButtonClick}>

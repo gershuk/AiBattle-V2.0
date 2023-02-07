@@ -30,6 +30,7 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 
 	const createCodeFile = async () => {
 		const { status, htmlElement } = await showPopup({
+			title: 'Создать карту',
 			content: (
 				<form className={'create-map-popup'}>
 					<div className={'create-map-popup-item'}>
