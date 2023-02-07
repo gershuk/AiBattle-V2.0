@@ -9,7 +9,8 @@ import { UploadedCode } from '../../model'
 import { AddIcon, UploadIcon } from './assets/icons'
 import { createAndDownloadFile } from '../../api'
 import './styles.scss'
-import { List, ListItem } from 'ui'
+import { Input, List, ListItem, showPopup } from 'ui'
+import { htmlFormToJson } from 'libs'
 
 export interface LoaderScriptProps {
 	active?: string | null
@@ -19,11 +20,26 @@ export interface LoaderScriptProps {
 export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 	const codes = useUnit($codesWithCache)
 
-	const createCodeFile = () => {
-		const res = prompt('Введите название файла')
-		if (res?.trim()) {
-			createdFileCode(res.trim())
-		}
+	const createCodeFile = async () => {
+		const { status, htmlElement } = await showPopup({
+			title: 'Создать скрипт',
+			content: (
+				<form className={'create-map-popup'}>
+					<div className={'create-map-popup-item'}>
+						<div>Имя файла</div>
+						<Input required name={'name'} />
+					</div>
+				</form>
+			),
+			okButtonText: 'Ок',
+			cancelButtonText: 'Отмена',
+			okButtonClick: ({ htmlElement }) =>
+				htmlElement.querySelector('form')?.reportValidity(),
+		})
+		if (status !== 'ok') return
+		const form = htmlElement.querySelector('form')
+		const { name } = htmlFormToJson<{ name: string }>(form!)
+		if (name?.trim()) createdFileCode(name.trim())
 	}
 
 	const handlerClickItemList = (item: ListItem) => {
