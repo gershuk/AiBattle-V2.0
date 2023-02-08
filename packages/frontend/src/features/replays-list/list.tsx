@@ -2,7 +2,7 @@ import { createAndDownloadFile } from 'api'
 import { useUnit } from 'effector-react'
 import { Replay } from 'model'
 import { $replays } from 'model/replays/model'
-import { List, ListItem } from 'ui'
+import { List, ListItem, showConfirm } from 'ui'
 import { UploadIcon } from './assets/icons'
 import { removedReplay, uploadedReplay } from './model'
 import './styles.scss'
@@ -29,9 +29,9 @@ export const ReplayList = ({ active, ontToggleSelect }: ReplayListProps) => {
 		createAndDownloadFile(map?.content, item.id, 'text/plain')
 	}
 
-	const handlerRemove = (item: ListItem) => {
-		const res = confirm('Удалить файл?')
-		if (res) removedReplay(item.id)
+	const handlerRemove = async (item: ListItem) => {
+		const { status } = await showConfirm({ content: 'Удалить файл?' })
+		if (status === 'ok') removedReplay(item.id)
 	}
 
 	return (

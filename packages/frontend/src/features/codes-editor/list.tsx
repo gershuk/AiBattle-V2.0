@@ -9,7 +9,7 @@ import { UploadedCode } from '../../model'
 import { AddIcon, UploadIcon } from './assets/icons'
 import { createAndDownloadFile } from '../../api'
 import './styles.scss'
-import { Input, List, ListItem, showConfirm } from 'ui'
+import { Input, List, ListItem, showConfirm, showMessage } from 'ui'
 import { htmlFormToJson } from 'libs'
 
 export interface LoaderScriptProps {
@@ -31,10 +31,18 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 					</div>
 				</form>
 			),
-			okButtonText: 'Ок',
-			cancelButtonText: 'Отмена',
-			okButtonClick: ({ htmlElement }) =>
-				htmlElement.querySelector('form')?.reportValidity(),
+			okButtonClick: ({ htmlElement }) => {
+				const form = htmlElement.querySelector('form')
+				const dataForm = htmlFormToJson<{ name: string }>(form!)
+				const valid = form?.reportValidity()
+				if (!valid) return false
+				else {
+					if (!!codes.find(({ name }) => name === dataForm.name)) {
+						showMessage({ content: 'Файл с таким именем уже существует.' })
+						return false
+					}
+				}
+			},
 		})
 		if (status !== 'ok') return
 		const form = htmlElement.querySelector('form')
@@ -56,9 +64,9 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 		createAndDownloadFile(map?.content, item.id, 'text/plain')
 	}
 
-	const handlerRemove = (item: ListItem) => {
-		const res = confirm('Удалить файл?')
-		if (res) removedFileCode(item.id)
+	const handlerRemove = async (item: ListItem) => {
+		const { status } = await showConfirm({ content: 'Удалить файл?' })
+		if (status === 'ok') removedFileCode(item.id)
 	}
 
 	return (

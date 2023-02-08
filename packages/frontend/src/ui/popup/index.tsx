@@ -78,12 +78,12 @@ export const showConfirm = ({
 
 export const showMessage = ({
 	content,
-	okButtonText,
+	okButtonText = 'Ок',
 	okButtonClick,
 	title,
 }: {
 	content: JSXInternal.Element | string
-	okButtonText: string
+	okButtonText?: string
 	okButtonClick?: (data: { htmlElement: HTMLDivElement }) => boolean | void
 	title?: string
 }) => {
