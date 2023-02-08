@@ -4,7 +4,7 @@ import { htmlFormToJson } from 'libs'
 import { Input, InputNumber, List, ListItem, showConfirm } from 'ui'
 import { AddIcon, UploadIcon } from './assets/icons'
 import {
-	$mapsWithCache,
+	$mapsWithSessionValue,
 	createdFile,
 	removedFileMap,
 	uploadedFile,
@@ -17,7 +17,7 @@ interface MapsListProps {
 }
 
 export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
-	const maps = useUnit($mapsWithCache)
+	const maps = useUnit($mapsWithSessionValue)
 
 	const handlerClickItemList = (item: ListItem) => {
 		const value = active === item.id ? null : item.id

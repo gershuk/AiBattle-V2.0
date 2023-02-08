@@ -3,7 +3,7 @@ import { useUnit } from 'effector-react'
 import { MapData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor, SplitPanel } from 'ui'
-import { $mapsWithCache, $sessions, changedMap } from './model'
+import { $mapsWithSessionValue, $sessions } from './model'
 import './styles.scss'
 import { TileEditor } from './tile-editor'
 
@@ -18,7 +18,7 @@ $size.on(setSize, (_, x) => x)
 
 export const EditorMap = ({ active, onSave }: EditorCode) => {
 	const { maps, size, sessions } = useUnit({
-		maps: $mapsWithCache,
+		maps: $mapsWithSessionValue,
 		size: $size,
 		sessions: $sessions,
 	})
@@ -56,9 +56,6 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 					session={activeSession}
 					fileName={selectMap.name}
 					onSave={value => onSave?.(value)}
-					onChange={value =>
-						changedMap({ name: selectMap.name, content: value })
-					}
 				/>
 			}
 			Right={

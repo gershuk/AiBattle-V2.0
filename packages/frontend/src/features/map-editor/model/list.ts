@@ -18,7 +18,7 @@ import { showConfirm } from 'ui'
 import {
 	addSession,
 	removeSession,
-	setSessionInitialValue,
+	resetSession,
 } from './session'
 
 const errorReadStringFile = new Error('Невозможно преобразовать файл в строку')
@@ -77,7 +77,7 @@ sample({
 sample({
 	clock: loadMapFx.doneData,
 	filter: ({ overwriteFile }) => overwriteFile,
-	target: [setSessionInitialValue, changeMap],
+	target: [resetSession, changeMap],
 })
 
 sample({

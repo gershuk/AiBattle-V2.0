@@ -1,5 +1,11 @@
 import { Ace, createEditSession, UndoManager } from 'ace-builds'
-import { attach, createEvent, createStore, sample } from 'effector'
+import {
+	attach,
+	createEffect,
+	createEvent,
+	createStore,
+	sample,
+} from 'effector'
 
 interface SessionItem {
 	name: string
@@ -12,11 +18,37 @@ export const createSessionsManager = ({
 	mode: 'ace/mode/javascript' | 'ace/mode/json'
 }) => {
 	const $sessions = createStore<{ [name: string]: Ace.EditSession }>({})
+	const $sessionsValue = createStore<{ [name: string]: string }>({})
 
 	const addSession = createEvent<SessionItem | SessionItem[]>()
 	const removeSession = createEvent<string | string[]>()
 	const resetUndoManager = createEvent<string | string[]>()
-	const setSessionInitialValue = createEvent<{ name: string; content: string }>()
+	const resetSession = createEvent<{
+		name: string
+		content?: string
+	}>()
+
+	const setSessionValue = createEvent<SessionItem | SessionItem[]>()
+
+	const addSessionFx = createEffect(
+		(newSession: SessionItem | SessionItem[]) => {
+			const array = Array.isArray(newSession) ? newSession : [newSession]
+			const newSessions = array.reduce((acc, { name, value }) => {
+				//@ts-expect-error
+				const session = createEditSession(value || '', mode)
+				session.getUndoManager().reset()
+				setSessionValue({ name, value })
+				session.on('change', () => {
+					setSessionValue({ name, value: session.doc.getValue() })
+				})
+				return {
+					...acc,
+					[name]: session,
+				}
+			}, {} as { [name: string]: Ace.EditSession })
+			return newSessions
+		}
+	)
 
 	const resetUndoManagerFx = attach({
 		source: $sessions,
@@ -28,27 +60,20 @@ export const createSessionsManager = ({
 		},
 	})
 
-	const setValueInitialFx = attach({
+	const resetSessionFx = attach({
 		source: $sessions,
-		effect: (sessions, { name, content }: { name: string; content: string }) => {
-			sessions[name].setValue(content)
+		effect: (
+			sessions,
+			{ name, content }: { name: string; content?: string }
+		) => {
+			sessions[name].setValue(content ?? '')
 		},
 	})
 
-	$sessions.on(addSession, (sessions, newSession) => {
-		const array = Array.isArray(newSession) ? newSession : [newSession]
-		const newSessions = array.reduce((acc, { name, value }) => {
-			//@ts-expect-error
-			const session = createEditSession(value || '', mode)
-			session.getUndoManager().reset()
-			return {
-				...acc,
-				[name]: session,
-			}
-		}, {} as { [name: string]: Ace.EditSession })
-
-		return { ...sessions, ...newSessions }
-	})
+	$sessions.on(addSessionFx.doneData, (sessions, newSessions) => ({
+		...sessions,
+		...newSessions,
+	}))
 
 	$sessions.on(removeSession, (sessions, removeSession) => {
 		const array = Array.isArray(removeSession) ? removeSession : [removeSession]
@@ -61,15 +86,39 @@ export const createSessionsManager = ({
 		return newSessions
 	})
 
+	$sessionsValue.on(removeSession, (value, removeSession) => {
+		const array = Array.isArray(removeSession) ? removeSession : [removeSession]
+		const newValue = { ...value }
+		array.forEach(undoName => {
+			if (undoName in newValue) {
+				delete newValue[undoName]
+			}
+		})
+		return newValue
+	})
+
+	$sessionsValue.on(setSessionValue, (values, newSessionValues) => {
+		const newValues = (
+			Array.isArray(newSessionValues) ? newSessionValues : [newSessionValues]
+		).reduce((acc, { name, value = '' }) => ({ ...acc, [name]: value }), {})
+		return {
+			...values,
+			...newValues,
+		}
+	})
+
 	sample({ clock: resetUndoManager, target: resetUndoManagerFx })
 
-	sample({ clock: setSessionInitialValue, target: setValueInitialFx })
+	sample({ clock: resetSession, target: resetSessionFx })
+
+	sample({ clock: addSession, target: addSessionFx })
 
 	return {
 		$sessions,
+		$sessionsValue,
 		addSession,
 		removeSession,
 		resetUndoManager,
-		setSessionInitialValue,
+		resetSession,
 	}
 }

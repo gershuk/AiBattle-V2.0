@@ -1,48 +1,40 @@
-import { combine, createEvent, createStore } from 'effector'
-import { $dataMaps, isMapData, MapData, removeMap } from 'model'
+import { combine } from 'effector'
+import { $dataMaps, isMapData, MapData } from 'model'
 import { stringToJson } from 'libs'
+import { $sessionsValue } from './session'
 
-const $editorTexts = createStore<{ [k: string]: string }>({})
-const $mapsWithCache = combine($dataMaps, $editorTexts, (maps, editorTexts) => {
-	return Object.values(maps).map(code => {
-		if (code.name in editorTexts) {
-			const { status: modifyJsonValid, parsedJson: parseTextEditor } =
-				stringToJson(editorTexts[code.name])
-			const modifyValidDataMap = modifyJsonValid
-				? isMapData(parseTextEditor)
-				: false
-			const cacheMapData = modifyValidDataMap
-				? (parseTextEditor as MapData)
-				: null
+const $mapsWithSessionValue = combine(
+	$dataMaps,
+	$sessionsValue,
+	(maps, sessionsValue) => {
+		return Object.values(maps).map(code => {
+			if (code.name in sessionsValue) {
+				const sessionValue = sessionsValue[code.name]
+				const { status: modifyJsonValid, parsedJson: parseTextEditor } =
+					stringToJson(sessionValue)
+				const modifyValidDataMap = modifyJsonValid
+					? isMapData(parseTextEditor)
+					: false
+				const cacheMapData = modifyValidDataMap
+					? (parseTextEditor as MapData)
+					: null
+				return {
+					...code,
+					modified: sessionValue !== code.content,
+					modifyJsonValid,
+					modifyValidDataMap,
+					textEditorMapData: cacheMapData,
+				}
+			}
 			return {
 				...code,
-				modified: editorTexts[code.name] !== code.content,
-				modifyJsonValid,
-				modifyValidDataMap,
-				textEditorMapData: cacheMapData,
+				modified: false,
+				modifyJsonValid: code.validJson,
+				modifyValidDataMap: code.validDataMap,
+				textEditorMapData: code.data,
 			}
-		}
-		return {
-			...code,
-			modified: false,
-			modifyJsonValid: code.validJson,
-			modifyValidDataMap: code.validDataMap,
-			textEditorMapData: code.data,
-		}
-	})
-})
+		})
+	}
+)
 
-const changedMap = createEvent<{ name: string; content: string }>()
-
-$editorTexts.on(changedMap, (editorTexts, { name, content }) => ({
-	...editorTexts,
-	[name]: content,
-}))
-
-$editorTexts.on(removeMap, (editorTexts, fileName) => {
-	const copy = { ...editorTexts }
-	delete copy[fileName]
-	return copy
-})
-
-export { changedMap, $mapsWithCache }
+export { $mapsWithSessionValue }
