@@ -1,5 +1,5 @@
 import { Ace, createEditSession, UndoManager } from 'ace-builds'
-import { createEvent, createStore } from 'effector'
+import { attach, createEvent, createStore, sample } from 'effector'
 
 interface SessionItem {
 	name: string
@@ -15,9 +15,28 @@ export const createSessionsManager = ({
 
 	const addSession = createEvent<SessionItem | SessionItem[]>()
 	const removeSession = createEvent<string | string[]>()
+	const resetUndoManager = createEvent<string | string[]>()
+	const setSessionInitialValue = createEvent<{ name: string; content: string }>()
 
-	$sessions.on(addSession, (sessions, nweSession) => {
-		const array = Array.isArray(nweSession) ? nweSession : [nweSession]
+	const resetUndoManagerFx = attach({
+		source: $sessions,
+		effect: (sessions, nameSession: string | string[]) => {
+			const array = Array.isArray(nameSession) ? nameSession : [nameSession]
+			array.forEach(nameSession => {
+				sessions[nameSession].getUndoManager().reset()
+			})
+		},
+	})
+
+	const setValueInitialFx = attach({
+		source: $sessions,
+		effect: (sessions, { name, content }: { name: string; content: string }) => {
+			sessions[name].setValue(content)
+		},
+	})
+
+	$sessions.on(addSession, (sessions, newSession) => {
+		const array = Array.isArray(newSession) ? newSession : [newSession]
 		const newSessions = array.reduce((acc, { name, value }) => {
 			//@ts-expect-error
 			const session = createEditSession(value || '', mode)
@@ -42,9 +61,15 @@ export const createSessionsManager = ({
 		return newSessions
 	})
 
+	sample({ clock: resetUndoManager, target: resetUndoManagerFx })
+
+	sample({ clock: setSessionInitialValue, target: setValueInitialFx })
+
 	return {
 		$sessions,
 		addSession,
 		removeSession,
+		resetUndoManager,
+		setSessionInitialValue,
 	}
 }

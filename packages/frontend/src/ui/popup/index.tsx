@@ -20,15 +20,15 @@ const createPopup = () => {
 
 export const showConfirm = ({
 	content,
-	okButtonText,
-	cancelButtonText,
+	okButtonText = 'Ок',
+	cancelButtonText = 'Отмена',
 	okButtonClick,
 	cancelButtonClick,
 	title,
 }: {
 	content: JSXInternal.Element | string
-	okButtonText: string
-	cancelButtonText: string
+	okButtonText?: string
+	cancelButtonText?: string
 	okButtonClick?: (data: { htmlElement: HTMLDivElement }) => boolean | void
 	cancelButtonClick?: (data: { htmlElement: HTMLDivElement }) => boolean | void
 	title?: string

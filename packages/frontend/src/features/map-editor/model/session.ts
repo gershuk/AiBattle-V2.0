@@ -1,7 +1,8 @@
 import { createSessionsManager } from 'libs/ace-editor'
 
-const { $sessions, addSession, removeSession } = createSessionsManager({
-	mode: 'ace/mode/json',
-})
+const { $sessions, addSession, removeSession, resetUndoManager, setSessionInitialValue } =
+	createSessionsManager({
+		mode: 'ace/mode/json',
+	})
 
-export { $sessions, addSession, removeSession }
+export { $sessions, addSession, removeSession, resetUndoManager, setSessionInitialValue }

@@ -10,13 +10,20 @@ import {
 	$dataMaps,
 	$maps,
 	addMap,
+	changeMap,
 	readMapsFromLocalStorageFx,
 	removeMap,
 } from 'model'
-import { addSession, removeSession } from './session'
+import { showConfirm } from 'ui'
+import {
+	addSession,
+	removeSession,
+	setSessionInitialValue,
+} from './session'
 
 const errorReadStringFile = new Error('Невозможно преобразовать файл в строку')
 const errorReadJson = new Error('Невалидный json')
+const loadMapAborted = new Error('Пользователь отменил загрузку файла')
 
 const uploadedFile = createEvent()
 const createdFile = createEvent<{
@@ -38,11 +45,18 @@ const loadMapFx = attach({
 				return Promise.reject(errorReadJson)
 			}
 			const fileIsExits = !!maps[file.name]
-			if (fileIsExits)
-				return Promise.reject(new Error('Файл с таким именем уже загружен'))
+			let overwriteFile = false
+			if (fileIsExits) {
+				const { status } = await showConfirm({
+					content: 'Файл с таким именем уже существует. Перезаписать файл?',
+				})
+				if (status === 'cancel') return Promise.reject(loadMapAborted)
+				else overwriteFile = true
+			}
 			return {
 				content,
 				name: file.name,
+				overwriteFile,
 			}
 		}
 		return Promise.reject(errorReadStringFile)
@@ -56,7 +70,14 @@ sample({
 
 sample({
 	clock: loadMapFx.doneData,
+	filter: ({ overwriteFile }) => !overwriteFile,
 	target: addMap,
+})
+
+sample({
+	clock: loadMapFx.doneData,
+	filter: ({ overwriteFile }) => overwriteFile,
+	target: [setSessionInitialValue, changeMap],
 })
 
 sample({
@@ -94,6 +115,10 @@ alertErrors({
 	errorList: [
 		{
 			guard: error => error instanceof OpenFileExplorerError,
+			ignore: true,
+		},
+		{
+			guard: error => error === loadMapAborted,
 			ignore: true,
 		},
 		{
