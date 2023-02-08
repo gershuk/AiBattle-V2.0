@@ -2,8 +2,17 @@ import { JSXInternal } from 'preact/src/jsx'
 import { Button } from 'ui/button'
 import { createRef, RefObject, render } from 'preact'
 import './styles.scss'
+import { useState } from 'preact/hooks'
 
-const createPopup = () => {
+export const usePopup = () => {
+	const [open, setOpen] = useState(false)
+	const onOpen = () => setOpen(true)
+	const onClose = () => setOpen(false)
+
+	return { open, onOpen, onClose }
+}
+
+const createPopupContainer = () => {
 	const rootNode = document.querySelector('#popups')!
 	const popupContainer = document.createElement('div')
 	rootNode.appendChild(popupContainer)
@@ -35,7 +44,7 @@ export const showConfirm = ({
 }) => {
 	return new Promise<{ status: 'ok' | 'cancel'; htmlElement: HTMLDivElement }>(
 		resolve => {
-			const { open, close } = createPopup()
+			const { open, close } = createPopupContainer()
 			const ref = createRef<HTMLDivElement>()
 
 			const okButtonClickHandler = () => {
@@ -57,7 +66,7 @@ export const showConfirm = ({
 			}
 
 			open(
-				<PopupComponent
+				<PopupBaseComponent
 					htmlRef={ref}
 					title={title}
 					footerContent={
@@ -70,7 +79,7 @@ export const showConfirm = ({
 					}
 				>
 					<>{content}</>
-				</PopupComponent>
+				</PopupBaseComponent>
 			)
 		}
 	)
@@ -89,7 +98,7 @@ export const showMessage = ({
 }) => {
 	return new Promise<{ status: 'ok' | 'cancel'; htmlElement: HTMLDivElement }>(
 		resolve => {
-			const { open, close } = createPopup()
+			const { open, close } = createPopupContainer()
 			const ref = createRef<HTMLDivElement>()
 
 			const okButtonClickHandler = () => {
@@ -102,7 +111,7 @@ export const showMessage = ({
 			}
 
 			open(
-				<PopupComponent
+				<PopupBaseComponent
 					htmlRef={ref}
 					title={title}
 					footerContent={
@@ -110,7 +119,7 @@ export const showMessage = ({
 					}
 				>
 					<>{content}</>
-				</PopupComponent>
+				</PopupBaseComponent>
 			)
 		}
 	)
@@ -123,7 +132,7 @@ export interface PopupComponentProps {
 	footerContent?: JSXInternal.Element
 }
 
-export const PopupComponent = ({
+export const PopupBaseComponent = ({
 	children,
 	htmlRef,
 	title,

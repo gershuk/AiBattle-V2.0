@@ -27,30 +27,36 @@
 	}
 	.add-spawn-wrapper {
 		display: flex;
+		font-size: 14px;
 		.button {
 			opacity: 0.75;
 			width: 20px;
 			height: 20px;
+			margin-right: 8px;
 		}
 	}
 }
 
-.tile-map {
+.tile-map-wrapper {
 	height: 100%;
 	width: 100%;
 	overflow: auto;
-	table,
+}
+
+.tile-map {
+	&,
 	th,
 	td {
 		border-collapse: collapse;
 	}
 	&.visible-grid {
-		table,
+		&,
 		th,
 		td {
 			border: 1px solid black;
 		}
 	}
+
 	.tile-editor-cell {
 		position: relative;
 		cursor: pointer;
@@ -107,6 +113,7 @@
 		}
 	}
 }
+
 .tile-scale {
 	width: 100%;
 	.label {

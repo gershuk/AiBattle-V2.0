@@ -1,11 +1,13 @@
+import { useUnit } from 'effector-react'
 import { clsx, deepCopyJson } from 'libs'
 import { Spawn } from 'model'
-import { Button, InputNumber } from 'ui'
+import { Button } from 'ui'
+import { $mode, setMode } from '../model'
 
 export interface ListSpawnsProps {
 	spawns: Spawn[]
 	classNameWrapper?: string
-	onChangeSpawn: (spawns: Spawn[], type: 'add' | 'remove' | 'change') => void
+	onChangeSpawn: (spawns: Spawn[]) => void
 }
 
 export const ListSpawns = ({
@@ -13,24 +15,18 @@ export const ListSpawns = ({
 	classNameWrapper,
 	onChangeSpawn,
 }: ListSpawnsProps) => {
+	const mode = useUnit($mode)
+
 	const onAddSpawnHandler = () => {
-		const newSpawns = [...spawns, { x: 1, y: 1 }]
-		onChangeSpawn(newSpawns, 'add')
+		setMode(mode !== 'add-spawn' ? 'add-spawn' : 'none')
 	}
-	const onChangeXSpawnHandler = (index: number, newX: number) => {
-		const newSpawns = deepCopyJson(spawns)
-		newSpawns[index].x = newX
-		onChangeSpawn(newSpawns, 'change')
-	}
-	const onChangeYSpawnHandler = (index: number, newY: number) => {
-		const newSpawns = deepCopyJson(spawns)
-		newSpawns[index].y = newY
-		onChangeSpawn(newSpawns, 'change')
-	}
+
 	const onRemoveSpawnHandler = (index: number) => {
 		const newSpawns = spawns.filter((_, i) => i !== index)
-		onChangeSpawn(newSpawns, 'remove')
+		onChangeSpawn(newSpawns)
 	}
+
+	const activeSpawnMode = mode === 'add-spawn'
 
 	return (
 		<div className={clsx(classNameWrapper, 'list-spawner-wrapper')}>
@@ -46,26 +42,19 @@ export const ListSpawns = ({
 							</Button>
 						</div>
 						<div>
-							<div>
-								<span>x:</span>{' '}
-								<InputNumber
-									value={x}
-									onChange={value => onChangeXSpawnHandler(i, value ?? 0)}
-								/>
-							</div>
-							<div>
-								<span>y:</span>{' '}
-								<InputNumber
-									value={y}
-									onChange={value => onChangeYSpawnHandler(i, value ?? 0)}
-								/>
-							</div>
+							x: {x}; y: {y}
 						</div>
 					</div>
 				))}
 			</div>
 			<div className={'add-spawn-wrapper'}>
-				<Button onClick={onAddSpawnHandler}>+</Button>
+				<Button
+					color={activeSpawnMode ? 'danger' : 'primary'}
+					onClick={onAddSpawnHandler}
+				>
+					+
+				</Button>
+				{activeSpawnMode ? <span>Укажите точку спавна на карте</span> : null}
 			</div>
 		</div>
 	)

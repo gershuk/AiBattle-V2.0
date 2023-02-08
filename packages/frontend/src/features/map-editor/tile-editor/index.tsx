@@ -8,20 +8,23 @@ import {
 } from 'libs'
 import { MapData } from 'model'
 import { useCallback, useState } from 'preact/hooks'
-import { useMemo } from 'react'
-import { Button, Checkbox, RangeInput } from 'ui'
+import { useEffect } from 'react'
+import { Button, Checkbox, RangeInput, showMessage } from 'ui'
 import {
 	$activeCode,
 	$cellSize,
+	$mode,
 	$visibleCode,
 	$visibleGrid,
 	changedCellSize,
 	selectedActiveCode,
+	setMode,
 	toggleVisibleCode,
 	toggleVisibleGrid,
 } from '../model'
 import { ListSpawns, ListSpawnsProps } from './list-spawns'
 import './styles.scss'
+import { TileTable } from './tile-table'
 
 interface TileEditorProps {
 	mapData: MapData
@@ -40,11 +43,6 @@ const typeCells = [
 	{ code: 2, uriImg: './Resources/Metal.png' },
 ]
 
-const codesImgMap = typeCells.reduce(
-	(acc, { code, uriImg }) => ({ ...acc, [code]: uriImg }),
-	{} as { [k: number]: string }
-)
-
 export const TileEditor = ({
 	mapData,
 	onChange,
@@ -55,11 +53,12 @@ export const TileEditor = ({
 	canUndo,
 	canRedo,
 }: TileEditorProps) => {
-	const { activeCode, visibleCode, visibleGrid, cellSize } = useUnit({
+	const { activeCode, visibleCode, visibleGrid, cellSize, mode } = useUnit({
 		activeCode: $activeCode,
 		visibleCode: $visibleCode,
 		visibleGrid: $visibleGrid,
 		cellSize: $cellSize,
+		mode: $mode,
 	})
 	const [htmlRef, setHtmlRef] = useState<HTMLDivElement | null>(null)
 	const [mouseDown, setMouseDown] = useState(false)
@@ -78,7 +77,14 @@ export const TileEditor = ({
 		dependencies: [onSave, htmlRef],
 	})
 
-	const changeMap = useCallback(
+	useEffect(() => {
+		return () => {
+			setMode('none')
+			selectedActiveCode(null)
+		}
+	}, [])
+
+	const changeCellMap = useCallback(
 		debounce(({ i, j, code }: { i: number; j: number; code: number }) => {
 			const cloneMapData = deepCopyJson(mapData)
 			cloneMapData.map[i][j] = code
@@ -87,34 +93,40 @@ export const TileEditor = ({
 		[onChange, mapData]
 	)
 
-	const changeSpawn: ListSpawnsProps['onChangeSpawn'] = spawns => {
+	const changeSpawn = (spawns: MapData['spawns']) => {
 		const cloneMapData = deepCopyJson(mapData)
 		cloneMapData.spawns = spawns
 		onChange(beautifulJsonToString(cloneMapData))
 	}
 
-	const onStartDraw = (params: { i: number; j: number }) => {
-		if (activeCode !== null) {
-			setMouseDown(true)
-			changeMap({ ...params, code: activeCode })
+	const onStartDraw = ({ i, j }: { i: number; j: number }) => {
+		setMouseDown(true)
+		if (mode === 'draw-tile' && activeCode !== null) {
+			changeCellMap({ i, j, code: activeCode })
+		} else if (mode === 'add-spawn') {
+			const spawnExists = mapData.spawns.find(({ x, y }) => x === j && y === i)
+			if (spawnExists) {
+				showMessage({
+					content: 'Невозможно поставить 2 одинаковые точки спавна.',
+				})
+				return
+			}
+			const newSpawns = [...mapData.spawns, { x: j, y: i }]
+			changeSpawn(newSpawns)
+			setMode('none')
 		}
 	}
 
 	const onDraw = (params: { i: number; j: number }) => {
-		if (activeCode !== null && mouseDown) {
+		if (mode === 'draw-tile' && activeCode !== null && mouseDown) {
 			setMouseDown(true)
-			changeMap({ ...params, code: activeCode })
+			changeCellMap({ ...params, code: activeCode })
 		}
 	}
 
 	const onStopDraw = () => {
 		setMouseDown(false)
 	}
-
-	const spawns = useMemo(
-		() => mapData.spawns.map(({ x, y }) => `${y}-${x}`),
-		[mapData]
-	)
 
 	return (
 		<div
@@ -198,51 +210,16 @@ export const TileEditor = ({
 					/>
 				</div>
 			</div>
-			<div
-				className={clsx({ 'tile-map': true, 'visible-grid': visibleGrid })}
-				onMouseLeave={onStopDraw}
-			>
-				<table>
-					{mapData.map.map((row, i) => (
-						<tr>
-							{row.map((code, j) => (
-								<td
-									className={'tile-editor-cell'}
-									style={{
-										width: cellSize,
-										height: cellSize,
-										minWidth: cellSize,
-									}}
-									onMouseDown={() => onStartDraw({ i, j })}
-									onMouseUp={onStopDraw}
-									onMouseEnter={() => onDraw({ i, j })}
-									title={`i: ${i}; j: ${j}; code: ${code}`}
-								>
-									<span
-										className={'tile-editor-cell-content'}
-										style={{ fontSize: cellSize }}
-									>
-										{visibleCode ? (
-											<span className={'tile-editor-cell-content-code'}>
-												{code}
-											</span>
-										) : null}
-										<img
-											src={codesImgMap[code]}
-											className={'tile-editor-cell-content-img'}
-										/>
-										{spawns.includes(`${i}-${j}`) ? (
-											<img
-												src={'./Resources/Man.png'}
-												className={'tile-editor-cell-content-man'}
-											/>
-										) : null}
-									</span>
-								</td>
-							))}
-						</tr>
-					))}
-				</table>
+			<div className={clsx('tile-map-wrapper')} onMouseLeave={onStopDraw}>
+				<TileTable
+					mapData={mapData}
+					cellSize={cellSize}
+					visibleCode={visibleCode}
+					visibleGrid={visibleGrid}
+					onDraw={onDraw}
+					onStartDraw={onStartDraw}
+					onStopDraw={onStopDraw}
+				/>
 			</div>
 		</div>
 	)
