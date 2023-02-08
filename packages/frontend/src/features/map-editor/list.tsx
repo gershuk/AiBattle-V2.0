@@ -39,11 +39,11 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 					</div>
 					<div className={'create-map-popup-item'}>
 						<div>Ширина карты</div>
-						<InputNumber required min={2} max={50} name={'rows'} />
+						<InputNumber required min={3} max={50} name={'rows'} />
 					</div>
 					<div className={'create-map-popup-item'}>
 						<div>Высота карты</div>
-						<InputNumber required min={2} max={50} name={'columns'} />
+						<InputNumber required min={3} max={50} name={'columns'} />
 					</div>
 				</form>
 			),

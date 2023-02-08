@@ -1,5 +1,11 @@
 import { useUnit } from 'effector-react'
-import { clsx, debounce, deepCopyJson, useKeyboard } from 'libs'
+import {
+	beautifulJsonToString,
+	clsx,
+	debounce,
+	deepCopyJson,
+	useKeyboard,
+} from 'libs'
 import { MapData } from 'model'
 import { useCallback, useState } from 'preact/hooks'
 import { useMemo } from 'react'
@@ -39,8 +45,6 @@ const codesImgMap = typeCells.reduce(
 	{} as { [k: number]: string }
 )
 
-const mapDataToString = (mapData: MapData) => JSON.stringify(mapData, null, 4)
-
 export const TileEditor = ({
 	mapData,
 	onChange,
@@ -69,7 +73,7 @@ export const TileEditor = ({
 
 	useKeyboard({
 		guard: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 's',
-		fn: () => onSave(mapDataToString(mapData)),
+		fn: () => onSave(beautifulJsonToString(mapData)),
 		targetElement: htmlRef,
 		dependencies: [onSave, htmlRef],
 	})
@@ -78,7 +82,7 @@ export const TileEditor = ({
 		debounce(({ i, j, code }: { i: number; j: number; code: number }) => {
 			const cloneMapData = deepCopyJson(mapData)
 			cloneMapData.map[i][j] = code
-			onChange(mapDataToString(cloneMapData))
+			onChange(beautifulJsonToString(cloneMapData))
 		}, 10),
 		[onChange, mapData]
 	)
@@ -86,7 +90,7 @@ export const TileEditor = ({
 	const changeSpawn: ListSpawnsProps['onChangeSpawn'] = spawns => {
 		const cloneMapData = deepCopyJson(mapData)
 		cloneMapData.spawns = spawns
-		onChange(mapDataToString(cloneMapData))
+		onChange(beautifulJsonToString(cloneMapData))
 	}
 
 	const onStartDraw = (params: { i: number; j: number }) => {
@@ -132,7 +136,7 @@ export const TileEditor = ({
 					</Button>
 					<Button
 						color="warning"
-						onClick={() => onSave(mapDataToString(mapData))}
+						onClick={() => onSave(beautifulJsonToString(mapData))}
 						disabled={!modify}
 					>
 						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
