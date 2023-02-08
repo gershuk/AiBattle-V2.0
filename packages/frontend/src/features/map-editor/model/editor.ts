@@ -1,5 +1,5 @@
 import { combine, createEvent, createStore } from 'effector'
-import { $dataMaps, isMapData, MapData } from 'model'
+import { $dataMaps, isMapData, MapData, removeMap } from 'model'
 import { stringToJson } from 'libs'
 
 const $editorTexts = createStore<{ [k: string]: string }>({})
@@ -34,9 +34,15 @@ const $mapsWithCache = combine($dataMaps, $editorTexts, (maps, editorTexts) => {
 
 const changedMap = createEvent<{ name: string; content: string }>()
 
-$editorTexts.on(changedMap, (cache, { name, content }) => ({
-	...cache,
+$editorTexts.on(changedMap, (editorTexts, { name, content }) => ({
+	...editorTexts,
 	[name]: content,
 }))
+
+$editorTexts.on(removeMap, (editorTexts, fileName) => {
+	const copy = { ...editorTexts }
+	delete copy[fileName]
+	return copy
+})
 
 export { changedMap, $mapsWithCache }

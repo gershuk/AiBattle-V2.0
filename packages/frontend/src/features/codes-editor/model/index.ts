@@ -65,6 +65,12 @@ $editorTexts.on(changedCode, (cache, { name, content }) => ({
 	[name]: content,
 }))
 
+$editorTexts.on(removeCode, (editorTexts, fileName) => {
+	const copy = { ...editorTexts }
+	delete copy[fileName]
+	return copy
+})
+
 sample({
 	clock: uploadedFileCode,
 	target: loadScriptFx,
