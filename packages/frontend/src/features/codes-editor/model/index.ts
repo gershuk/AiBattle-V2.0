@@ -17,21 +17,19 @@ import { alertErrors } from 'libs/failer/failer'
 
 const errorReadStringFile = new Error('Невозможно преобразовать файл в строку')
 
-const { $sessions, addSession, removeSession } = createSessionsManager({
+const { $sessions, addSession, removeSession, $sessionsValue } = createSessionsManager({
 	mode: 'ace/mode/javascript',
 })
-
-const $editorTexts = createStore<{ [fileName: string]: string }>({})
 
 //TODO: ПЛОХА бижим по всем файлам
 const $codesWithCache = combine(
 	$codesData,
-	$editorTexts,
-	(codes, editorTexts) => {
+	$sessionsValue,
+	(codes, sessionsValue) => {
 		return Object.values(codes).map(code => ({
 			...code,
 			modified:
-				code.name in editorTexts && editorTexts[code.name] !== code.content,
+				code.name in sessionsValue && sessionsValue[code.name] !== code.content,
 		}))
 	}
 )
@@ -39,7 +37,6 @@ const $codesWithCache = combine(
 const uploadedFileCode = createEvent()
 const createdFileCode = createEvent<string>()
 const removedFileCode = createEvent<string>()
-const changedCode = createEvent<{ name: string; content: string }>()
 
 const loadScriptFx = attach({
 	source: $codes,
@@ -60,16 +57,6 @@ const loadScriptFx = attach({
 	},
 })
 
-$editorTexts.on(changedCode, (cache, { name, content }) => ({
-	...cache,
-	[name]: content,
-}))
-
-$editorTexts.on(removeCode, (editorTexts, fileName) => {
-	const copy = { ...editorTexts }
-	delete copy[fileName]
-	return copy
-})
 
 sample({
 	clock: uploadedFileCode,
@@ -132,5 +119,4 @@ export {
 	uploadedFileCode,
 	removedFileCode,
 	createdFileCode,
-	changedCode,
 }

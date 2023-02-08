@@ -1,7 +1,7 @@
 import { useUnit } from 'effector-react'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor } from '../../ui'
-import { $codesWithCache, $sessions, changedCode } from './model'
+import { $codesWithCache, $sessions } from './model'
 import './styles.scss'
 
 export interface EditorCode {
@@ -32,7 +32,6 @@ export const EditorCode = ({ active, onSave }: EditorCode) => {
 			mode="javascript"
 			fileName={selectCode.name}
 			onSave={value => onSave?.(value)}
-			onChange={value => changedCode({ name: selectCode.name, content: value })}
 		/>
 	)
 }
