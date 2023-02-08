@@ -1,4 +1,4 @@
-import { Ace, createEditSession, UndoManager } from 'ace-builds'
+import { Ace, createEditSession } from 'ace-builds'
 import {
 	attach,
 	createEffect,
@@ -50,11 +50,27 @@ export const createSessionsManager = ({
 		}
 	)
 
+	const removeSessionFx = attach({
+		source: $sessions,
+		effect: (sessions, nameSession: string | string[]) => {
+			const names = Array.isArray(nameSession) ? nameSession : [nameSession]
+			const newSessions = { ...sessions }
+			names.forEach(nameSession => {
+				if (nameSession in newSessions) {
+					const targetSession = newSessions[nameSession]
+					delete newSessions[nameSession]
+					targetSession.destroy()
+				}
+			})
+			return newSessions
+		},
+	})
+
 	const resetUndoManagerFx = attach({
 		source: $sessions,
 		effect: (sessions, nameSession: string | string[]) => {
-			const array = Array.isArray(nameSession) ? nameSession : [nameSession]
-			array.forEach(nameSession => {
+			const names = Array.isArray(nameSession) ? nameSession : [nameSession]
+			names.forEach(nameSession => {
 				sessions[nameSession].getUndoManager().reset()
 			})
 		},
@@ -75,16 +91,7 @@ export const createSessionsManager = ({
 		...newSessions,
 	}))
 
-	$sessions.on(removeSession, (sessions, removeSession) => {
-		const array = Array.isArray(removeSession) ? removeSession : [removeSession]
-		const newSessions = { ...sessions }
-		array.forEach(undoName => {
-			if (undoName in newSessions) {
-				delete newSessions[undoName]
-			}
-		})
-		return newSessions
-	})
+	$sessions.on(removeSessionFx.doneData, (_, newSessions) => newSessions)
 
 	$sessionsValue.on(removeSession, (value, removeSession) => {
 		const array = Array.isArray(removeSession) ? removeSession : [removeSession]
@@ -112,6 +119,8 @@ export const createSessionsManager = ({
 	sample({ clock: resetSession, target: resetSessionFx })
 
 	sample({ clock: addSession, target: addSessionFx })
+
+	sample({ clock: removeSession, target: removeSessionFx })
 
 	return {
 		$sessions,
