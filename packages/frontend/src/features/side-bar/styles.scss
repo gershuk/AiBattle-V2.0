@@ -1,9 +1,11 @@
 .side-bar {
 	height: 100%;
 	overflow: auto;
-	background: rgb(44, 44, 44);
+	background: rgb(243 243 243);
 	width: 50px;
+	min-width: 50px;
 	.side-bar-item {
+
 		height: 50px;
 		width: 100%;
 		display: flex;
@@ -13,11 +15,17 @@
 		svg,
 		g,
 		path {
-			color: white;
-			fill: white;
+			color: rgba(0, 0, 0, 0.7);
+			fill: rgba(0, 0, 0, 0.7);
 		}
 		&.active {
-			background: rgb(75, 75, 75);
+			background: #d8d8d8;
+			svg,
+			g,
+			path {
+				color: black;
+				fill: black;
+			}
 		}
 	}
 }
