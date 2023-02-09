@@ -1,6 +1,7 @@
 import { useUnit } from 'effector-react'
 import { useMemo } from 'preact/hooks'
-import { CodeEditor } from '../../ui'
+import { CodeEditor, SplitPanel } from '../../ui'
+import { Debug } from './debug'
 import { $codesWithCache, $sessions } from './model'
 import './styles.scss'
 
@@ -27,11 +28,20 @@ export const EditorCode = ({ active, onSave }: EditorCode) => {
 	if (!selectCode) return null
 
 	return (
-		<CodeEditor
-			session={session}
-			mode="javascript"
-			fileName={selectCode.name}
-			onSave={value => onSave?.(value)}
+		<SplitPanel
+			minSize={[0, 0]}
+			className="json-map-editor"
+			gutterSize={5}
+			direction={'vertical'}
+			Left={
+				<CodeEditor
+					session={session}
+					mode="javascript"
+					fileName={selectCode.name}
+					onSave={value => onSave?.(value)}
+				/>
+			}
+			Right={<Debug />}
 		/>
 	)
 }

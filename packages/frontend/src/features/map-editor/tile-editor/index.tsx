@@ -1,6 +1,6 @@
 import { useUnit } from 'effector-react'
 import {
-	beautifulJsonToString,
+	jsonToBeautifulString,
 	clsx,
 	debounce,
 	deepCopyJson,
@@ -72,7 +72,7 @@ export const TileEditor = ({
 
 	useKeyboard({
 		guard: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 's',
-		fn: () => onSave(beautifulJsonToString(mapData)),
+		fn: () => onSave(jsonToBeautifulString(mapData)),
 		targetElement: htmlRef,
 		dependencies: [onSave, htmlRef],
 	})
@@ -88,7 +88,7 @@ export const TileEditor = ({
 		debounce(({ i, j, code }: { i: number; j: number; code: number }) => {
 			const cloneMapData = deepCopyJson(mapData)
 			cloneMapData.map[i][j] = code
-			onChange(beautifulJsonToString(cloneMapData))
+			onChange(jsonToBeautifulString(cloneMapData))
 		}, 10),
 		[onChange, mapData]
 	)
@@ -96,7 +96,7 @@ export const TileEditor = ({
 	const changeSpawn = (spawns: MapData['spawns']) => {
 		const cloneMapData = deepCopyJson(mapData)
 		cloneMapData.spawns = spawns
-		onChange(beautifulJsonToString(cloneMapData))
+		onChange(jsonToBeautifulString(cloneMapData))
 	}
 
 	const onStartDraw = ({ i, j }: { i: number; j: number }) => {
@@ -148,7 +148,7 @@ export const TileEditor = ({
 					</Button>
 					<Button
 						color="warning"
-						onClick={() => onSave(beautifulJsonToString(mapData))}
+						onClick={() => onSave(jsonToBeautifulString(mapData))}
 						disabled={!modify}
 					>
 						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">

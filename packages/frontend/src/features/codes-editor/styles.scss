@@ -38,3 +38,40 @@
 		}
 	}
 }
+
+.debug-wrapper {
+	height: 100%;
+
+	.logs-wrapper {
+		background: #f3f3f3;
+		padding: 8px;
+		height: 100%;
+		display: flex;
+		flex-flow: column;
+		.logs-list {
+			height: 100%;
+			overflow: auto;
+			font-size: 12px;
+			.log-item-wrapper {
+				display: flex;
+				white-space: nowrap;
+				& > * {
+					position: relative;
+					& + * {
+						&:before {
+							content: '';
+							height: 5px;
+							width: 5px;
+							border-radius: 100%;
+							position: absolute;
+							background: black;
+							left: 5px;
+							top: 8px;
+						}
+						padding-left: 16px;
+					}
+				}
+			}
+		}
+	}
+}

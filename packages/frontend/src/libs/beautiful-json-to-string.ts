@@ -4,7 +4,7 @@
 // that case we don’t care since the output would be invalid anyway).
 const stringOrChar = /("(?:[^\\"]|\\.)*")|[:,]/g
 
-export const beautifulJsonToString = (
+export const jsonToBeautifulString = (
 	passedObj: any,
 	options: {
 		indent?: number | string

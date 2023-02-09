@@ -5,7 +5,7 @@ import {
 	ReadFileError,
 } from 'api'
 import { attach, createEvent, sample } from 'effector'
-import { alertErrors, beautifulJsonToString, make2dArray } from 'libs'
+import { alertErrors, jsonToBeautifulString, make2dArray } from 'libs'
 import {
 	$dataMaps,
 	$maps,
@@ -90,7 +90,7 @@ sample({
 	filter: (maps, { name }) => !!name && !maps.find(code => code.name === name),
 	fn: (_, { name, rows, columns, fillCode, borderCode }) => ({
 		name,
-		content: beautifulJsonToString({
+		content: jsonToBeautifulString({
 			map: makeMap(rows, columns, fillCode, borderCode),
 			spawns: [],
 		}),
