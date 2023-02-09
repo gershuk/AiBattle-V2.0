@@ -55,11 +55,11 @@ const buildArray = (jsonData: { [k: string]: any }): { [k: string]: any } => {
 	return Object.entries(jsonData).reduce((acc, [key, value]) => {
 		regexpIsArray.lastIndex = 0
 		if (regexpIsArray.test(key)) {
-			const newName = regexpIsArray.exec(key)?.[1]!
-			const index = Number(key.replace(newName, '').replace(/[\[\]']+/g, ''))
-			const valueFields = [...(acc?.[newName] || [])]
+			const itemName = regexpIsArray.exec(key)?.[1]!
+			const index = Number(key.replace(itemName, '').replace(/[\[\]']+/g, ''))
+			const valueFields = [...(acc?.[itemName] || [])]
 			valueFields[index] = isObject(value) ? buildArray(value) : value
-			return { ...acc, [newName]: valueFields }
+			return { ...acc, [itemName]: valueFields }
 		}
 		const newValue = isObject(value) ? buildArray(value) : value
 		return {

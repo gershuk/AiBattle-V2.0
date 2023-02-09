@@ -52,6 +52,14 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 						<div>Высота карты</div>
 						<InputNumber required min={3} max={50} name={'columns'} />
 					</div>
+					<div className={'create-map-popup-item'}>
+						<div>Заполнение карты (код клетки)</div>
+						<InputNumber initValue={0} required name={'fillCode'} />
+					</div>
+					<div className={'create-map-popup-item'}>
+						<div>Заполнение краев карты (код клетки)</div>
+						<InputNumber initValue={2} required name={'borderCode'} />
+					</div>
 				</form>
 			),
 			okButtonClick: ({ htmlElement }) => {
@@ -73,6 +81,8 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 			name: string
 			rows: number
 			columns: number
+			fillCode: number
+			borderCode: number
 		}>(form!)
 		createdFile(dataForm)
 	}

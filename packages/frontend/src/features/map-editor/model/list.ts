@@ -15,11 +15,8 @@ import {
 	removeMap,
 } from 'model'
 import { showConfirm } from 'ui'
-import {
-	addSession,
-	removeSession,
-	resetSession,
-} from './session'
+import { makeMap } from '../utils'
+import { addSession, removeSession, resetSession } from './session'
 
 const errorReadStringFile = new Error('Невозможно преобразовать файл в строку')
 const errorReadJson = new Error('Невалидный json')
@@ -30,6 +27,8 @@ const createdFile = createEvent<{
 	name: string
 	rows: number
 	columns: number
+	fillCode: number
+	borderCode: number
 }>()
 const removedFileMap = createEvent<string>()
 
@@ -89,10 +88,10 @@ sample({
 	source: $maps,
 	clock: createdFile,
 	filter: (maps, { name }) => !!name && !maps.find(code => code.name === name),
-	fn: (_, { name, rows, columns }) => ({
+	fn: (_, { name, rows, columns, fillCode, borderCode }) => ({
 		name,
 		content: beautifulJsonToString({
-			map: make2dArray(rows, columns, 0),
+			map: makeMap(rows, columns, fillCode, borderCode),
 			spawns: [],
 		}),
 	}),
