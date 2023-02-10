@@ -9,7 +9,7 @@ export const ControllerEditor = () => {
 	const selectCode = useUnit($selectCode)
 	const sizes = useMemo(() => {
 		const width = window.innerWidth
-		const r = (300 / width) * 100
+		const r = (200 / width) * 100
 		return [r, 100 - r]
 	}, [])
 	const handlerDragEnd = () => {

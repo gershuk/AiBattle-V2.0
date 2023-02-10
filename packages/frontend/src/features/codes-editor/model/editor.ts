@@ -22,7 +22,7 @@ const { $sessions, addSession, removeSession, $sessionsValue } = createSessionsM
 })
 
 //TODO: ПЛОХА бижим по всем файлам
-const $codesWithCache = combine(
+const $codesModified = combine(
 	$codesData,
 	$sessionsValue,
 	(codes, sessionsValue) => {
@@ -115,7 +115,7 @@ alertErrors({
 
 export {
 	$sessions,
-	$codesWithCache,
+	$codesModified as $codesWithCache,
 	uploadedFileCode,
 	removedFileCode,
 	createdFileCode,

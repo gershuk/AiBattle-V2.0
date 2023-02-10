@@ -27,10 +27,15 @@ export const EditorCode = ({ active, onSave }: EditorCode) => {
 
 	if (!selectCode) return null
 
+	const handlerDragEnd = () => {
+		window.dispatchEvent(new Event('resize'))
+	}
+
 	return (
 		<SplitPanel
+			onDragEnd={handlerDragEnd}
 			minSize={[0, 0]}
-			className="json-map-editor"
+			className="split-bot-editor"
 			gutterSize={5}
 			direction={'vertical'}
 			Left={
@@ -41,7 +46,7 @@ export const EditorCode = ({ active, onSave }: EditorCode) => {
 					onSave={value => onSave?.(value)}
 				/>
 			}
-			Right={<Debug />}
+			Right={<Debug selectedCodeName={selectCode.name} />}
 		/>
 	)
 }

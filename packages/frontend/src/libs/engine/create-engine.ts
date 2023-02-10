@@ -6,7 +6,7 @@ import {
 	SceneParameters,
 	Vector2,
 } from '@ai-battle/engine'
-import { attach, createStore, combine } from 'effector'
+import { attach, createStore, combine, sample } from 'effector'
 import { MapData } from 'model'
 import { createEngineCanvas } from './engine-canvas'
 
@@ -21,6 +21,7 @@ export const createEngine = () => {
 	const { canvas, CanvasComponent } = createEngineCanvas()
 
 	const $canvas = createStore(canvas)
+	const $startedAutoTurn = createStore(false)
 
 	const imageLoader = new ImageLoader()
 	const engine = new BombermanGame()
@@ -86,6 +87,18 @@ export const createEngine = () => {
 		console.log('init engine with params:', params)
 	})
 
+	sample({
+		clock: startAutoTurn,
+		fn: () => true,
+		target: $startedAutoTurn,
+	})
+
+	sample({
+		clock: stopAutoTurn,
+		fn: () => false,
+		target: $startedAutoTurn,
+	})
+
 	start.watch(() => {
 		console.log('start engine')
 	})
@@ -104,6 +117,7 @@ export const createEngine = () => {
 
 	return {
 		CanvasComponent,
+		$startedAutoTurn,
 		methods: {
 			init,
 			start,

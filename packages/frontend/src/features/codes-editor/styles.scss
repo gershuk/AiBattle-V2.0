@@ -39,8 +39,64 @@
 	}
 }
 
+.split-bot-editor {
+	height: 100%;
+}
+
+.bot-debug {
+	width: 100%;
+	height: 100%;
+}
+
 .debug-wrapper {
 	height: 100%;
+	display: flex;
+	flex-flow: column;
+	background: #f3f3f3;
+
+	.debug-engine-setting {
+		padding: 8px;
+		form {
+			display: flex;
+			align-items: end;
+			gap: 8px;
+		}
+		.title {
+			font-size: 16px;
+			margin-bottom: 4px;
+			white-space: nowrap;
+		}
+		.game-settings-range {
+			width: 100%;
+		}
+		.setting-item {
+			font-size: 14px;
+		}
+
+		.size-tile-title {
+			.link-button {
+				padding: 0;
+			}
+		}
+		.input-title {
+			margin-bottom: 4px;
+		}
+
+		.submit-debug-setting {
+			width: 25px;
+			height: 25px;
+			padding: 0;
+			svg {
+				fill: white;
+				stroke: white;
+			}
+		}
+	}
+
+	.render-debug-canvas {
+		height: 100%;
+		padding: 8px;
+	}
 
 	.logs-wrapper {
 		background: #f3f3f3;
