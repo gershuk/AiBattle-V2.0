@@ -1,6 +1,6 @@
 import { JSXInternal } from 'preact/src/jsx'
 import { Button } from 'ui/button'
-import { createRef, RefObject, render } from 'preact'
+import { ComponentChild, createRef, RefObject, render } from 'preact'
 import './styles.scss'
 import { useState } from 'preact/hooks'
 
@@ -25,6 +25,41 @@ const createPopupContainer = () => {
 			popupContainer.remove()
 		},
 	}
+}
+
+export const showPopup = ({
+	content,
+}: {
+	content: (props: {
+		htmlElement: HTMLDivElement | null
+		close: () => void
+		ok: () => void
+		cancel: () => void
+	}) => ComponentChild
+}) => {
+	return new Promise<{ status: 'ok' | 'cancel'; htmlElement: HTMLDivElement }>(
+		resolve => {
+			const { open, close } = createPopupContainer()
+			const ref = createRef<HTMLDivElement>()
+
+			open(
+				<PopupBaseComponent htmlRef={ref}>
+					{content({
+						htmlElement: ref.current,
+						close,
+						ok: () => {
+							resolve({ status: 'ok', htmlElement: ref.current! })
+							close()
+						},
+						cancel: () => {
+							resolve({ status: 'cancel', htmlElement: ref.current! })
+							close()
+						},
+					})}
+				</PopupBaseComponent>
+			)
+		}
+	)
 }
 
 export const showConfirm = ({
@@ -66,7 +101,7 @@ export const showConfirm = ({
 			}
 
 			open(
-				<PopupBaseComponent
+				<Popup
 					htmlRef={ref}
 					title={title}
 					footerContent={
@@ -79,7 +114,7 @@ export const showConfirm = ({
 					}
 				>
 					<>{content}</>
-				</PopupBaseComponent>
+				</Popup>
 			)
 		}
 	)
@@ -111,7 +146,7 @@ export const showMessage = ({
 			}
 
 			open(
-				<PopupBaseComponent
+				<Popup
 					htmlRef={ref}
 					title={title}
 					footerContent={
@@ -119,34 +154,43 @@ export const showMessage = ({
 					}
 				>
 					<>{content}</>
-				</PopupBaseComponent>
+				</Popup>
 			)
 		}
 	)
 }
 
-export interface PopupComponentProps {
+export interface Popup {
 	children: JSXInternal.Element
 	htmlRef?: RefObject<HTMLDivElement>
 	title?: string
 	footerContent?: JSXInternal.Element
 }
 
+export const Popup = ({ children, htmlRef, title, footerContent }: Popup) => {
+	return (
+		<PopupBaseComponent htmlRef={htmlRef}>
+			{title ? <div className={'popup-header'}>{title}</div> : null}
+			<div className={'popup-content'}>{children}</div>
+			{footerContent ? (
+				<div className={'popup-footer'}>{footerContent}</div>
+			) : null}
+		</PopupBaseComponent>
+	)
+}
+
+export interface PopupBaseComponent {
+	children: ComponentChild
+	htmlRef?: RefObject<HTMLDivElement>
+}
+
 export const PopupBaseComponent = ({
 	children,
 	htmlRef,
-	title,
-	footerContent,
-}: PopupComponentProps) => {
+}: PopupBaseComponent) => {
 	return (
 		<div ref={htmlRef} className={'popup-overlay'}>
-			<div className={'popup-body'}>
-				{title ? <div className={'popup-header'}>{title}</div> : null}
-				<div className={'popup-content'}>{children}</div>
-				{footerContent ? (
-					<div className={'popup-footer'}>{footerContent}</div>
-				) : null}
-			</div>
+			<div className={'popup-body'}>{children}</div>
 		</div>
 	)
 }

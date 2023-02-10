@@ -9,7 +9,15 @@ import { UploadedCode } from '../../model'
 import { AddIcon, UploadIcon } from './assets/icons'
 import { createAndDownloadFile } from '../../api'
 import './styles.scss'
-import { Input, List, ListItem, showConfirm, showMessage } from 'ui'
+import {
+	Button,
+	Input,
+	List,
+	ListItem,
+	showConfirm,
+	showMessage,
+	showPopup,
+} from 'ui'
 import { htmlFormToJson } from 'libs'
 
 export interface LoaderScriptProps {
@@ -21,28 +29,37 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 	const codes = useUnit($codesWithCache)
 
 	const createCodeFile = async () => {
-		const { status, htmlElement } = await showConfirm({
-			title: 'Создать скрипт',
-			content: (
-				<form className={'create-map-popup'}>
-					<div className={'create-map-popup-item'}>
-						<div>Имя файла</div>
-						<Input required name={'name'} />
+		const { status, htmlElement } = await showPopup({
+			content: ({ cancel, ok }) => (
+				<form
+					onSubmit={e => {
+						e.preventDefault()
+						const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
+						const fileExists = !!codes.find(
+							({ name }) => name === dataForm.name
+						)
+						if (fileExists)
+							showMessage({ content: 'Файл с таким именем уже существует.' })
+						else ok()
+					}}
+				>
+					<div className={'popup-header'}>Создать скрипт</div>
+					<div className={'popup-content'}>
+						<div className={'create-map-popup-item'}>
+							<div>Имя файла</div>
+							<Input autoFocus required name={'name'} />
+						</div>
+					</div>
+					<div className={'popup-footer'}>
+						<Button onClick={() => cancel()} type="button" color="danger">
+							Отмена
+						</Button>
+						<Button type="submit" color="primary">
+							Ок
+						</Button>
 					</div>
 				</form>
 			),
-			okButtonClick: ({ htmlElement }) => {
-				const form = htmlElement.querySelector('form')
-				const dataForm = htmlFormToJson<{ name: string }>(form!)
-				const valid = form?.reportValidity()
-				if (!valid) return false
-				else {
-					if (!!codes.find(({ name }) => name === dataForm.name)) {
-						showMessage({ content: 'Файл с таким именем уже существует.' })
-						return false
-					}
-				}
-			},
 		})
 		if (status !== 'ok') return
 		const form = htmlElement.querySelector('form')

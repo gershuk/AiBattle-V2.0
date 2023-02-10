@@ -2,12 +2,14 @@ import { createAndDownloadFile } from 'api'
 import { useUnit } from 'effector-react'
 import { htmlFormToJson } from 'libs'
 import {
+	Button,
 	Input,
 	InputNumber,
 	List,
 	ListItem,
 	showConfirm,
 	showMessage,
+	showPopup,
 } from 'ui'
 import { AddIcon, UploadIcon } from './assets/icons'
 import {
@@ -36,44 +38,51 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 	}
 
 	const createCodeFile = async () => {
-		const { status, htmlElement } = await showConfirm({
-			title: 'Создать карту',
-			content: (
-				<form className={'create-map-popup'}>
-					<div className={'create-map-popup-item'}>
-						<div>Имя файла</div>
-						<Input required name={'name'} />
+		const { status, htmlElement } = await showPopup({
+			content: ({ ok, cancel }) => (
+				<form
+					onSubmit={e => {
+						e.preventDefault()
+						const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
+						const fileExists = !!maps.find(({ name }) => name === dataForm.name)
+						if (fileExists)
+							showMessage({ content: 'Файл с таким именем уже существует.' })
+						else ok()
+					}}
+				>
+					<div className={'popup-header'}>Создать карту</div>
+					<div className={'popup-content create-map-popup'}>
+						<div className={'create-map-popup-item'}>
+							<div>Имя файла</div>
+							<Input autoFocus required name={'name'} />
+						</div>
+						<div className={'create-map-popup-item'}>
+							<div>Ширина карты</div>
+							<InputNumber required min={3} max={50} name={'rows'} />
+						</div>
+						<div className={'create-map-popup-item'}>
+							<div>Высота карты</div>
+							<InputNumber required min={3} max={50} name={'columns'} />
+						</div>
+						<div className={'create-map-popup-item'}>
+							<div>Заполнение карты (код клетки)</div>
+							<InputNumber initValue={0} required name={'fillCode'} />
+						</div>
+						<div className={'create-map-popup-item'}>
+							<div>Заполнение краев карты (код клетки)</div>
+							<InputNumber initValue={2} required name={'borderCode'} />
+						</div>
 					</div>
-					<div className={'create-map-popup-item'}>
-						<div>Ширина карты</div>
-						<InputNumber required min={3} max={50} name={'rows'} />
-					</div>
-					<div className={'create-map-popup-item'}>
-						<div>Высота карты</div>
-						<InputNumber required min={3} max={50} name={'columns'} />
-					</div>
-					<div className={'create-map-popup-item'}>
-						<div>Заполнение карты (код клетки)</div>
-						<InputNumber initValue={0} required name={'fillCode'} />
-					</div>
-					<div className={'create-map-popup-item'}>
-						<div>Заполнение краев карты (код клетки)</div>
-						<InputNumber initValue={2} required name={'borderCode'} />
+					<div className={'popup-footer'}>
+						<Button onClick={() => cancel()} type="button" color="danger">
+							Отмена
+						</Button>
+						<Button type="submit" color="primary">
+							Ок
+						</Button>
 					</div>
 				</form>
 			),
-			okButtonClick: ({ htmlElement }) => {
-				const form = htmlElement.querySelector('form')
-				const dataForm = htmlFormToJson<{ name: string }>(form!)
-				const valid = form?.reportValidity()
-				if (!valid) return false
-				else {
-					if (!!maps.find(({ name }) => name === dataForm.name)) {
-						showMessage({ content: 'Файл с таким именем уже существует.' })
-						return false
-					}
-				}
-			},
 		})
 		if (status !== 'ok') return
 		const form = htmlElement.querySelector('form')
