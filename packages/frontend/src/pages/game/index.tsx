@@ -1,16 +1,15 @@
+import { useUnit } from 'effector-react'
 import { GameController, ViewPortGame } from 'features/game-controller'
-import { useMemo } from 'preact/hooks'
+import { createPanelSizeController } from 'libs'
 import { SplitPanel } from 'ui'
 import './styles.scss'
 
-export const Game = () => {
-	const sizes = useMemo(() => {
-		const width = window.innerWidth
-		const r = (400 / width) * 100
-		return [r, 100 - r]
-	}, [])
+const { $sizes, setSizes } = createPanelSizeController(400)
 
-	const handlerDragEnd = () => {
+export const Game = () => {
+	const sizes = useUnit($sizes)
+	const handlerDragEnd = (sizesPanel: number[]) => {
+		setSizes([...sizesPanel])
 		window.dispatchEvent(new Event('resize'))
 	}
 
@@ -20,7 +19,7 @@ export const Game = () => {
 				onDragEnd={handlerDragEnd}
 				className={'controller-editor-split'}
 				sizes={sizes}
-				gutterSize={3}
+				gutterSize={5}
 				minSize={0}
 				Left={<GameController />}
 				Right={<ViewPortGame />}

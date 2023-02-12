@@ -1,4 +1,5 @@
 import { useUnit } from 'effector-react'
+import { createPanelSizeController } from 'libs'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor, SplitPanel } from '../../ui'
 import { Debug } from './debug'
@@ -10,10 +11,16 @@ export interface EditorCode {
 	onSave?: (value: string) => void
 }
 
+const { $sizes, setSizes } = createPanelSizeController(
+	window.innerHeight / 2,
+	'vertical'
+)
+
 export const EditorCode = ({ active, onSave }: EditorCode) => {
-	const { codes, sessions } = useUnit({
+	const { codes, sessions, sizes } = useUnit({
 		codes: $codesWithCache,
 		sessions: $sessions,
+		sizes: $sizes,
 	})
 	const selectCode = useMemo(() => {
 		if (!active) return null
@@ -27,7 +34,8 @@ export const EditorCode = ({ active, onSave }: EditorCode) => {
 
 	if (!selectCode) return null
 
-	const handlerDragEnd = () => {
+	const handlerDragEnd = (sizesPanel: number[]) => {
+		setSizes([...sizesPanel])
 		window.dispatchEvent(new Event('resize'))
 	}
 
@@ -35,6 +43,7 @@ export const EditorCode = ({ active, onSave }: EditorCode) => {
 		<SplitPanel
 			onDragEnd={handlerDragEnd}
 			minSize={[0, 0]}
+			sizes={sizes}
 			className="split-bot-editor"
 			gutterSize={5}
 			direction={'vertical'}

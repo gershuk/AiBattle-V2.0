@@ -1,5 +1,5 @@
-import { createEvent, createStore } from 'effector'
 import { useUnit } from 'effector-react'
+import { createPanelSizeController } from 'libs'
 import { MapData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor, SplitPanel } from 'ui'
@@ -12,14 +12,15 @@ export interface EditorCode {
 	onSave?: (value: string) => void
 }
 
-const $size = createStore<number[]>([50, 50])
-const setSize = createEvent<number[]>()
-$size.on(setSize, (_, x) => x)
+const { $sizes, setSizes } = createPanelSizeController(
+	window.innerHeight / 2,
+	'vertical'
+)
 
 export const EditorMap = ({ active, onSave }: EditorCode) => {
-	const { maps, size, sessions } = useUnit({
+	const { maps, sizes, sessions } = useUnit({
 		maps: $mapsWithSessionValue,
-		size: $size,
+		sizes: $sizes,
 		sessions: $sessions,
 	})
 	const selectMap = useMemo(() => {
@@ -33,7 +34,7 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 	}, [selectMap, sessions])
 
 	const handlerDragEnd = (sizesPanel: number[]) => {
-		setSize([...sizesPanel])
+		setSizes([...sizesPanel])
 		window.dispatchEvent(new Event('resize'))
 	}
 
@@ -46,7 +47,7 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 	return (
 		<SplitPanel
 			onDragEnd={handlerDragEnd}
-			sizes={size ?? undefined}
+			sizes={sizes ?? undefined}
 			minSize={[0, 0]}
 			className="json-map-editor"
 			gutterSize={5}
