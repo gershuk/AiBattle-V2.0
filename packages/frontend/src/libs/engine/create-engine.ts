@@ -19,17 +19,27 @@ export interface SceneParams {
 }
 
 export const createEngine = () => {
-	const { canvas, CanvasComponent } = createEngineCanvas()
-
-	const $canvas = createStore(canvas)
-	const $startedAutoTurn = createStore(false)
-
 	const imageLoader = new ImageLoader()
 	const engine = new BombermanGame()
 
 	const $engine = createStore(engine)
 
+	const $startedAutoTurn = createStore(false)
+	const $mapData = createStore<MapData | null>(null)
+	const $sceneParams = createStore<SceneParams | null>(null)
+
 	const toggleAutoTurn = createEvent()
+	const setMapData = createEvent<MapData | null>()
+	const setSceneParams = createEvent<SceneParams | null>()
+
+	const { canvas, CanvasComponent } = createEngineCanvas({
+		$map: $mapData.map(mapData => mapData?.map || []),
+		$tileSize: $sceneParams.map(sceneParams => sceneParams?.tileSize ?? 50),
+	})
+	const $canvas = createStore(canvas)
+
+	$mapData.on(setMapData, (_, mapData) => mapData)
+	$sceneParams.on(setSceneParams, (_, sceneParams) => sceneParams)
 
 	const init = attach({
 		source: combine({ engine: $engine, canvas: $canvas }),
@@ -110,6 +120,18 @@ export const createEngine = () => {
 		clock: toggleAutoTurn,
 		filter: startedAutoTurn => !startedAutoTurn,
 		target: startAutoTurn,
+	})
+
+	sample({
+		clock: init.done,
+		fn: ({ params }) => params.mapData,
+		target: setMapData,
+	})
+
+	sample({
+		clock: init.done,
+		fn: ({ params }) => params.sceneParams,
+		target: setSceneParams,
 	})
 
 	return {

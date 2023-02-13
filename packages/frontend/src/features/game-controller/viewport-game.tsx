@@ -1,8 +1,21 @@
-import { engine } from './model/game'
+import { useUnit } from 'effector-react'
+import { useEffect } from 'react'
+import { $activeGame, engine } from './model/game'
 import './styles.scss'
 
 const { CanvasComponent } = engine
 
-export const ViewPortGame = () => {
-	return <CanvasComponent className="awesome-canvas-game" />
+export const ViewportGame = () => {
+	const activeGame = useUnit($activeGame)
+
+	useEffect(() => {
+		if (activeGame) engine.methods.renderFrame()
+	}, [activeGame])
+
+	if (!activeGame) return null
+	return (
+		<div className={'viewport-game'}>
+			<CanvasComponent className="awesome-canvas-game" />
+		</div>
+	)
 }

@@ -148,7 +148,11 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 					</Button>
 				</form>
 			</div>
-			<CanvasComponent className="render-debug-canvas" />
+			{startedAutoTurn ? (
+				<div className="debug-viewport">
+					<CanvasComponent />
+				</div>
+			) : null}
 		</div>
 	)
 }

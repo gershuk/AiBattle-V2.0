@@ -1,5 +1,5 @@
 import { useUnit } from 'effector-react'
-import { GameController, ViewPortGame } from 'features/game-controller'
+import { GameController, ViewportGame } from 'features/game-controller'
 import { createPanelSizeController } from 'libs'
 import { SplitPanel } from 'ui'
 import './styles.scss'
@@ -22,7 +22,7 @@ export const Game = () => {
 				gutterSize={5}
 				minSize={0}
 				Left={<GameController />}
-				Right={<ViewPortGame />}
+				Right={<ViewportGame />}
 			/>
 		</div>
 	)

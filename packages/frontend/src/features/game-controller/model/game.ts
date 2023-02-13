@@ -11,7 +11,7 @@ const $activeGame = createStore(false)
 const startedGame = createEvent<SubmitForm>()
 const stoppedGame = createEvent()
 
-$activeGame.on(engine.methods.start, () => true)
+$activeGame.on(engine.methods.start.done, () => true)
 $activeGame.on(stoppedGame, () => false)
 
 sample({
