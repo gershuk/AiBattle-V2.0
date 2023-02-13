@@ -3,6 +3,7 @@ import { InputNumber } from '../input-number'
 import { AllFields } from './type'
 import { JSXInternal } from 'preact/src/jsx'
 import { memo } from 'preact/compat'
+import { DropDown } from '../dropdown'
 
 export const FormGenerator = ({
 	fields,
@@ -31,6 +32,14 @@ const Unit = memo(
 			case 'range':
 				return (
 					<RangeInput
+						{...field}
+						{...props}
+						onChange={value => field?.onChange?.(value, field)}
+					/>
+				)
+			case 'dropdown':
+				return (
+					<DropDown
 						{...field}
 						{...props}
 						onChange={value => field?.onChange?.(value, field)}

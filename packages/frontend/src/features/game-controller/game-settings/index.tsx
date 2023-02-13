@@ -1,8 +1,7 @@
 import { useUnit } from 'effector-react'
 import { ComponentChild } from 'preact'
 import { useMemo } from 'preact/hooks'
-import { FormGenerator } from 'ui/form-generator/generator'
-import { AllFields } from 'ui/form-generator/type'
+import { FormGenerator, AllFields } from 'ui'
 import { $activeGame, $formValues, setFieldValue } from '../model'
 import './styles.scss'
 
@@ -15,7 +14,7 @@ const _formFields: AllFields[] = [
 		name: 'sceneParams.tileSize',
 		required: true,
 		className: 'game-settings-range',
-		title: 'Задать размер тайла',
+		title: 'Размер тайла',
 	},
 	{
 		type: 'number',
@@ -51,7 +50,7 @@ const _formFields: AllFields[] = [
 	},
 ]
 
-export const PreGameSettings = () => {
+export const GameSettings = () => {
 	const { startedGame, formValues } = useUnit({
 		startedGame: $activeGame,
 		formValues: $formValues,

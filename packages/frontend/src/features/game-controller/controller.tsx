@@ -1,6 +1,6 @@
 import { useUnit } from 'effector-react'
 import { BotsSetting } from './bots-settings'
-import { PreGameSettings } from './pre-game-settings'
+import { GameSettings } from './game-settings'
 import { MapInfo } from './map-info'
 import { MapSelection } from './map-selection'
 import { $activeGame, engine, startedGame, stoppedGame } from './model/game'
@@ -27,9 +27,13 @@ export const GameController = () => {
 				className={'game-controller-start-form'}
 				onSubmit={e => {
 					e.preventDefault()
-					const jsonForm = htmlFormToJson<SubmitForm>(e.currentTarget)
-					console.log('jsonForm', jsonForm)
-					startedGame(jsonForm)
+					if (!startedGameFlag) {
+						const jsonForm = htmlFormToJson<SubmitForm>(e.currentTarget)
+						console.log('jsonForm', jsonForm)
+						startedGame(jsonForm)
+					} else {
+						stoppedGame()
+					}
 				}}
 			>
 				<div className={'game-controller-metrics'}>
@@ -38,7 +42,7 @@ export const GameController = () => {
 						<>
 							<MapInfo />
 							<BotsSetting />
-							<PreGameSettings />
+							<GameSettings />
 						</>
 					) : null}
 				</div>
@@ -61,9 +65,8 @@ export const GameController = () => {
 					) : null}
 					<Button
 						className={'btn-toggle-game'}
-						type={startedGameFlag ? 'button' : 'submit'}
+						type={'submit'}
 						color={startedGameFlag ? 'danger' : 'primary'}
-						onClick={startedGameFlag ? stoppedGame : undefined}
 						disabled={!activeMap}
 					>
 						{startedGameFlag ? (

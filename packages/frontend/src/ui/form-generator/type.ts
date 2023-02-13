@@ -22,4 +22,9 @@ interface NumberField extends BaseField<'number', number | null> {
 	disabled?: boolean
 }
 
-export type AllFields = RangeField | NumberField
+interface DropdownField extends BaseField<'dropdown', string | null> {
+	options: { id: string; text: string }[]
+	disabled?: boolean
+}
+
+export type AllFields = RangeField | NumberField | DropdownField

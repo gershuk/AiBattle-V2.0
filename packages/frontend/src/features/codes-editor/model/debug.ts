@@ -1,7 +1,6 @@
-import { SceneParameters } from '@ai-battle/engine'
 import { combine, createEvent, createStore, sample } from 'effector'
-import { createEngine, generateGuid } from 'libs'
-import { $dataMaps, MapData } from 'model'
+import { createEngine, createForm } from 'libs'
+import { $dataMaps } from 'model'
 
 // interface LogItem<Type extends string> {
 // 	type: Type
@@ -78,6 +77,8 @@ import { $dataMaps, MapData } from 'model'
 // 	},
 // }
 
+const { $formValues, setFieldValue } = createForm()
+
 const {
 	CanvasComponent,
 	$startedAutoTurn,
@@ -93,8 +94,8 @@ const $selectedMap = combine($dataMaps, $selectedMapName, (maps, nameMap) => {
 	return null
 })
 
-const selected = createEvent<string | null>()
-$selectedMapName.on(selected, (_, name) => name)
+const selectedMap = createEvent<string | null>()
+$selectedMapName.on(selectedMap, (_, name) => name)
 
 sample({
 	clock: engineMethods.init.done,
@@ -111,5 +112,7 @@ export {
 	engineMethods,
 	$startedAutoTurn,
 	$selectedMap,
-	selected,
+	$formValues, 
+	setFieldValue,
+	selectedMap,
 }

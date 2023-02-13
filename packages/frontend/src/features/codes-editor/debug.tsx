@@ -4,12 +4,13 @@ import { $selectedMap } from 'features/game-controller/model'
 import { htmlFormToJson } from 'libs'
 import { $codesData, $dataMaps } from 'model'
 import { useMemo } from 'react'
-import { Button, DropDown, InputNumber } from 'ui'
+import { Button, FormGenerator } from 'ui'
+import { AllFields } from 'ui'
 import {
 	$startedAutoTurn,
 	CanvasComponent,
 	engineMethods,
-	selected,
+	selectedMap,
 } from './model'
 
 interface DebugProps {
@@ -30,6 +31,64 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 			.map(({ name }) => ({ id: name, text: name }))
 	}, [mapsHashMap])
 
+	const formFields = useMemo(
+		() =>
+			[
+				{
+					type: 'dropdown',
+					options: maps,
+					onChange: selectedMap,
+					name: 'mapName',
+					required: true,
+					value: activeMap?.name,
+					title: 'Карта',
+				},
+				{
+					type: 'number',
+					min: 1,
+					max: 200,
+					initValue: 30,
+					name: 'sceneParams.tileSize',
+					required: true,
+					className: 'game-settings-range',
+					title: 'Размер тайла',
+				},
+				{
+					type: 'number',
+					required: true,
+					name: 'sceneParams.maxTurnIndex',
+					min: 1,
+					initValue: 1000000,
+					title: 'maxTurnIndex',
+				},
+				{
+					type: 'number',
+					required: true,
+					name: 'sceneParams.animTicksCount',
+					min: 1,
+					initValue: 60,
+					title: 'animTicksCount',
+				},
+				{
+					type: 'number',
+					required: true,
+					name: 'sceneParams.animTicksTime',
+					min: 1,
+					initValue: 12,
+					title: 'animTicksTime',
+				},
+				{
+					type: 'number',
+					required: true,
+					name: 'sceneParams.autoTurnTime',
+					min: 1,
+					initValue: 1100,
+					title: 'autoTurnTime',
+				},
+			] as AllFields[],
+		[maps, selectedMap?.name]
+	)
+
 	return (
 		<div className={'debug-wrapper'}>
 			<div className={'debug-engine-setting'}>
@@ -43,63 +102,21 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 							}>(e.currentTarget)
 							const mapData = mapsHashMap[mapName].data!
 							const botCode = codesHashMap[selectedCodeName].content
-							console.log('{ sceneParams, mapData, codesBot: [botCode] }', {
-								sceneParams,
-								mapData,
-								codesBot: [botCode],
-							})
 							engineMethods.init({ sceneParams, mapData, codesBot: [botCode] })
 						} else {
 							engineMethods.stopAutoTurn()
 						}
 					}}
 				>
-					<div className={'setting-item'}>
-						<div className={'input-title'}>Карта</div>
-						<DropDown
-							required
-							value={activeMap?.name}
-							options={maps}
-							onChange={selected}
-							name={'mapName'}
-						/>
-					</div>
-					<div className={'setting-item'}>
-						<div className={'input-title'}>maxTurnIndex</div>
-						<InputNumber
-							required
-							name="sceneParams.maxTurnIndex"
-							min={1}
-							initValue={1000000}
-						/>
-					</div>
-					<div className={'setting-item'}>
-						<div className={'input-title'}>animTicksCount</div>
-						<InputNumber
-							required
-							name="sceneParams.animTicksCount"
-							min={1}
-							initValue={60}
-						/>
-					</div>
-					<div className={'setting-item'}>
-						<div className={'input-title'}>animTicksTime</div>
-						<InputNumber
-							required
-							name="sceneParams.animTicksTime"
-							min={1}
-							initValue={12}
-						/>
-					</div>
-					<div className={'setting-item'}>
-						<div className={'input-title'}>autoTurnTime</div>
-						<InputNumber
-							required
-							name="sceneParams.autoTurnTime"
-							min={1}
-							initValue={1100}
-						/>
-					</div>
+					<FormGenerator
+						fields={formFields}
+						renderUnit={(Unit, field) => (
+							<div className={'setting-item'}>
+								<div className={'input-title'}>{field.title}</div>
+								{Unit}
+							</div>
+						)}
+					/>
 					<Button
 						type="submit"
 						color={startedAutoTurn ? 'danger' : 'primary'}
@@ -131,7 +148,7 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 					</Button>
 				</form>
 			</div>
-			<CanvasComponent className='render-debug-canvas' />
+			<CanvasComponent className="render-debug-canvas" />
 		</div>
 	)
 }
