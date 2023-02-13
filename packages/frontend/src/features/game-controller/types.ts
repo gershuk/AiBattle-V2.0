@@ -8,6 +8,7 @@ export interface SceneParams {
     animTicksCount: number;
     animTicksTime: number;
     autoTurnTime: number;
+    tileSize: number
 }
 
 export interface SubmitForm {

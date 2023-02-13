@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
+import { JSXInternal } from 'preact/src/jsx'
 import './styles.scss'
 
 export interface InputNumberProps {
@@ -10,7 +11,10 @@ export interface InputNumberProps {
 	initValue?: number
 	min?: number
 	max?: number
-	onChange?: (value: number | null) => void
+	onChange?: (
+		value: number | null,
+		e: JSXInternal.TargetedEvent<HTMLInputElement, Event>
+	) => void
 	required?: boolean
 	[k: string]: any
 }
@@ -39,10 +43,13 @@ export const InputNumber = ({
 		if (typeof initValue === 'number') setValue(initValue ?? '')
 	}, [])
 
-	const handlerChange = (_value: string) => {
+	const handlerChange = (
+		e: JSXInternal.TargetedEvent<HTMLInputElement, Event>
+	) => {
 		if (disabled) return
+		const _value = e.currentTarget.value
 		setValue(_value)
-		onChange?.(_value.trim() === '' ? null : Number(_value))
+		onChange?.(_value.trim() === '' ? null : Number(_value), e)
 	}
 
 	return (
@@ -57,7 +64,7 @@ export const InputNumber = ({
 				placeholder={placeholder}
 				ref={ref}
 				className={'input-field'}
-				onChange={e => handlerChange(e.currentTarget.value)}
+				onChange={e => handlerChange(e)}
 				value={String(value)}
 				{...props}
 			/>

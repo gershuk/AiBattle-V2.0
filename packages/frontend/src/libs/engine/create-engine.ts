@@ -15,6 +15,7 @@ export interface SceneParams {
 	animTicksCount: number
 	animTicksTime: number
 	autoTurnTime: number
+	tileSize: number
 }
 
 export const createEngine = () => {
@@ -48,7 +49,7 @@ export const createEngine = () => {
 						sceneParams?.animTicksTime ?? 1,
 						sceneParams?.autoTurnTime ?? 1,
 						canvas,
-						50
+						sceneParams?.tileSize ?? 50
 					),
 					new BombermanMap(
 						mapData.map,

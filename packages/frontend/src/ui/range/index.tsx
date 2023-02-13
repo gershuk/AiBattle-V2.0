@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
+import { JSXInternal } from 'preact/src/jsx'
 import './styles.scss'
 
 interface RangeInputProps {
-	initialValue?: number
+	initValue?: number
 	min?: number
 	max?: number
 	onChange?: (value: number) => void
@@ -12,7 +13,7 @@ interface RangeInputProps {
 }
 
 export const RangeInput = ({
-	initialValue: initialValue,
+	initValue,
 	min,
 	max,
 	className,
@@ -21,7 +22,7 @@ export const RangeInput = ({
 	...props
 }: RangeInputProps) => {
 	const ref = useRef<HTMLInputElement>(null)
-	const [value, setValue] = useState<null | number>(initialValue ?? null)
+	const [value, setValue] = useState<null | number>(initValue ?? null)
 
 	useEffect(() => {
 		if (ref.current) {
@@ -35,7 +36,10 @@ export const RangeInput = ({
 		}
 	}, [])
 
-	const handlerChange = (_value: number) => {
+	const handlerChange = (
+		e: JSXInternal.TargetedEvent<HTMLInputElement, Event>
+	) => {
+		const _value = Number(e.currentTarget.value)
 		setValue(_value)
 		onChange?.(_value)
 	}
@@ -48,7 +52,7 @@ export const RangeInput = ({
 				type="range"
 				min={min}
 				max={max}
-				onChange={e => handlerChange(Number(e.currentTarget.value))}
+				onChange={e => handlerChange(e)}
 				disabled={disabled}
 				{...props}
 			/>

@@ -124,7 +124,7 @@ export const htmlFormToJson = <T extends { [k: string]: any }>(
 
 		if (field.tagName === 'INPUT') {
 			if (field.type === 'text') value = field.srtValue
-			if (field.type === 'number')
+			if (field.type === 'number' || field.type === 'range')
 				value = field.srtValue.trim() === '' ? null : Number(field.srtValue)
 		}
 

@@ -161,7 +161,7 @@ export const TileEditor = ({
 					<RangeInput
 						min={1}
 						max={100}
-						initialValue={cellSize}
+						initValue={cellSize}
 						step={1}
 						className={'tile-scale'}
 						onChange={changedCellSize}
