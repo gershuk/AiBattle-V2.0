@@ -7,6 +7,7 @@ interface RangeInputProps {
 	max?: number
 	onChange?: (value: number) => void
 	className?: string
+	disabled?: boolean
 	[k: string]: any
 }
 
@@ -16,6 +17,7 @@ export const RangeInput = ({
 	max,
 	className,
 	onChange,
+	disabled,
 	...props
 }: RangeInputProps) => {
 	const ref = useRef<HTMLInputElement>(null)
@@ -47,6 +49,7 @@ export const RangeInput = ({
 				min={min}
 				max={max}
 				onChange={e => handlerChange(Number(e.currentTarget.value))}
+				disabled={disabled}
 				{...props}
 			/>
 			<span className={'label'}>{value}</span>

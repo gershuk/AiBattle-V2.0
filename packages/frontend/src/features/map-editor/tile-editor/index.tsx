@@ -22,7 +22,7 @@ import {
 	toggleVisibleCode,
 	toggleVisibleGrid,
 } from '../model'
-import { ListSpawns, ListSpawnsProps } from './list-spawns'
+import { ListSpawns } from './list-spawns'
 import './styles.scss'
 import { TileTable } from './tile-table'
 

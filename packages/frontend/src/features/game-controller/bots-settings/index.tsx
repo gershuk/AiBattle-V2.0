@@ -2,6 +2,7 @@ import { useUnit } from 'effector-react'
 import { $codesData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { DropDown, Input } from 'ui'
+import { $activeGame } from '../model'
 import { $selectedMap } from '../model/select-map'
 import './styles.scss'
 
@@ -17,9 +18,10 @@ const colors = [
 ]
 
 export const BotsSetting = () => {
-	const { activeMap, codesData } = useUnit({
+	const { activeMap, codesData, startedGame } = useUnit({
 		activeMap: $selectedMap,
 		codesData: $codesData,
+		startedGame: $activeGame,
 	})
 
 	const listCodes = useMemo(() => {
@@ -41,11 +43,13 @@ export const BotsSetting = () => {
 							className="bot-name"
 							placeholder="Имя бота"
 							value={`bot#${i}`}
+							disabled={startedGame}
 						/>
 						<DropDown
 							name={`bot[${i}].controller`}
 							className="bot-controller"
 							options={listCodes}
+							disabled={startedGame}
 						/>
 					</div>
 				))}

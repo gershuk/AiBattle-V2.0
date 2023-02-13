@@ -10,7 +10,7 @@ export interface SceneParams {
     autoTurnTime: number;
 }
 
-export interface ISubmitForm {
+export interface SubmitForm {
     bot: Bot[];
     "replay-name": string;
     sceneParams: SceneParams;

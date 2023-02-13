@@ -1,24 +1,36 @@
+import { useUnit } from 'effector-react'
 import { Input, InputNumber, LinkButton, RangeInput } from 'ui'
+import { $activeGame } from '../model'
 import './styles.scss'
 
 export const PreGameSettings = () => {
+	const { startedGame } = useUnit({
+		startedGame: $activeGame,
+	})
+
 	return (
 		<div className={'pre-game-settings'}>
 			<div className={'title'}>Конфигурация игры</div>
 			<div className={'wrapper-settings'}>
-				<div className={'setting-item'}>
+				{/* <div className={'setting-item'}>
 					<div>Название реплея</div>
 					<Input required name="replay-name" />
-				</div>
+				</div> */}
 				<div className={'setting-item'}>
 					<div className={'size-tile-title'}>
 						Задать размер тайла <LinkButton>или сбросить</LinkButton>
 					</div>
-					<RangeInput min={20} max={200} className="game-settings-range" />
+					<RangeInput
+						disabled={startedGame}
+						min={20}
+						max={200}
+						className="game-settings-range"
+					/>
 				</div>
 				<div className={'setting-item'}>
 					<div className={'input-title'}>maxTurnIndex</div>
 					<InputNumber
+						disabled={startedGame}
 						required
 						name="sceneParams.maxTurnIndex"
 						min={1}
@@ -28,6 +40,7 @@ export const PreGameSettings = () => {
 				<div className={'setting-item'}>
 					<div className={'input-title'}>animTicksCount</div>
 					<InputNumber
+						disabled={startedGame}
 						required
 						name="sceneParams.animTicksCount"
 						min={1}
@@ -37,6 +50,7 @@ export const PreGameSettings = () => {
 				<div className={'setting-item'}>
 					<div className={'input-title'}>animTicksTime</div>
 					<InputNumber
+						disabled={startedGame}
 						required
 						name="sceneParams.animTicksTime"
 						min={1}
@@ -46,6 +60,7 @@ export const PreGameSettings = () => {
 				<div className={'setting-item'}>
 					<div className={'input-title'}>autoTurnTime</div>
 					<InputNumber
+						disabled={startedGame}
 						required
 						name="sceneParams.autoTurnTime"
 						min={1}

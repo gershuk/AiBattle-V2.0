@@ -6,7 +6,7 @@ import {
 	SceneParameters,
 	Vector2,
 } from '@ai-battle/engine'
-import { attach, createStore, combine, sample } from 'effector'
+import { attach, createStore, combine, sample, createEvent } from 'effector'
 import { MapData } from 'model'
 import { createEngineCanvas } from './engine-canvas'
 
@@ -27,6 +27,8 @@ export const createEngine = () => {
 	const engine = new BombermanGame()
 
 	const $engine = createStore(engine)
+
+	const toggleAutoTurn = createEvent()
 
 	const init = attach({
 		source: combine({ engine: $engine, canvas: $canvas }),
@@ -83,36 +85,30 @@ export const createEngine = () => {
 		effect: engine => engine.RenderFrame(),
 	})
 
-	init.watch(params => {
-		console.log('init engine with params:', params)
-	})
-
 	sample({
-		clock: startAutoTurn,
+		clock: startAutoTurn.done,
 		fn: () => true,
 		target: $startedAutoTurn,
 	})
 
 	sample({
-		clock: stopAutoTurn,
+		clock: stopAutoTurn.done,
 		fn: () => false,
 		target: $startedAutoTurn,
 	})
 
-	start.watch(() => {
-		console.log('start engine')
+	sample({
+		source: $startedAutoTurn,
+		clock: toggleAutoTurn,
+		filter: startedAutoTurn => startedAutoTurn,
+		target: stopAutoTurn,
 	})
 
-	startAutoTurn.watch(() => {
-		console.log('startAutoTurn engine')
-	})
-
-	stopAutoTurn.watch(() => {
-		console.log('stopAutoTurn engine')
-	})
-
-	doNextTurn.watch(() => {
-		console.log('doNextTurn engine')
+	sample({
+		source: $startedAutoTurn,
+		clock: toggleAutoTurn,
+		filter: startedAutoTurn => !startedAutoTurn,
+		target: startAutoTurn,
 	})
 
 	return {
@@ -125,6 +121,7 @@ export const createEngine = () => {
 			stopAutoTurn,
 			doNextTurn,
 			renderFrame,
+			toggleAutoTurn,
 		},
 	}
 }
