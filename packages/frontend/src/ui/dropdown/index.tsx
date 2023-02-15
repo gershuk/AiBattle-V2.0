@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'preact/hooks'
 import './styles.scss'
 
 export interface DropDownProps {
-	value?: string | null
+	initValue?: string | null
 	onChange?: (selectId: string | null) => void
 	options: { id: string; text: string }[]
 	disabled?: boolean
@@ -13,7 +13,7 @@ export interface DropDownProps {
 }
 
 export const DropDown = ({
-	value: valueProps,
+	initValue,
 	options,
 	onChange,
 	disabled,
@@ -23,21 +23,7 @@ export const DropDown = ({
 	...props
 }: DropDownProps) => {
 	const ref = useRef<HTMLSelectElement | null>(null)
-	const [value, setValue] = useState<string | null>(valueProps ?? null)
-
-	useEffect(() => {
-		if (ref.current) {
-			if (valueProps !== undefined) {
-				ref.current.value = valueProps ?? ''
-			} else {
-				ref.current.value = value || ''
-			}
-		}
-	}, [ref, value])
-
-	useEffect(() => {
-		setValue(valueProps ?? null)
-	}, [valueProps])
+	const [value, setValue] = useState<string | null>(initValue ?? null)
 
 	const handlerChange = (_value: string) => {
 		if (disabled) return
@@ -65,6 +51,9 @@ export const DropDown = ({
 				onChange={e => handlerChange(e.currentTarget.value)}
 				{...props}
 			>
+				{initValue === null || initValue === undefined ? (
+					<option disabled selected style="display:none"></option>
+				) : null}
 				{options.map(({ id, text }) => (
 					<option key={id} value={id}>
 						{text}

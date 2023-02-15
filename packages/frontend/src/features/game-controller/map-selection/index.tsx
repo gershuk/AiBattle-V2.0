@@ -21,7 +21,7 @@ export const MapSelection = () => {
 			<div>
 				<DropDown
 					disabled={startedGame}
-					value={activeMap?.name}
+					initValue={activeMap?.name}
 					options={maps.map(({ name }) => ({ id: name, text: name }))}
 					onChange={x => selected(x)}
 				/>

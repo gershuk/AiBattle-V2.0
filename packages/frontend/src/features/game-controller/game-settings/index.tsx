@@ -10,7 +10,6 @@ const _formFields: AllFields[] = [
 		type: 'range',
 		min: 1,
 		max: 200,
-		initValue: 30,
 		name: 'sceneParams.tileSize',
 		required: true,
 		className: 'game-settings-range',
@@ -21,7 +20,6 @@ const _formFields: AllFields[] = [
 		required: true,
 		name: 'sceneParams.maxTurnIndex',
 		min: 1,
-		initValue: 1000000,
 		title: 'maxTurnIndex',
 	},
 	{
@@ -29,7 +27,6 @@ const _formFields: AllFields[] = [
 		required: true,
 		name: 'sceneParams.animTicksCount',
 		min: 1,
-		initValue: 60,
 		title: 'animTicksCount',
 	},
 	{
@@ -37,7 +34,6 @@ const _formFields: AllFields[] = [
 		required: true,
 		name: 'sceneParams.animTicksTime',
 		min: 1,
-		initValue: 12,
 		title: 'animTicksTime',
 	},
 	{
@@ -45,7 +41,6 @@ const _formFields: AllFields[] = [
 		required: true,
 		name: 'sceneParams.autoTurnTime',
 		min: 1,
-		initValue: 1100,
 		title: 'autoTurnTime',
 	},
 ]
@@ -63,7 +58,7 @@ export const GameSettings = () => {
 				disabled: startedGame,
 				onChange: (value: any) =>
 					setFieldValue({ value, fieldName: field.name }),
-				initValue: formValues[field.name] ?? field?.initValue,
+				initValue: formValues[field.name],
 			})),
 		[_formFields, startedGame, formValues]
 	)

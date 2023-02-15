@@ -1,28 +1,67 @@
 import { SceneParameters } from '@ai-battle/engine'
 import { useUnit } from 'effector-react'
-import { $selectedMap } from 'features/game-controller/model'
 import { htmlFormToJson } from 'libs'
 import { $codesData, $dataMaps } from 'model'
 import { useMemo } from 'react'
 import { Button, FormGenerator } from 'ui'
 import { AllFields } from 'ui'
 import {
+	$formValues,
 	$startedAutoTurn,
 	CanvasComponent,
 	engineMethods,
-	selectedMap,
+	setFieldValue,
 } from './model'
 
 interface DebugProps {
 	selectedCodeName: string
 }
 
+const _formFields: AllFields[] = [
+	{
+		type: 'number',
+		min: 1,
+		name: 'sceneParams.tileSize',
+		required: true,
+		className: 'game-settings-range',
+		title: 'Размер тайла',
+	},
+	{
+		type: 'number',
+		required: true,
+		name: 'sceneParams.maxTurnIndex',
+		min: 1,
+		title: 'maxTurnIndex',
+	},
+	{
+		type: 'number',
+		required: true,
+		name: 'sceneParams.animTicksCount',
+		min: 1,
+		title: 'animTicksCount',
+	},
+	{
+		type: 'number',
+		required: true,
+		name: 'sceneParams.animTicksTime',
+		min: 1,
+		title: 'animTicksTime',
+	},
+	{
+		type: 'number',
+		required: true,
+		name: 'sceneParams.autoTurnTime',
+		min: 1,
+		title: 'autoTurnTime',
+	},
+]
+
 export const Debug = ({ selectedCodeName }: DebugProps) => {
-	const { startedAutoTurn, mapsHashMap, activeMap, codesHashMap } = useUnit({
+	const { startedAutoTurn, mapsHashMap, codesHashMap, formValues } = useUnit({
 		startedAutoTurn: $startedAutoTurn,
 		mapsHashMap: $dataMaps,
-		activeMap: $selectedMap,
 		codesHashMap: $codesData,
+		formValues: $formValues,
 	})
 
 	const maps = useMemo(() => {
@@ -37,56 +76,23 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 				{
 					type: 'dropdown',
 					options: maps,
-					onChange: selectedMap,
+					onChange: (value: any) =>
+						setFieldValue({ value, fieldName: 'mapName' }),
 					name: 'mapName',
 					required: true,
-					value: activeMap?.name,
 					title: 'Карта',
+					disabled: startedAutoTurn,
+					initValue: formValues['mapName'],
 				},
-				{
-					type: 'number',
-					min: 1,
-					max: 200,
-					initValue: 30,
-					name: 'sceneParams.tileSize',
-					required: true,
-					className: 'game-settings-range',
-					title: 'Размер тайла',
-				},
-				{
-					type: 'number',
-					required: true,
-					name: 'sceneParams.maxTurnIndex',
-					min: 1,
-					initValue: 1000000,
-					title: 'maxTurnIndex',
-				},
-				{
-					type: 'number',
-					required: true,
-					name: 'sceneParams.animTicksCount',
-					min: 1,
-					initValue: 60,
-					title: 'animTicksCount',
-				},
-				{
-					type: 'number',
-					required: true,
-					name: 'sceneParams.animTicksTime',
-					min: 1,
-					initValue: 12,
-					title: 'animTicksTime',
-				},
-				{
-					type: 'number',
-					required: true,
-					name: 'sceneParams.autoTurnTime',
-					min: 1,
-					initValue: 1100,
-					title: 'autoTurnTime',
-				},
+				..._formFields.map(field => ({
+					...field,
+					disabled: startedAutoTurn,
+					onChange: (value: any) =>
+						setFieldValue({ value, fieldName: field.name }),
+					initValue: formValues[field.name],
+				})),
 			] as AllFields[],
-		[maps, selectedMap?.name]
+		[maps, startedAutoTurn]
 	)
 
 	return (

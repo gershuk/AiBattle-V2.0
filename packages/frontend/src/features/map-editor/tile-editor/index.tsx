@@ -170,14 +170,14 @@ export const TileEditor = ({
 				<div className={'tile-editor-toolbar-row'}>
 					<Checkbox
 						label="Показать коды ячеек"
-						initialChecked={visibleCode}
+						initValue={visibleCode}
 						onChange={toggleVisibleCode}
 					/>
 				</div>
 				<div className={'tile-editor-toolbar-row'}>
 					<Checkbox
 						label="Включить сетку"
-						initialChecked={visibleGrid}
+						initValue={visibleGrid}
 						onChange={toggleVisibleGrid}
 					/>
 				</div>

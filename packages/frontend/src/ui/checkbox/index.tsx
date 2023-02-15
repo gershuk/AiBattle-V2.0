@@ -5,7 +5,7 @@ import './styles.scss'
 
 interface CheckboxProps {
 	label?: string
-	initialChecked?: boolean
+	initValue?: boolean
 	onChange?: (checked: boolean) => void
 	className?: string
 	id?: string
@@ -14,13 +14,13 @@ interface CheckboxProps {
 
 export const Checkbox: React.FC<CheckboxProps> = ({
 	label,
-	initialChecked = false,
+	initValue = false,
 	onChange,
 	className,
 	id: idProp,
 	...props
 }) => {
-	const [checked, setChecked] = useState(initialChecked)
+	const [checked, setChecked] = useState(initValue)
 
 	const handleChange = (newChecked: boolean) => {
 		setChecked(newChecked)
