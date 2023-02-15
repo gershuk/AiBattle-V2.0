@@ -15,11 +15,33 @@ import {
 import { createSessionsManager } from 'libs/ace-editor'
 import { alertErrors } from 'libs/failer/failer'
 
+const _codeExample = `
+// example random bot
+class Controller { 
+    Init(info) {}
+    
+    GetRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min;
+    }
+    
+    GetCommand(info) { 
+        console.log(info);
+        return this.GetRandomInt(0, 6);
+    }
+    
+} 
+
+new Controller()
+`
+
 const errorReadStringFile = new Error('Невозможно преобразовать файл в строку')
 
-const { $sessions, addSession, removeSession, $sessionsValue } = createSessionsManager({
-	mode: 'ace/mode/javascript',
-})
+const { $sessions, addSession, removeSession, $sessionsValue } =
+	createSessionsManager({
+		mode: 'ace/mode/javascript',
+	})
 
 //TODO: ПЛОХА бижим по всем файлам
 const $codesModified = combine(
@@ -57,7 +79,6 @@ const loadScriptFx = attach({
 	},
 })
 
-
 sample({
 	clock: uploadedFileCode,
 	target: loadScriptFx,
@@ -78,7 +99,7 @@ sample({
 	clock: createdFileCode,
 	filter: (codes, name) =>
 		Boolean(name) && !codes.find(code => code.name === name),
-	fn: (_, name) => ({ name, content: '' }),
+	fn: (_, name) => ({ name, content: _codeExample }),
 	target: addCode,
 })
 
@@ -115,7 +136,7 @@ alertErrors({
 
 export {
 	$sessions,
-	$codesModified as $codesWithCache,
+	$codesModified,
 	uploadedFileCode,
 	removedFileCode,
 	createdFileCode,

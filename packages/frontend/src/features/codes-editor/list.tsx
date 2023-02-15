@@ -3,7 +3,7 @@ import {
 	uploadedFileCode,
 	removedFileCode,
 	createdFileCode,
-	$codesWithCache,
+	$codesModified,
 } from './model'
 import { UploadedCode } from '../../model'
 import { AddIcon, UploadIcon } from './assets/icons'
@@ -26,7 +26,7 @@ export interface LoaderScriptProps {
 }
 
 export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
-	const codes = useUnit($codesWithCache)
+	const codes = useUnit($codesModified)
 
 	const createCodeFile = async () => {
 		const { status, htmlElement } = await showPopup({

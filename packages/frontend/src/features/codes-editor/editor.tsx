@@ -3,7 +3,7 @@ import { createPanelSizeController } from 'libs'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor, SplitPanel } from '../../ui'
 import { Debug } from './debug'
-import { $codesWithCache, $sessions } from './model'
+import { $codesModified, $sessions } from './model'
 import './styles.scss'
 
 export interface EditorCode {
@@ -18,7 +18,7 @@ const { $sizes, setSizes } = createPanelSizeController(
 
 export const EditorCode = ({ active, onSave }: EditorCode) => {
 	const { codes, sessions, sizes } = useUnit({
-		codes: $codesWithCache,
+		codes: $codesModified,
 		sessions: $sessions,
 		sizes: $sizes,
 	})
