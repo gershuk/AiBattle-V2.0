@@ -1,4 +1,4 @@
-import { attach, combine, createEvent, createStore, sample } from 'effector'
+import { attach, combine, createEvent, sample } from 'effector'
 import {
 	addCode,
 	$codes,
@@ -15,8 +15,7 @@ import {
 import { createSessionsManager } from 'libs/ace-editor'
 import { alertErrors } from 'libs/failer/failer'
 
-const _codeExample = `
-// example random bot
+const _codeExample = `// example random bot
 class Controller { 
     Init(info) {}
     
@@ -33,8 +32,7 @@ class Controller {
     
 } 
 
-new Controller()
-`
+new Controller()`
 
 const errorReadStringFile = new Error('Невозможно преобразовать файл в строку')
 
