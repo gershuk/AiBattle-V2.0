@@ -1,6 +1,6 @@
 import { useUnit } from 'effector-react'
-import { $dataMaps, $maps } from 'model'
-import { useMemo } from 'react'
+import { $dataMaps } from 'model'
+import { useMemo } from 'preact/hooks'
 import { DropDown } from 'ui'
 import { $activeGame } from '../model'
 import { $selectedMap, selected } from '../model/select-map'

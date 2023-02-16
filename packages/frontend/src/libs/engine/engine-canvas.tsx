@@ -1,8 +1,9 @@
-import { memo, useEffect, useMemo, useRef } from 'react'
+import { useEffect, useMemo, useRef } from 'preact/hooks'
 import { clsx } from 'libs/clsx'
 import { MapData } from 'model'
 import { Store } from 'effector'
 import { useUnit } from 'effector-react'
+import { memo } from 'preact/compat'
 
 export const createEngineCanvas = ({
 	$map,

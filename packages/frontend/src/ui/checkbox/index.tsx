@@ -1,6 +1,5 @@
 import { clsx, generateGuid } from 'libs'
-import { useMemo } from 'preact/hooks'
-import React, { useState } from 'react'
+import { useMemo, useState } from 'preact/hooks'
 import './styles.scss'
 
 interface CheckboxProps {

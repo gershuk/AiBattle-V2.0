@@ -7,8 +7,7 @@ import {
 	useKeyboard,
 } from 'libs'
 import { MapData } from 'model'
-import { useCallback, useState } from 'preact/hooks'
-import { useEffect } from 'react'
+import { useCallback, useState, useEffect } from 'preact/hooks'
 import { Button, Checkbox, RangeInput, showMessage } from 'ui'
 import {
 	$activeCode,

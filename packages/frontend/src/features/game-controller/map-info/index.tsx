@@ -1,5 +1,5 @@
 import { useUnit } from 'effector-react'
-import { useMemo } from 'react'
+import { useMemo } from 'preact/hooks'
 import { $selectedMap } from '../model/select-map'
 import './styles.scss'
 

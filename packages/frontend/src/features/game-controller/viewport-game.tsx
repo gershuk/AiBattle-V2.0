@@ -1,5 +1,5 @@
 import { useUnit } from 'effector-react'
-import { useEffect } from 'react'
+import { useEffect } from 'preact/hooks'
 import { $activeGame, engine } from './model/game'
 import './styles.scss'
 

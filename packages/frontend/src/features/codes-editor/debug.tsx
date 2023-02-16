@@ -2,7 +2,7 @@ import { SceneParameters } from '@ai-battle/engine'
 import { useUnit } from 'effector-react'
 import { htmlFormToJson } from 'libs'
 import { $codesData, $dataMaps } from 'model'
-import { useMemo } from 'react'
+import { useMemo } from 'preact/hooks'
 import { Button, FormGenerator } from 'ui'
 import { AllFields } from 'ui'
 import {
