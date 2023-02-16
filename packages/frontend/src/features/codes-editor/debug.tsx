@@ -108,7 +108,11 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 							}>(e.currentTarget)
 							const mapData = mapsHashMap[mapName].data!
 							const botCode = codesHashMap[selectedCodeName].content
-							engineMethods.init({ sceneParams, mapData, codesBot: [botCode] })
+							engineMethods.init({
+								sceneParams,
+								mapData,
+								codesBot: mapData.spawns.map(() => botCode),
+							})
 						} else {
 							engineMethods.stopAutoTurn()
 						}
