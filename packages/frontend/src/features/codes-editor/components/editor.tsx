@@ -1,9 +1,9 @@
 import { useUnit } from 'effector-react'
 import { createPanelSizeController } from 'libs'
 import { useMemo } from 'preact/hooks'
-import { CodeEditor, SplitPanel } from '../../ui'
+import { CodeEditor, SplitPanel } from '../../../ui'
 import { Debug } from './debug'
-import { $codesModified, $sessions } from './model'
+import { $codesModified, $sessions } from '../model'
 import './styles.scss'
 
 export interface EditorCode {

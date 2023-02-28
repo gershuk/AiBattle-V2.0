@@ -2,8 +2,8 @@ import { useUnit } from 'effector-react'
 import { $dataMaps } from 'model'
 import { useMemo } from 'preact/hooks'
 import { DropDown } from 'ui'
-import { $activeGame } from '../model'
-import { $selectedMap, selected } from '../model/select-map'
+import { $activeGame } from '../../model'
+import { $selectedMap, selected } from '../../model/select-map'
 import './styles.scss'
 
 export const MapSelection = () => {

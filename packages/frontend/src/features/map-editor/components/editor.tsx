@@ -3,7 +3,7 @@ import { createPanelSizeController } from 'libs'
 import { MapData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor, SplitPanel } from 'ui'
-import { $mapsWithSessionValue, $sessions } from './model'
+import { $mapsWithSessionValue, $sessions } from '../model'
 import './styles.scss'
 import { TileEditor } from './tile-editor'
 

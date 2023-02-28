@@ -3,12 +3,12 @@ import { BotsSetting } from './bots-settings'
 import { GameSettings } from './game-settings'
 import { MapInfo } from './map-info'
 import { MapSelection } from './map-selection'
-import { $activeGame, engine, startedGame, stoppedGame } from './model/game'
-import { $selectedMap } from './model/select-map'
+import { $activeGame, engine, startedGame, stoppedGame } from '../model/game'
+import { $selectedMap } from '../model/select-map'
 import './styles.scss'
 import { Button } from 'ui'
 import { htmlFormToJson } from 'libs'
-import { SubmitForm } from './types'
+import { SubmitForm } from '../types'
 
 export const GameController = () => {
 	const {

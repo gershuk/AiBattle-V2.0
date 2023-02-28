@@ -4,10 +4,10 @@ import {
 	removedFileCode,
 	createdFileCode,
 	$codesModified,
-} from './model'
-import { UploadedCode } from '../../model'
-import { AddIcon, UploadIcon } from './assets/icons'
-import { createAndDownloadFile } from '../../api'
+} from '../model'
+import { UploadedCode } from '../../../model'
+import { AddIcon, UploadIcon } from '../assets/icons'
+import { createAndDownloadFile } from '../../../api'
 import './styles.scss'
 import {
 	Button,

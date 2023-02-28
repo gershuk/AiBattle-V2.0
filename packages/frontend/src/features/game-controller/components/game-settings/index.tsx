@@ -2,7 +2,7 @@ import { useUnit } from 'effector-react'
 import { ComponentChild } from 'preact'
 import { useMemo } from 'preact/hooks'
 import { FormGenerator, AllFields } from 'ui'
-import { $activeGame, $formValues, setFieldValue } from '../model'
+import { $activeGame, $formValues, setFieldValue } from '../../model'
 import './styles.scss'
 
 const _formFields: AllFields[] = [

@@ -20,7 +20,7 @@ import {
 	setMode,
 	toggleVisibleCode,
 	toggleVisibleGrid,
-} from '../model'
+} from '../../model'
 import { ListSpawns } from './list-spawns'
 import './styles.scss'
 import { TileTable } from './tile-table'

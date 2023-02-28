@@ -1,2 +1,2 @@
-export * from './controller'
-export * from './viewport-game'
+export * from './components/controller'
+export * from './components/viewport-game'

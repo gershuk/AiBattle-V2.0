@@ -3,8 +3,8 @@ import { useUnit } from 'effector-react'
 import { Replay } from 'model'
 import { $replays } from 'model/replays/model'
 import { List, ListItem, showConfirm } from 'ui'
-import { UploadIcon } from './assets/icons'
-import { removedReplay, uploadedReplay } from './model'
+import { UploadIcon } from '../assets/icons'
+import { removedReplay, uploadedReplay } from '../model'
 import './styles.scss'
 
 interface ReplayListProps {

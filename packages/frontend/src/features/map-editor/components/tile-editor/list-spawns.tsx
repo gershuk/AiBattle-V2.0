@@ -2,7 +2,7 @@ import { useUnit } from 'effector-react'
 import { clsx, deepCopyJson } from 'libs'
 import { Spawn } from 'model'
 import { Button } from 'ui'
-import { $mode, setMode } from '../model'
+import { $mode, setMode } from '../../model'
 
 export interface ListSpawnsProps {
 	spawns: Spawn[]

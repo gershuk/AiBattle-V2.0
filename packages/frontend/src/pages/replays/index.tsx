@@ -1,6 +1,6 @@
 import { useUnit } from 'effector-react'
 import { ReplayController } from 'features/replay-contoller'
-import { ReplayList } from 'features/replays-list/list'
+import { ReplayList } from 'features/replays-list/components/list'
 import { createPanelSizeController } from 'libs'
 import { Button, SplitPanel } from 'ui'
 import {

@@ -2,8 +2,8 @@ import { useUnit } from 'effector-react'
 import { $codesData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { DropDown, Input } from 'ui'
-import { $activeGame } from '../model'
-import { $selectedMap } from '../model/select-map'
+import { $activeGame } from '../../model'
+import { $selectedMap } from '../../model/select-map'
 import './styles.scss'
 
 const colors = [

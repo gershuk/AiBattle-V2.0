@@ -11,7 +11,7 @@ import {
 	CanvasComponent,
 	engineMethods,
 	setFieldValue,
-} from './model'
+} from '../model'
 
 interface DebugProps {
 	selectedCodeName: string

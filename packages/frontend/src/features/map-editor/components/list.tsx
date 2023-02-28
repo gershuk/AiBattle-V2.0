@@ -11,13 +11,13 @@ import {
 	showMessage,
 	showPopup,
 } from 'ui'
-import { AddIcon, UploadIcon } from './assets/icons'
+import { AddIcon, UploadIcon } from '../assets/icons'
 import {
 	$mapsWithSessionValue,
 	createdFile,
 	removedFileMap,
 	uploadedFile,
-} from './model'
+} from '../model'
 import './styles.scss'
 
 interface MapsListProps {
