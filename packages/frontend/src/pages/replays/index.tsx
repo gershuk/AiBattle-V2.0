@@ -13,7 +13,7 @@ import './styles.scss'
 
 const { $sizes, setSizes } = createPanelSizeController(200)
 
-export const Replays = () => {
+export const ReplaysPage = () => {
 	const { selectReplay, startGame, sizes } = useUnit({
 		selectReplay: $selectReplay,
 		startGame: $startGame,

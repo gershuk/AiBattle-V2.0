@@ -8,7 +8,7 @@ import { createPanelSizeController } from 'libs'
 
 const { $sizes, setSizes } = createPanelSizeController(200)
 
-export const MapEditor = () => {
+export const MapEditorPage = () => {
 	const { selectMap, sizes } = useUnit({ selectMap: $selectMap, sizes: $sizes })
 	const handlerDragEnd = (sizesPanel: number[]) => {
 		setSizes([...sizesPanel])

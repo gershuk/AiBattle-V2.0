@@ -7,7 +7,7 @@ import { createPanelSizeController } from 'libs'
 
 const { $sizes, setSizes } = createPanelSizeController(200)
 
-export const ControllerEditor = () => {
+export const ControllerEditorPage = () => {
 	const { selectCode, sizes } = useUnit({
 		selectCode: $selectCode,
 		sizes: $sizes,

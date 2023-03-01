@@ -1,7 +1,7 @@
 import { SideBar } from 'features/side-bar'
 import { readCodesFromLocalStorageFx, readMapsFromLocalStorageFx } from 'model'
 import './styles.scss'
-import { RoutesView } from 'routing'
+import { RoutesView } from 'pages'
 
 export const App = () => {
 	return (

@@ -6,7 +6,7 @@ import './styles.scss'
 
 const { $sizes, setSizes } = createPanelSizeController(400)
 
-export const Game = () => {
+export const GamePage = () => {
 	const sizes = useUnit($sizes)
 	const handlerDragEnd = (sizesPanel: number[]) => {
 		setSizes([...sizesPanel])
