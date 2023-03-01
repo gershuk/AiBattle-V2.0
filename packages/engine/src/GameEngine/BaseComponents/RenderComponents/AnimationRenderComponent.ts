@@ -1,8 +1,5 @@
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
-import {
-	AbstractObjectComponent,
-	ComponentParameters,
-} from '../AbstractObjectComponent'
+import { ComponentParameters } from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
 import { AbstractRenderComponent } from './AbstractRenderComponent'
 import { StaticRenderComponentParameters } from './StaticRenderComponent'
@@ -27,8 +24,8 @@ export class AnimationRenderComponent extends AbstractRenderComponent {
 		return this.CurrentFrameData.size
 	}
 
-	public get zOder(): number {
-		return this.CurrentFrameData.zOder
+	public get zOrder(): number {
+		return this.CurrentFrameData.zOrder
 	}
 
 	public get Image(): HTMLImageElement {
@@ -38,28 +35,18 @@ export class AnimationRenderComponent extends AbstractRenderComponent {
 	Init(owner: IGameObject, parameters?: AnimationRenderComponentParameters) {
 		super.Init(owner, parameters)
 		if (parameters) {
-			if (parameters instanceof AnimationRenderComponentParameters) {
-				this._frameIndex = 0
-				this._frames = parameters.frames
-			} else {
-				throw new Error(
-					'Expect parameters of type AnimationRenderComponentParameters'
-				)
-			}
+			this._frameIndex = 0
+			this._frames = parameters.frames
 		}
 	}
 
-	OnFixedUpdateEnded(index: number): void {}
-	OnOwnerInit(): void {}
-	OnDestroy(): void {}
-	OnSceneStart(): void {}
 	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {
 		const part = (currentFrame + 1) / frameCount
 		while (part > this.CurrentPart) {
 			this._frameIndex++
 		}
 	}
-	OnAfterFrameRender(currentFrame: number, frameCount: number): void {}
+
 	OnFixedUpdate(index: number): void {
 		this._frameIndex = 0
 	}

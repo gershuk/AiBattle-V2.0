@@ -1,12 +1,12 @@
-import { AbstractObjectComponent } from '../AbstractObjectComponent'
+import { GameObjectComponent } from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
 
-export abstract class AbstractRenderComponent extends AbstractObjectComponent {
+export abstract class AbstractRenderComponent extends GameObjectComponent {
 	public abstract get offset(): Vector2
 
 	public abstract get size(): Vector2
 
-	public abstract get zOder(): number
+	public abstract get zOrder(): number
 
 	public abstract get Image(): HTMLImageElement
 }

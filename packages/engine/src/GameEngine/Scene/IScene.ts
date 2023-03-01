@@ -1,15 +1,17 @@
 import {
-	AbstractObjectComponent,
+	GameObjectComponent,
 	ComponentParameters,
-} from '../BaseComponents/AbstractObjectComponent'
+} from '../BaseComponents/GameObjectComponent'
 import { GameObject } from '../GameObject/GameObject'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
 
 export interface IScene {
-	get tileSize(): Number
+	get playModeParameters(): PlayModeParameters
 
-	set tileSize(v: Number)
+	get tileSizeScale(): Number
+
+	set tileSizeScale(v: Number)
 
 	get messageBroker(): IMessageBroker
 
@@ -50,7 +52,7 @@ export interface IScene {
 	AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
 	): void
 
@@ -58,7 +60,7 @@ export interface IScene {
 		gameObjectInits: [
 			Vector2,
 			T,
-			[AbstractObjectComponent, ComponentParameters?][]
+			[GameObjectComponent, ComponentParameters?][]
 		][]
 	): void
 
@@ -79,13 +81,20 @@ export interface IScene {
 	Init(parameters: SceneParameters): void
 }
 
+export class PlayModeParameters {
+	disableAnimation: boolean = false
+	disableRender: boolean = false
+	useRemoteControllers: boolean = false
+}
+
 export class SceneParameters {
 	maxTurnIndex: number
 	animTicksCount: number
 	animTicksTime: number
 	autoTurnTime: number
 	canvas: HTMLCanvasElement
-	tileSize: number
+	tileSizeScale: number
+	playModeParameters: PlayModeParameters
 
 	constructor(
 		maxTurnIndex: number,
@@ -93,13 +102,15 @@ export class SceneParameters {
 		animTicksTime: number,
 		autoTurnTime: number,
 		canvas: HTMLCanvasElement,
-		tileSize: number = 1
+		tileSizeScale: number = 1,
+		playModeParameters: PlayModeParameters = new PlayModeParameters()
 	) {
 		this.maxTurnIndex = maxTurnIndex
 		this.animTicksCount = animTicksCount
 		this.animTicksTime = animTicksTime
 		this.autoTurnTime = autoTurnTime
 		this.canvas = canvas
-		this.tileSize = tileSize
+		this.tileSizeScale = tileSizeScale
+		this.playModeParameters = playModeParameters
 	}
 }

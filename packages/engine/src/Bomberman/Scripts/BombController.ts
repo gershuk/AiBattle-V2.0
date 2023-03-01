@@ -1,7 +1,7 @@
 import {
-	AbstractObjectComponent,
+	GameObjectComponent,
 	ComponentParameters,
-} from 'GameEngine/BaseComponents/AbstractObjectComponent'
+} from 'GameEngine/BaseComponents/GameObjectComponent'
 import { DiscreteColliderSystem } from 'GameEngine/BaseComponents/DiscreteColliderSystem/DiscreteColliderSystem'
 import {
 	DiscreteMovementComponent,
@@ -10,13 +10,11 @@ import {
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import { HealthComponent } from './Health'
+import { DestructibleWall } from './DestructibleWall'
 import { Wall } from './Wall'
-import { Metal } from './Metal'
 import { BombData } from './MapData'
 
-export class BombController extends AbstractObjectComponent {
-	OnFixedUpdateEnded(index: number): void {}
-
+export class BombController extends GameObjectComponent {
 	private _pattern: Vector2[] = [
 		new Vector2(1, 0),
 		new Vector2(-1, 0),
@@ -32,7 +30,7 @@ export class BombController extends AbstractObjectComponent {
 
 	public GetData(): BombData {
 		return new BombData(
-			this.owner.position.Clone(),
+			this.gameObject.position.Clone(),
 			this._turnToExplosion,
 			this._damage,
 			this._range,
@@ -40,11 +38,11 @@ export class BombController extends AbstractObjectComponent {
 		)
 	}
 
-	Init(owner: IGameObject, parameters?: BombControllerParameters): void {
-		super.Init(owner, parameters)
+	Init(gameObject: IGameObject, parameters?: BombControllerParameters): void {
+		super.Init(gameObject, parameters)
 		if (parameters) {
 			this._turnToExplosion =
-				(owner.owner.turnIndex ? owner.owner.turnIndex : 1) +
+				(gameObject.scene.turnIndex ? gameObject.scene.turnIndex : 1) +
 				parameters.ticksToExplosion
 			this._discreteColliderSystem = parameters.discreteColliderSystem
 			this._damage = parameters.damage
@@ -53,40 +51,38 @@ export class BombController extends AbstractObjectComponent {
 		}
 	}
 
-	OnOwnerInit(): void {}
-	OnDestroy(): void {}
-	OnSceneStart(): void {}
-	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {}
-	OnAfterFrameRender(currentFrame: number, frameCount: number): void {}
 	OnFixedUpdate(index: number): void {
 		if (
 			this._discreteColliderSystem.CanInit(
-				this.owner.position.x,
-				this.owner.position.y
+				this.gameObject.position.x,
+				this.gameObject.position.y
 			)
 		) {
-			this.owner.AddComponents([
+			this.gameObject.AddComponents([
 				[
 					new DiscreteMovementComponent(),
 					new DiscreteMovementComponentParameters(this._discreteColliderSystem),
 				],
 			])
 		}
+
 		if (index === this._turnToExplosion) {
-			this.owner.owner.RemoveGameObjectsByFilter(g => this.owner === g)
-			this.DamageTile(this.owner.position)
+			this.gameObject.scene.RemoveGameObjectsByFilter(
+				g => this.gameObject === g
+			)
+			this.DamageTile(this.gameObject.position)
 
 			for (let dir of this._pattern) {
 				for (let i = 1; i <= this._range; ++i) {
-					const pos = this.owner.position.Add(dir.MulScalar(i))
-					const owner = this._discreteColliderSystem.GetCellData(
+					const pos = this.gameObject.position.Add(dir.MulScalar(i))
+					const cellOwner = this._discreteColliderSystem.GetCellData(
 						pos.x,
 						pos.y
 					).owner
-					const wall = owner?.owner?.GetComponents(Wall)
-					const metal = owner?.owner?.GetComponents(Metal)
-					if (metal && metal.length > 0) break
-					if (wall && wall.length > 0) {
+					const destructibleWall = cellOwner?.gameObject?.GetComponents(DestructibleWall)
+					const wall = cellOwner?.gameObject?.GetComponents(Wall)
+					if (wall && wall.length > 0) break
+					if (destructibleWall && destructibleWall.length > 0) {
 						this.DamageTile(pos)
 						break
 					}
@@ -98,13 +94,13 @@ export class BombController extends AbstractObjectComponent {
 
 	private DamageTile(position: Vector2) {
 		this._blastSpawnFunction(position)
-		let owner = this._discreteColliderSystem.GetCellData(
+		let cellOwner = this._discreteColliderSystem.GetCellData(
 			position.x,
 			position.y
 		).owner
 
-		if (owner) {
-			let healthComponent = owner.owner.GetComponents(
+		if (cellOwner) {
+			let healthComponent = cellOwner.gameObject.GetComponents(
 				HealthComponent
 			)[0] as any as HealthComponent
 			if (healthComponent) {

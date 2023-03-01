@@ -1,8 +1,8 @@
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 import {
-	AbstractObjectComponent,
+	GameObjectComponent,
 	ComponentParameters,
-} from '../AbstractObjectComponent'
+} from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
 import { DiscreteMovementComponent } from './DiscreteMovementComponent'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
@@ -35,9 +35,12 @@ export class CellData {
 	}
 }
 
-export class DiscreteColliderSystem extends AbstractObjectComponent {
+export class DiscreteColliderSystem extends GameObjectComponent {
 	private _width: number
 	private _height: number
+
+	_grid: Array<Array<CellData>>
+	_turn: number
 
 	public get width(): number {
 		return this._width
@@ -47,46 +50,28 @@ export class DiscreteColliderSystem extends AbstractObjectComponent {
 		return this._height
 	}
 
-	OnFixedUpdateEnded(index: number): void {}
-
-	OnOwnerInit(): void {
+	public OnOwnerInit(): void {
 		this._turn = 0
 	}
-	OnDestroy(): void {}
-	OnSceneStart(): void {}
-	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {}
-	OnAfterFrameRender(currentFrame: number, frameCount: number): void {}
-	OnFixedUpdate(index: number): void {
+
+	public OnFixedUpdate(index: number): void {
 		this._turn = index
 	}
 
-	_grid: Array<Array<CellData>>
-	_turn: number
-
-	constructor(
-		owner?: IGameObject,
+	public Init(
+		owner: IGameObject,
 		parameters?: DiscreteColliderSystemParameters
-	) {
-		super(owner, parameters)
-	}
-
-	public Init(owner: IGameObject, parameters?: ComponentParameters): void {
+	): void {
 		super.Init(owner, parameters)
 		if (parameters) {
-			if (parameters instanceof DiscreteColliderSystemParameters) {
-				this._width = parameters.width
-				this._height = parameters.height
-				this._grid = new Array<Array<CellData>>(this._width)
-				for (let i = 0; i < this._width; ++i) {
-					this._grid[i] = new Array<CellData>(this._height)
-					for (let j = 0; j < this._height; ++j) {
-						this._grid[i][j] = new CellData()
-					}
+			this._width = parameters.width
+			this._height = parameters.height
+			this._grid = new Array<Array<CellData>>(this._width)
+			for (let i = 0; i < this._width; ++i) {
+				this._grid[i] = new Array<CellData>(this._height)
+				for (let j = 0; j < this._height; ++j) {
+					this._grid[i][j] = new CellData()
 				}
-			} else {
-				throw new Error(
-					'Expect parameters of type DiscreteColliderSystemParameters'
-				)
 			}
 		}
 	}
@@ -103,8 +88,8 @@ export class DiscreteColliderSystem extends AbstractObjectComponent {
 	}
 
 	public CanInitOwner(owner: DiscreteMovementComponent) {
-		const x = owner.owner.position.x
-		const y = owner.owner.position.y
+		const x = owner.gameObject.position.x
+		const y = owner.gameObject.position.y
 
 		if (!this.CellExist(x, y)) {
 			console.error(`Cell is not exist (${x} ${y})`)
@@ -113,7 +98,7 @@ export class DiscreteColliderSystem extends AbstractObjectComponent {
 
 		return (
 			(this._grid[x][y].receiver === undefined ||
-				this._grid[x][y].receiver === owner.owner) &&
+				this._grid[x][y].receiver === owner.gameObject) &&
 			(this._grid[x][y].owner === undefined ||
 				this._grid[x][y].owner === owner ||
 				this._grid[x][y].endRentTurn <= this._turn)
@@ -164,7 +149,7 @@ export class DiscreteColliderSystem extends AbstractObjectComponent {
 		const targetCell = this._grid[newPos.x][newPos.y]
 		const cond =
 			(this._grid[newPos.x][newPos.y].receiver === undefined ||
-				this._grid[newPos.x][newPos.y].receiver === owner.owner) &&
+				this._grid[newPos.x][newPos.y].receiver === owner.gameObject) &&
 			(targetCell.owner === owner ||
 				targetCell.owner === undefined ||
 				(targetCell.endRentTurn !== undefined &&

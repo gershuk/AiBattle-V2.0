@@ -1,4 +1,4 @@
-import { AbstractObjectComponent } from 'GameEngine/BaseComponents/AbstractObjectComponent'
+import { GameObjectComponent } from 'GameEngine/BaseComponents/GameObjectComponent'
 import { Queue } from 'Utilities'
 import { IMessageBroker } from './IMessageBroker'
 import { Message } from './Message'
@@ -7,7 +7,7 @@ export class MessageBroker implements IMessageBroker {
 	private messages: { [key: string]: Queue<Message> } = {}
 
 	public SendMessage(
-		component: AbstractObjectComponent,
+		component: GameObjectComponent,
 		receiverUuid: string,
 		data: any
 	): number {
@@ -28,7 +28,7 @@ export class MessageBroker implements IMessageBroker {
 		return this.messages[receiverUuid].Size()
 	}
 
-	public GetMessage(component: AbstractObjectComponent): [number, Message?] {
+	public GetMessage(component: GameObjectComponent): [number, Message?] {
 		if (!this.messages[component.uuid]) {
 			return [0]
 		}

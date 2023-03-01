@@ -1,13 +1,14 @@
 import {
-	AbstractObjectComponent,
+	GameObjectComponent,
 	ComponentParameters,
-} from '../BaseComponents/AbstractObjectComponent'
+} from '../BaseComponents/GameObjectComponent'
 import { GameObject } from '../GameObject/GameObject'
-import { IScene, SceneParameters } from './IScene'
+import { IScene, PlayModeParameters, SceneParameters } from './IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
 import { AbstractRenderComponent } from 'GameEngine/BaseComponents/RenderComponents/AbstractRenderComponent'
+import { Delay } from 'Utilities/Delay'
 
 enum SceneState {
 	Init,
@@ -18,7 +19,7 @@ enum SceneState {
 }
 
 export class Scene implements IScene {
-	private _tileSize: number
+	private _tileSizeScale: number
 	private _gameObjects: GameObject[]
 	private _turnIndex: number
 	private _maxTurnIndex: number
@@ -28,6 +29,14 @@ export class Scene implements IScene {
 	private _animTicksCount: number
 	private _animTicksTime: number
 	private _canvas: HTMLCanvasElement
+
+	private _playModeParameters: PlayModeParameters
+	public get playModeParameters(): PlayModeParameters {
+		return this._playModeParameters
+	}
+	protected set playModeParameters(v: PlayModeParameters) {
+		this._playModeParameters = v
+	}
 
 	private _messageBroker: IMessageBroker
 	public get messageBroker(): IMessageBroker {
@@ -130,16 +139,12 @@ export class Scene implements IScene {
 		this._canvas = canvas
 	}
 
-	constructor(parameters: SceneParameters) {
-		this.Init(parameters)
+	get tileSizeScale(): number {
+		return this._tileSizeScale
 	}
 
-	get tileSize(): number {
-		return this._tileSize
-	}
-
-	set tileSize(v: number) {
-		this._tileSize = v
+	set tileSizeScale(v: number) {
+		this._tileSizeScale = v
 		if (this.state && this.state !== SceneState.Starting) this.RenderFrame()
 	}
 
@@ -153,7 +158,7 @@ export class Scene implements IScene {
 		this.animTicksCount = parameters.animTicksCount
 		this.animTicksTime = parameters.animTicksTime
 		this.canvas = parameters.canvas
-		this.tileSize = parameters.tileSize
+		this.tileSizeScale = parameters.tileSizeScale
 
 		this.gameObjects = new Array<GameObject>()
 		this.renderOffset = new Vector2(0, 0)
@@ -169,12 +174,14 @@ export class Scene implements IScene {
 			const y = event.clientY - rect.top
 			this.mousePositionOnCanvas.SetXY(x, y)
 		})
+
+		this.playModeParameters = parameters.playModeParameters
 	}
 
 	public AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
 	): void {
 		this._gameObjects.push(gameObject)
@@ -185,7 +192,7 @@ export class Scene implements IScene {
 		gameObjectInits: [
 			Vector2,
 			T,
-			[AbstractObjectComponent, ComponentParameters?][]
+			[GameObjectComponent, ComponentParameters?][]
 		][]
 	): void {
 		for (let gameObjectInit of gameObjectInits)
@@ -244,6 +251,8 @@ export class Scene implements IScene {
 	}
 
 	public RenderFrame(): void {
+		if (this.playModeParameters.disableRender) return
+
 		let renderComponents: AbstractRenderComponent[] =
 			new Array<AbstractRenderComponent>()
 		for (let gameObject of this.gameObjects) {
@@ -252,86 +261,102 @@ export class Scene implements IScene {
 			)
 		}
 
-		renderComponents = renderComponents.sort((a, b) => a.zOder - b.zOder)
+		renderComponents = renderComponents.sort((a, b) => a.zOrder - b.zOrder)
 
 		const context = <CanvasRenderingContext2D>this.canvas.getContext('2d')
-		//ToDo : test ctx.beginPath();
+
 		context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
 		for (let component of renderComponents) {
 			const image = component.Image
-			const pos = component.owner.position
+			const pos = component.gameObject.position
 				.Add(component.offset)
 				.Add(this.renderOffset)
 			const dw = component.size.x
 			const dh = component.size.y
 			context.drawImage(
 				image,
-				pos.x * this.tileSize,
-				pos.y * this.tileSize,
-				dw * this.tileSize,
-				dh * this.tileSize
+				pos.x * this.tileSizeScale,
+				pos.y * this.tileSizeScale,
+				dw * this.tileSizeScale,
+				dh * this.tileSizeScale
 			)
 		}
 	}
 
-	private AnimationStep(index: number, animTicksCount: number) {
-		this.OnBeforeFrameRender(index, this.animTicksCount)
-		this.RenderFrame()
-		this.OnAfterFrameRender(index, this.animTicksCount)
-		if (index + 1 < animTicksCount) {
-			setTimeout(
-				() => this.AnimationStep(index + 1, animTicksCount),
-				this.animTicksTime
-			)
-		} else {
-			this.OnFixedUpdateEnded(this.turnIndex)
-			this.state = SceneState.ReadyToNextTurn
+	private async AnimationStep() {
+		if (this.playModeParameters.disableAnimation) {
+			this.RenderFrame()
+			return
+		}
+
+		for (let i = 0; i < this.animTicksCount; ++i) {
+			this.OnBeforeFrameRender(i, this.animTicksCount)
+			this.RenderFrame()
+			this.OnAfterFrameRender(i, this.animTicksCount)
+			await Delay(this.animTicksTime)
 		}
 	}
 
-	public DoNextTurn(): void {
-		if (this.state == SceneState.ReadyToNextTurn) {
-			if (this.turnIndex >= this.maxTurnIndex) {
-				throw new Error('turnIndex == this.maxTurnIndex')
-			}
-			this.turnIndex++
-			this.state = SceneState.NextTurn
-			this.OnFixedUpdate(this.turnIndex)
-			this.state = SceneState.Animation
-			this.AnimationStep(0, this.animTicksCount)
-			if (this.turnIndex == this.maxTurnIndex) {
-				this.StopAutoTurn()
-			}
-		} else {
+	public async DoNextTurn() {
+		if (this.state != SceneState.ReadyToNextTurn) {
 			throw new Error(
-				`Expected state==SceneState.ReadyToNextTurn, but got ${this.state}`
+				`Expected state==${SceneState.ReadyToNextTurn}, but got ${this.state}`
 			)
 		}
+
+		if (this.turnIndex >= this.maxTurnIndex) {
+			throw new Error('turnIndex == this.maxTurnIndex')
+		}
+
+		this.turnIndex++
+
+		if (this.turnIndex == this.maxTurnIndex) {
+			this.StopAutoTurn()
+		}
+
+		this.state = SceneState.NextTurn
+		this.OnFixedUpdate(this.turnIndex)
+
+		this.state = SceneState.Animation
+		await this.AnimationStep()
+
+		this.OnFixedUpdateEnded(this.turnIndex)
+		this.state = SceneState.ReadyToNextTurn
 	}
 
 	public StopAutoTurn(): void {
-		if (this.autoTurnTimerId) {
-			clearTimeout(this.autoTurnTimerId)
-			this.autoTurnTimerId = undefined
-		} else {
-			throw new Error('AutoNext not started')
+		if (!this.autoTurnTimerId) {
+			throw new Error('AutoTurn not started')
 		}
+		clearTimeout(this.autoTurnTimerId)
+		this.autoTurnTimerId = undefined
 	}
 
 	public StartAutoTurn(): void {
-		if (this.state == SceneState.ReadyToNextTurn) {
-			if (this.turnIndex == this.maxTurnIndex) {
-				throw new Error('turnIndex == this.maxTurnIndex')
-			}
-
-			if (!this.autoTurnTimerId) {
-				this.DoNextTurn()
-				this.autoTurnTimerId = window.setInterval(
-					() => this.DoNextTurn(),
-					this.autoTurnTime
-				)
-			} else throw new Error('AutoTurn already started')
+		if (this.state != SceneState.ReadyToNextTurn) {
+			throw new Error(
+				`Expected state==${SceneState.ReadyToNextTurn}, but got ${this.state}`
+			)
 		}
+
+		if (this.turnIndex == this.maxTurnIndex) {
+			throw new Error('turnIndex == this.maxTurnIndex')
+		}
+
+		if (this.autoTurnTimerId) {
+			throw new Error('AutoTurn already started')
+		}
+
+		this.DoNextTurn().catch(reason => {
+			throw reason
+		})
+		this.autoTurnTimerId = window.setInterval(
+			() =>
+				this.DoNextTurn().catch(reason => {
+					throw reason
+				}),
+			this.autoTurnTime
+		)
 	}
 }

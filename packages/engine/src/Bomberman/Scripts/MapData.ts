@@ -1,26 +1,26 @@
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 
 export class MapData {
-	wallsData: WallData[]
-	metalsData: MetalData[]
+	destructibleWallsData: DestructibleWallData[]
+	simpleWallsData: WallData[]
 	bombsData: BombData[]
-	bodiesData: BodyData[]
-	playerData: PlayerData
+	enemiesData: BodyPublicData[]
+	playerData: BodyAllData
 	map: MapObjectData[][][]
 
 	constructor(
-		wallsData: WallData[],
-		metalsData: MetalData[],
+		destructibleWallsData: DestructibleWallData[],
+		simpleWallsData: WallData[],
 		bombsData: BombData[],
-		bodiesData: BodyData[],
-		playerData: PlayerData,
+		enemiesData: BodyPublicData[],
+		playerData: BodyAllData,
 		x: number,
 		y: number
 	) {
-		this.wallsData = wallsData
-		this.metalsData = metalsData
+		this.destructibleWallsData = destructibleWallsData
+		this.simpleWallsData = simpleWallsData
 		this.bombsData = bombsData
-		this.bodiesData = bodiesData
+		this.enemiesData = enemiesData
 		this.playerData = playerData
 
 		this.map = []
@@ -31,19 +31,19 @@ export class MapData {
 			}
 		}
 
-		for (let wallData of wallsData) {
+		for (let wallData of destructibleWallsData) {
 			this.map[wallData.position.x][wallData.position.y].push(wallData)
 		}
 
-		for (let metalData of metalsData) {
-			this.map[metalData.position.x][metalData.position.y].push(metalData)
+		for (let simpleWall of simpleWallsData) {
+			this.map[simpleWall.position.x][simpleWall.position.y].push(simpleWall)
 		}
 
 		for (let bombData of bombsData) {
 			this.map[bombData.position.x][bombData.position.y].push(bombData)
 		}
 
-		for (let bodyData of bodiesData) {
+		for (let bodyData of enemiesData) {
 			this.map[bodyData.position.x][bodyData.position.y].push(bodyData)
 		}
 
@@ -54,27 +54,29 @@ export class MapData {
 export abstract class MapObjectData {
 	position: Vector2
 	uuid: string
+
 	constructor(position: Vector2, uuid: string) {
 		this.uuid = uuid
 		this.position = position
 	}
 }
 
-export class MetalData extends MapObjectData {
+export class WallData extends MapObjectData {
 	constructor(position: Vector2, uuid: string) {
 		super(position, uuid)
 	}
 }
 
-export class WallData extends MapObjectData {
+export class DestructibleWallData extends WallData {
 	health: number
+
 	constructor(position: Vector2, health: number, uuid: string) {
 		super(position, uuid)
 		this.health = health
 	}
 }
 
-export class BodyData extends MapObjectData {
+export class BodyPublicData extends MapObjectData {
 	health: number
 
 	constructor(position: Vector2, health: number, uuid: string) {
@@ -84,8 +86,7 @@ export class BodyData extends MapObjectData {
 	}
 }
 
-export class PlayerData extends MapObjectData {
-	health: number
+export class BodyAllData extends BodyPublicData {
 	bombsMaxCount: number
 	bombsCount: number
 	bombsRestoreTicks: number
@@ -102,7 +103,7 @@ export class PlayerData extends MapObjectData {
 		lastBombRestoreTurn: number,
 		uuid: string
 	) {
-		super(position, uuid)
+		super(position, health, uuid)
 		this.health = health
 		this.bombsMaxCount = bombsMaxCount
 		this.bombsCount = bombsCount

@@ -15,17 +15,11 @@ import {
 	BombermanMap,
 } from './Bomberman/Scripts/BombermanGame'
 import {
-	SimpleDemo,
-	SimpleDemoEngineParameters,
-} from 'GameEngine/SimpleDemo/SimpleDemo'
-import {
-	BodyData,
 	BombData,
 	MapData,
 	MapObjectData,
-	MetalData,
-	PlayerData,
 	WallData,
+	DestructibleWallData,
 } from 'Bomberman/Scripts/MapData'
 
 export {
@@ -33,17 +27,13 @@ export {
 	type IScene,
 	GameEngine,
 	GameEngineParameters,
-	SimpleDemo,
-	SimpleDemoEngineParameters,
 	BombermanGame,
 	BombermanMap,
 	BombermanGameParameters,
 	MapObjectData,
 	MapData,
-	BodyData,
-	MetalData,
 	WallData,
-	PlayerData,
+	DestructibleWallData,
 	BombData,
 	SceneParameters,
 	ImageLoader,

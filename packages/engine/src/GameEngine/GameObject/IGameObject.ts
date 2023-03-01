@@ -1,12 +1,12 @@
 import {
-	AbstractObjectComponent,
+	GameObjectComponent,
 	ComponentParameters,
-} from '../BaseComponents/AbstractObjectComponent'
+} from '../BaseComponents/GameObjectComponent'
 import { IScene } from '../Scene/IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
 
 export interface IGameObject {
-	get owner(): IScene
+	get scene(): IScene
 
 	get id(): string
 
@@ -16,18 +16,18 @@ export interface IGameObject {
 
 	Init(
 		position: Vector2,
-		owner?: IScene,
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		scene?: IScene,
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
 	): void
 
 	AddComponents(
-		newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents: [GameObjectComponent, ComponentParameters?][]
 	): void
 
-	RemoveComponents<T extends typeof AbstractObjectComponent>(type: T): void
+	RemoveComponents<T extends typeof GameObjectComponent>(type: T): void
 
-	GetComponents<T extends typeof AbstractObjectComponent>(type: T): T[]
+	GetComponents<T extends typeof GameObjectComponent>(type: T): T[]
 
 	OnSceneStart(): void
 

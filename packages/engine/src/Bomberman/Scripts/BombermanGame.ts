@@ -15,14 +15,13 @@ import { GameEngine, GameEngineParameters } from 'GameEngine/GameEngine'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
 import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
 import { SceneParameters } from 'GameEngine/Scene/IScene'
-import { Scene } from 'GameEngine/Scene/Scene'
 import { shuffle } from 'Utilities/ShuffleArray'
 import { ManBody, ManBodyParameters } from './ManBody'
 import { BombController, BombControllerParameters } from './BombController'
 import { Blast } from './Blast'
 import { HealthComponent, HealthComponentParameters } from './Health'
+import { DestructibleWall } from './DestructibleWall'
 import { Wall } from './Wall'
-import { Metal } from './Metal'
 import {
 	AnimationFrame,
 	AnimationRenderComponent,
@@ -34,50 +33,45 @@ export class BombermanGame extends GameEngine {
 
 	async Init(parameters: BombermanGameParameters) {
 		super.Init(parameters)
-		if (parameters instanceof BombermanGameParameters) {
-			this._map = parameters.map
 
-			const height = this._map.field.length
-			const width = this._map.field[0].length
-			const colliderSystem = this.CreateColliderSystem(width, height)
-			const shuffledSpawns = shuffle(this._map.spawns)
+		this._map = parameters.map
 
-			if (parameters.map.spawns.length < parameters.controllers.length) {
-				throw Error('Spawn less then controllers')
-			}
+		const height = this._map.field.length
+		const width = this._map.field[0].length
 
-			//ToDo: image loading section
-			await this.imageLoader.LoadPng('./Resources/Blast.png')
+		const colliderSystem = this.CreateColliderSystem(width, height)
 
-			for (let y = 0; y < height; ++y) {
-				for (let x = 0; x < width; ++x) {
-					switch (this._map.field[y][x]) {
-						case 1:
-							await this.CreateWall(new Vector2(x, y), colliderSystem)
-							break
-						case 2:
-							await this.CreateMetal(new Vector2(x, y), colliderSystem)
-							break
-						default:
-							break
-					}
-					await this.CreateGrass(new Vector2(x, y))
+		const shuffledSpawns = shuffle(this._map.spawns)
+
+		if (parameters.map.spawns.length < parameters.controllers.length) {
+			throw Error('Spawn less then controllers')
+		}
+
+		for (let y = 0; y < height; ++y) {
+			for (let x = 0; x < width; ++x) {
+				switch (this._map.field[y][x]) {
+					case 1:
+						await this.CreateWall(new Vector2(x, y), colliderSystem)
+						break
+					case 2:
+						await this.CreateDestructibleWall(new Vector2(x, y), colliderSystem)
+						break
+					default:
+						break
 				}
+				await this.CreateGrass(new Vector2(x, y))
 			}
-			let i = 0
-			for (let controller of parameters.controllers) {
-				await this.CreateMan(shuffledSpawns[i], colliderSystem, controller)
-				++i
-			}
-		} else {
-			throw new Error(
-				'Wrong parameters type. Expected SimpleDemoEngineParameters.'
-			)
+		}
+
+		let i = 0
+		for (let controller of parameters.controllers) {
+			await this.CreateMan(shuffledSpawns[i], colliderSystem, controller)
+			++i
 		}
 	}
 
 	private async CreateGrass(position: Vector2) {
-		const gameObject = new GameObject(new Vector2())
+		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
 				new StaticRenderComponent(),
@@ -94,7 +88,7 @@ export class BombermanGame extends GameEngine {
 		position: Vector2,
 		discreteColliderSystem: DiscreteColliderSystem
 	) {
-		const gameObject = new GameObject(new Vector2())
+		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
 				new StaticRenderComponent(),
@@ -109,12 +103,12 @@ export class BombermanGame extends GameEngine {
 				new DiscreteMovementComponentParameters(discreteColliderSystem),
 			],
 			[new HealthComponent(), new HealthComponentParameters()],
-			[new Wall()],
+			[new DestructibleWall()],
 		])
 	}
 
 	private async CreateBlast(position: Vector2) {
-		const gameObject = new GameObject(new Vector2())
+		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
 				new StaticRenderComponent(),
@@ -128,11 +122,11 @@ export class BombermanGame extends GameEngine {
 		])
 	}
 
-	private async CreateMetal(
+	private async CreateDestructibleWall(
 		position: Vector2,
 		discreteColliderSystem: DiscreteColliderSystem
 	) {
-		const gameObject = new GameObject(new Vector2())
+		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
 				new StaticRenderComponent(),
@@ -146,7 +140,7 @@ export class BombermanGame extends GameEngine {
 				new DiscreteMovementComponent(),
 				new DiscreteMovementComponentParameters(discreteColliderSystem),
 			],
-			[new Metal()],
+			[new Wall()],
 		])
 	}
 
@@ -164,7 +158,7 @@ export class BombermanGame extends GameEngine {
 			return null
 		}
 
-		const gameObject = new GameObject(new Vector2())
+		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
 				new AnimationRenderComponent(),
@@ -206,7 +200,7 @@ export class BombermanGame extends GameEngine {
 		discreteColliderSystem: DiscreteColliderSystem,
 		controllerText: string
 	) {
-		const gameObject = new GameObject(new Vector2())
+		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
 				new StaticRenderComponent(),
@@ -248,7 +242,7 @@ export class BombermanGame extends GameEngine {
 		width: number,
 		height: number
 	): DiscreteColliderSystem {
-		const gameObject = new GameObject(new Vector2())
+		const gameObject = new GameObject()
 		const discreteColliderSystem = new DiscreteColliderSystem()
 		this.scene.AddGameObject(new Vector2(0, 0), gameObject, [
 			[

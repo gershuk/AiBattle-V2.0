@@ -1,16 +1,16 @@
 import * as Utilities from 'Utilities'
 import {
-	AbstractObjectComponent,
+	GameObjectComponent,
 	ComponentParameters,
-} from '../BaseComponents/AbstractObjectComponent'
+} from '../BaseComponents/GameObjectComponent'
 import { IGameObject } from './IGameObject'
 import { IScene } from '../Scene/IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
 
 export class GameObject implements IGameObject {
 	private _id: string
-	private _components: AbstractObjectComponent[]
-	private _owner: IScene | undefined
+	private _components: GameObjectComponent[]
+	private _scene: IScene | undefined
 	private _position: Vector2
 
 	public get position(): Vector2 {
@@ -21,8 +21,8 @@ export class GameObject implements IGameObject {
 		this._position = v
 	}
 
-	public get owner(): IScene {
-		return this._owner
+	public get scene(): IScene {
+		return this._scene
 	}
 
 	public get id(): string {
@@ -33,31 +33,22 @@ export class GameObject implements IGameObject {
 		this._id = id
 	}
 
-	constructor(
-		position: Vector2,
-		owner?: IScene,
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
-		id?: string
-	) {
-		this.Init(position, owner, newComponents, id)
-	}
-
 	Init(
 		position: Vector2,
-		owner?: IScene,
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		scene?: IScene,
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
 	) {
 		this._position = position
-		this._components = new Array<AbstractObjectComponent>()
+		this._components = new Array<GameObjectComponent>()
 		this.id = id ?? Utilities.GenerateUUID()
-		this._owner = owner
+		this._scene = scene
 		this.AddComponents(newComponents)
 		this.OnInit()
 	}
 
 	public AddComponents(
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents?: [GameObjectComponent, ComponentParameters?][]
 	): void {
 		if (newComponents) {
 			for (let component of newComponents) {
@@ -67,13 +58,11 @@ export class GameObject implements IGameObject {
 		}
 	}
 
-	public RemoveComponents<T extends typeof AbstractObjectComponent>(
-		type: T
-	): void {
+	public RemoveComponents<T extends typeof GameObjectComponent>(type: T): void {
 		this._components = this._components.filter(c => !(c instanceof type))
 	}
 
-	public GetComponents<T extends typeof AbstractObjectComponent>(type: T): any {
+	public GetComponents<T extends typeof GameObjectComponent>(type: T): any {
 		return this._components.filter(c => c instanceof type)
 	}
 
@@ -101,12 +90,16 @@ export class GameObject implements IGameObject {
 
 	//sort only on add\delete
 	public OnFixedUpdate(index: number): void {
-		const sortedArray = this._components.sort((a, b) => a.qNumber - b.qNumber)
+		const sortedArray = this._components.sort(
+			(a, b) => a.executionPriority - b.executionPriority
+		)
 		for (let component of sortedArray) component.OnFixedUpdate(index)
 	}
 
 	public OnFixedUpdateEnded(index: number): void {
-		const sortedArray = this._components.sort((a, b) => a.qNumber - b.qNumber)
+		const sortedArray = this._components.sort(
+			(a, b) => a.executionPriority - b.executionPriority
+		)
 		for (let component of sortedArray) component.OnFixedUpdateEnded(index)
 	}
 }
