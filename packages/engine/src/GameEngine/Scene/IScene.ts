@@ -49,6 +49,12 @@ export interface IScene {
 
 	get autoTurnTimerId(): number | undefined
 
+	CreateDefaultGameObject(
+		position: Vector2,
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
+		id?: string
+	): GameObject
+
 	AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,

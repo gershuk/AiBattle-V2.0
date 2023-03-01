@@ -178,6 +178,16 @@ export class Scene implements IScene {
 		this.playModeParameters = parameters.playModeParameters
 	}
 
+	CreateDefaultGameObject(
+		position: Vector2,
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
+		id?: string
+	): GameObject {
+		const gameObject = new GameObject()
+		this.AddGameObject(position, gameObject, newComponents, id)
+		return gameObject
+	}
+
 	public AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,

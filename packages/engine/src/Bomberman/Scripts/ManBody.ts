@@ -28,7 +28,7 @@ export class ManBody extends GameObjectComponent {
 		damage: number,
 		range: number,
 		ticksToExplosion: number
-	) => Promise<GameObject>
+	) => GameObject
 
 	private _bombDamage: number
 	private _blastRange: number
@@ -132,7 +132,7 @@ export class ManBody extends GameObjectComponent {
 		)
 	}
 
-	async OnFixedUpdate(index: number) {
+	OnFixedUpdate(index: number) {
 		const command = this._controller.GetCommand(this.GetMapData())
 		if (
 			this._lastRestoreTurn + this._bombsRestoreTicks ===
@@ -167,7 +167,7 @@ export class ManBody extends GameObjectComponent {
 				break
 			case 5:
 				if (this._bombsCount == 0) return
-				const bomb = await this._bombSpawnFunction(
+				const bomb = this._bombSpawnFunction(
 					this._movementComponent.currentPosition,
 					this._bombDamage,
 					this._blastRange,
@@ -202,7 +202,7 @@ export class ManBodyParameters extends ComponentParameters {
 		damage: number,
 		range: number,
 		ticksToExplosion: number
-	) => Promise<GameObject>
+	) => GameObject
 
 	constructor(
 		controllerText: string,
@@ -212,7 +212,7 @@ export class ManBodyParameters extends ComponentParameters {
 			damage: number,
 			range: number,
 			ticksToExplosion: number
-		) => Promise<GameObject>,
+		) => GameObject,
 		bombDamage: number = 1,
 		blastRange: number = 1,
 		ticksToExplosion: number = 3,

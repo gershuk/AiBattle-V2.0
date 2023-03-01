@@ -34,6 +34,16 @@ export class BombermanGame extends GameEngine {
 	async Init(parameters: BombermanGameParameters) {
 		super.Init(parameters)
 
+		await this.imageLoader.LoadPngs([
+			'./Resources/Grass.png',
+			'./Resources/Wall.png',
+			'./Resources/Blast.png',
+			'./Resources/Metal.png',
+			'./Resources/Bomb.png',
+			'./Resources/BombRed.png',
+			'./Resources/Man.png',
+		])
+
 		this._map = parameters.map
 
 		const height = this._map.field.length
@@ -51,10 +61,10 @@ export class BombermanGame extends GameEngine {
 			for (let x = 0; x < width; ++x) {
 				switch (this._map.field[y][x]) {
 					case 1:
-						await this.CreateWall(new Vector2(x, y), colliderSystem)
+						await this.CreateDestructibleWall(new Vector2(x, y), colliderSystem)
 						break
 					case 2:
-						await this.CreateDestructibleWall(new Vector2(x, y), colliderSystem)
+						await this.CreateSimpleWall(new Vector2(x, y), colliderSystem)
 						break
 					default:
 						break
@@ -70,21 +80,21 @@ export class BombermanGame extends GameEngine {
 		}
 	}
 
-	private async CreateGrass(position: Vector2) {
+	private CreateGrass(position: Vector2) {
 		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
 				new StaticRenderComponent(),
 				new StaticRenderComponentParameters(
 					new Vector2(1, 1),
-					await this.imageLoader.LoadPng('./Resources/Grass.png'),
+					this.imageLoader.GetPng('./Resources/Grass.png'),
 					-1
 				),
 			],
 		])
 	}
 
-	private async CreateWall(
+	private CreateDestructibleWall(
 		position: Vector2,
 		discreteColliderSystem: DiscreteColliderSystem
 	) {
@@ -94,7 +104,7 @@ export class BombermanGame extends GameEngine {
 				new StaticRenderComponent(),
 				new StaticRenderComponentParameters(
 					new Vector2(1, 1),
-					await this.imageLoader.LoadPng('./Resources/Wall.png'),
+					this.imageLoader.GetPng('./Resources/Wall.png'),
 					0
 				),
 			],
@@ -107,14 +117,14 @@ export class BombermanGame extends GameEngine {
 		])
 	}
 
-	private async CreateBlast(position: Vector2) {
+	private CreateBlast(position: Vector2) {
 		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
 				new StaticRenderComponent(),
 				new StaticRenderComponentParameters(
 					new Vector2(1, 1),
-					await this.imageLoader.LoadPng('./Resources/Blast.png'),
+					this.imageLoader.GetPng('./Resources/Blast.png'),
 					3
 				),
 			],
@@ -122,7 +132,7 @@ export class BombermanGame extends GameEngine {
 		])
 	}
 
-	private async CreateDestructibleWall(
+	private CreateSimpleWall(
 		position: Vector2,
 		discreteColliderSystem: DiscreteColliderSystem
 	) {
@@ -132,7 +142,7 @@ export class BombermanGame extends GameEngine {
 				new StaticRenderComponent(),
 				new StaticRenderComponentParameters(
 					new Vector2(1, 1),
-					await this.imageLoader.LoadPng('./Resources/Metal.png'),
+					this.imageLoader.GetPng('./Resources/Metal.png'),
 					0
 				),
 			],
@@ -144,13 +154,13 @@ export class BombermanGame extends GameEngine {
 		])
 	}
 
-	private async CreateBomb(
+	private CreateBomb(
 		position: Vector2,
 		discreteColliderSystem: DiscreteColliderSystem,
 		damage: number = 1,
 		range: number = 1,
 		ticksToExplosion: number = 3
-	): Promise<GameObject> {
+	): GameObject {
 		if (
 			!discreteColliderSystem.CanInit(position.x, position.y) &&
 			discreteColliderSystem.GetCellData(position.x, position.y).receiver
@@ -166,7 +176,7 @@ export class BombermanGame extends GameEngine {
 					new AnimationFrame(
 						new StaticRenderComponentParameters(
 							new Vector2(1, 1),
-							await this.imageLoader.LoadPng('./Resources/Bomb.png'),
+							this.imageLoader.GetPng('./Resources/Bomb.png'),
 							0
 						),
 						0.5
@@ -174,7 +184,7 @@ export class BombermanGame extends GameEngine {
 					new AnimationFrame(
 						new StaticRenderComponentParameters(
 							new Vector2(1, 1),
-							await this.imageLoader.LoadPng('./Resources/BombRed.png'),
+							this.imageLoader.GetPng('./Resources/BombRed.png'),
 							0
 						),
 						1
@@ -195,7 +205,7 @@ export class BombermanGame extends GameEngine {
 		return gameObject
 	}
 
-	private async CreateMan(
+	private CreateMan(
 		position: Vector2,
 		discreteColliderSystem: DiscreteColliderSystem,
 		controllerText: string
@@ -206,7 +216,7 @@ export class BombermanGame extends GameEngine {
 				new StaticRenderComponent(),
 				new StaticRenderComponentParameters(
 					new Vector2(1, 1),
-					await this.imageLoader.LoadPng('./Resources/Man.png'),
+					this.imageLoader.GetPng('./Resources/Man.png'),
 					1
 				),
 			],
@@ -219,13 +229,13 @@ export class BombermanGame extends GameEngine {
 				new ManBodyParameters(
 					controllerText,
 					discreteColliderSystem,
-					async (
+					(
 						position: Vector2,
 						damage: number,
 						range: number,
 						ticksToExplosion: number
 					) =>
-						await this.CreateBomb(
+						this.CreateBomb(
 							position,
 							discreteColliderSystem,
 							damage,
