@@ -5,8 +5,10 @@ import {
 import { GameObject } from '../GameObject/GameObject'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
+import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
-export interface IScene {
+export interface IScene extends UpdatableGroup<GameObject> {
 	get playModeParameters(): PlayModeParameters
 
 	get tileSizeScale(): Number
@@ -19,7 +21,7 @@ export interface IScene {
 
 	get canvas(): HTMLCanvasElement
 
-	get gameObjects(): GameObject[]
+	get gameObjects(): SafeReference<GameObject>[]
 
 	get renderOffset(): Vector2
 
@@ -53,14 +55,14 @@ export interface IScene {
 		position: Vector2,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
-	): GameObject
+	): SafeReference<GameObject>
 
 	AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
-	): void
+	): SafeReference<GameObject>
 
 	AddGameObjects<T extends GameObject>(
 		gameObjectInits: [
@@ -68,11 +70,15 @@ export interface IScene {
 			T,
 			[GameObjectComponent, ComponentParameters?][]
 		][]
+	): SafeReference<GameObject>[]
+
+	GetGameObjectsRefByFilter(
+		filter: (r: SafeReference<GameObject>) => boolean
+	): SafeReference<GameObject>[]
+
+	RemoveGameObjectsByFilter(
+		filter: (r: SafeReference<GameObject>) => boolean
 	): void
-
-	GetGameObjectsByFilter(filter: (g: GameObject) => boolean): GameObject[]
-
-	RemoveGameObjectsByFilter(filter: (g: GameObject) => boolean): void
 
 	Start(): void
 

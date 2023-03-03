@@ -21,6 +21,7 @@ import { DestructibleWall } from './DestructibleWall'
 import { Wall } from './Wall'
 import { BombController } from './BombController'
 import { DiscreteColliderSystem } from 'GameEngine/BaseComponents/DiscreteColliderSystem/DiscreteColliderSystem'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
 export class ManBody extends GameObjectComponent {
 	private _bombSpawnFunction: (
@@ -40,8 +41,8 @@ export class ManBody extends GameObjectComponent {
 	private _bombsRestoreCount: number
 	private _lastRestoreTurn: number
 
-	private _movementComponent: DiscreteMovementComponent
-	private _healthComponent: HealthComponent
+	private _movementComponentRef: SafeReference<DiscreteMovementComponent>
+	private _healthComponent: SafeReference<HealthComponent>
 	private _discreteColliderSystem: DiscreteColliderSystem
 
 	private _controller: AbstractController
@@ -70,7 +71,7 @@ export class ManBody extends GameObjectComponent {
 	public GetPublicData(): BodyPublicData {
 		return new BodyPublicData(
 			this.gameObject.position.Clone(),
-			this._healthComponent.health,
+			this._healthComponent.object.health,
 			this.uuid
 		)
 	}
@@ -78,7 +79,7 @@ export class ManBody extends GameObjectComponent {
 	public GetAllData(): BodyAllData {
 		return new BodyAllData(
 			this.gameObject.position.Clone(),
-			this._healthComponent.health,
+			this._healthComponent.object.health,
 			this._bombsMaxCount,
 			this._bombsCount,
 			this._bombsRestoreTicks,
@@ -91,11 +92,11 @@ export class ManBody extends GameObjectComponent {
 	OnOwnerInit(): void {
 		this._healthComponent = this.gameObject.GetComponents(
 			HealthComponent
-		)[0] as any
+		)[0] as SafeReference<HealthComponent>
 
-		this._movementComponent = this.gameObject.GetComponents(
+		this._movementComponentRef = this.gameObject.GetComponents(
 			DiscreteMovementComponent
-		)[0] as unknown as DiscreteMovementComponent
+		)[0] as SafeReference<DiscreteMovementComponent>
 	}
 
 	public GetMapData(): MapData {
@@ -104,17 +105,25 @@ export class ManBody extends GameObjectComponent {
 		const bombsData: BombData[] = []
 		const bodiesData: BodyPublicData[] = []
 		const playerData = this.GetAllData()
-		const objects: GameObject[] = this.gameObject.scene.gameObjects
+		const refObjects: SafeReference<GameObject>[] =
+			this.gameObject.scene.gameObjects
 
-		for (let object of objects) {
-			if (object === this.gameObject) continue
+		for (let ref of refObjects) {
+			if (ref.object === this.gameObject) continue
 
-			const destructibleWall = object
-				.GetComponents(DestructibleWall)[0]
-				?.GetData()
-			const wall = object.GetComponents(Wall)[0]?.GetData()
-			const bombData = object.GetComponents(BombController)[0]?.GetData()
-			const bodyData = object.GetComponents(ManBody)[0]?.GetPublicData()
+			const destructibleWall = (
+				ref.object.GetComponents(DestructibleWall)[0]
+					?.object as DestructibleWall
+			)?.GetData()
+			const wall = (
+				ref.object.GetComponents(Wall)[0]?.object as Wall
+			)?.GetData()
+			const bombData = (
+				ref.object.GetComponents(BombController)[0]?.object as BombController
+			)?.GetData()
+			const bodyData = (
+				ref.object.GetComponents(ManBody)[0]?.object as ManBody
+			)?.GetPublicData()
 
 			if (destructibleWall) destructibleWalls.push(destructibleWall)
 			if (wall) simpleWallsData.push(wall)
@@ -150,32 +159,40 @@ export class ManBody extends GameObjectComponent {
 				//idle
 				break
 			case 1:
-				this._movementComponent.bufferNewPosition =
-					this._movementComponent.currentPosition.Add(new Vector2(0, 1))
+				this._movementComponentRef.object.bufferNewPosition =
+					this._movementComponentRef.object.currentPosition.Add(
+						new Vector2(0, 1)
+					)
 				break
 			case 2:
-				this._movementComponent.bufferNewPosition =
-					this._movementComponent.currentPosition.Add(new Vector2(1, 0))
+				this._movementComponentRef.object.bufferNewPosition =
+					this._movementComponentRef.object.currentPosition.Add(
+						new Vector2(1, 0)
+					)
 				break
 			case 3:
-				this._movementComponent.bufferNewPosition =
-					this._movementComponent.currentPosition.Add(new Vector2(0, -1))
+				this._movementComponentRef.object.bufferNewPosition =
+					this._movementComponentRef.object.currentPosition.Add(
+						new Vector2(0, -1)
+					)
 				break
 			case 4:
-				this._movementComponent.bufferNewPosition =
-					this._movementComponent.currentPosition.Add(new Vector2(-1, 0))
+				this._movementComponentRef.object.bufferNewPosition =
+					this._movementComponentRef.object.currentPosition.Add(
+						new Vector2(-1, 0)
+					)
 				break
 			case 5:
 				if (this._bombsCount == 0) return
 				const bomb = this._bombSpawnFunction(
-					this._movementComponent.currentPosition,
+					this._movementComponentRef.object.currentPosition,
 					this._bombDamage,
 					this._blastRange,
 					this._ticksToExplosion
 				)
 				if (bomb) {
 					this._bombsCount -= 1
-					this._movementComponent.SetReceiver(bomb)
+					this._movementComponentRef.object.SetReceiver(bomb)
 				}
 				break
 			default:

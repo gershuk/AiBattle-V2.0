@@ -1,12 +1,20 @@
 import { GameObjectComponent } from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
 
-export abstract class AbstractRenderComponent extends GameObjectComponent {
-	public abstract get offset(): Vector2
+export class AbstractRenderComponent extends GameObjectComponent {
+	public get offset(): Vector2 {
+		return new Vector2()
+	}
 
-	public abstract get size(): Vector2
+	public get size(): Vector2 {
+		return new Vector2(1, 1)
+	}
 
-	public abstract get zOrder(): number
+	public get zOrder(): number {
+		return 1
+	}
 
-	public abstract get Image(): HTMLImageElement
+	public get Image(): HTMLImageElement {
+		return undefined
+	}
 }

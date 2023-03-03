@@ -4,11 +4,11 @@ import {
 } from '../BaseComponents/GameObjectComponent'
 import { IScene } from '../Scene/IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
+import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
-export interface IGameObject {
+export interface IGameObject extends UpdatableGroup<GameObjectComponent> {
 	get scene(): IScene
-
-	get id(): string
 
 	get position(): Vector2
 
@@ -27,15 +27,7 @@ export interface IGameObject {
 
 	RemoveComponents<T extends typeof GameObjectComponent>(type: T): void
 
-	GetComponents<T extends typeof GameObjectComponent>(type: T): T[]
-
-	OnSceneStart(): void
-
-	OnBeforeFrameRender(currentFrame: number, frameCount: number): void
-
-	OnAfterFrameRender(currentFrame: number, frameCount: number): void
-
-	OnFixedUpdateEnded(index: number): void
-
-	OnFixedUpdate(index: number): void
+	GetComponents<T extends typeof GameObjectComponent>(
+		type: T
+	): SafeReference<GameObjectComponent>[]
 }

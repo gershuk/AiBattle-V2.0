@@ -26,7 +26,7 @@ export class HealthComponent extends GameObjectComponent {
 
 		if (this.health === 0)
 			this.gameObject.scene.RemoveGameObjectsByFilter(
-				g => g === this.gameObject
+				r => r.object == this.gameObject
 			)
 	}
 

@@ -1,25 +1,8 @@
 import { GenerateUUID } from 'Utilities'
 import { IGameObject } from '../GameObject/IGameObject'
+import { UpdatableObject } from 'GameEngine/ObjectBaseType/UpdatableObject'
 
-//ToDo : Remove abstract
-export abstract class GameObjectComponent {
-	private _executionPriority: number
-
-	protected set executionPriority(v: number) {
-		this._executionPriority = v
-	}
-	public get executionPriority(): number {
-		return this._executionPriority
-	}
-
-	private _uuid: string
-	public get uuid(): string {
-		return this._uuid
-	}
-	private set uuid(v: string) {
-		this._uuid = v
-	}
-
+export class GameObjectComponent extends UpdatableObject {
 	protected _gameObject: IGameObject | undefined
 
 	public get gameObject(): IGameObject {
@@ -37,13 +20,19 @@ export abstract class GameObjectComponent {
 		}
 	}
 
-	OnOwnerInit(): void {}
-	OnDestroy(): void {}
-	OnSceneStart(): void {}
+	OnStart(): void {}
+
 	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {}
+
 	OnAfterFrameRender(currentFrame: number, frameCount: number): void {}
-	OnFixedUpdate(index: number): void {}
+
 	OnFixedUpdateEnded(index: number): void {}
+
+	OnFixedUpdate(index: number): void {}
+
+	OnDestroy(): void {}
+
+	OnOwnerInit(): void {}
 }
 
 export class ComponentParameters {

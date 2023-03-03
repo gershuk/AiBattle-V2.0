@@ -7,8 +7,11 @@ import { IScene, PlayModeParameters, SceneParameters } from './IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
-import { AbstractRenderComponent } from 'GameEngine/BaseComponents/RenderComponents/AbstractRenderComponent'
+import { AbstractRenderComponent as RenderComponent } from 'GameEngine/BaseComponents/RenderComponents/AbstractRenderComponent'
 import { Delay } from 'Utilities/Delay'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
+import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
+import { UpdatableObjectArrayContainer } from 'GameEngine/ObjectBaseType/UpdatableObjectArrayContainer'
 
 enum SceneState {
 	Init,
@@ -18,9 +21,8 @@ enum SceneState {
 	Animation,
 }
 
-export class Scene implements IScene {
+export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	private _tileSizeScale: number
-	private _gameObjects: GameObject[]
 	private _turnIndex: number
 	private _maxTurnIndex: number
 	private _autoTurnTime: number
@@ -62,12 +64,8 @@ export class Scene implements IScene {
 		this._renderOffset = v
 	}
 
-	protected set gameObjects(gameObjects: GameObject[]) {
-		this._gameObjects = gameObjects
-	}
-
-	public get gameObjects(): GameObject[] {
-		return this._gameObjects
+	public get gameObjects(): SafeReference<GameObject>[] {
+		return this._container.GetSafeRefsByFilter(() => true)
 	}
 
 	public set turnIndex(turnIndex: number) {
@@ -160,7 +158,7 @@ export class Scene implements IScene {
 		this.canvas = parameters.canvas
 		this.tileSizeScale = parameters.tileSizeScale
 
-		this.gameObjects = new Array<GameObject>()
+		this._container = new UpdatableObjectArrayContainer()
 		this.renderOffset = new Vector2(0, 0)
 
 		this.state = SceneState.Init
@@ -182,10 +180,9 @@ export class Scene implements IScene {
 		position: Vector2,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
-	): GameObject {
+	): SafeReference<GameObject> {
 		const gameObject = new GameObject()
-		this.AddGameObject(position, gameObject, newComponents, id)
-		return gameObject
+		return this.AddGameObject(position, gameObject, newComponents, id)
 	}
 
 	public AddGameObject<T extends GameObject>(
@@ -193,9 +190,10 @@ export class Scene implements IScene {
 		gameObject: T,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
-	): void {
-		this._gameObjects.push(gameObject)
+	): SafeReference<GameObject> {
+		const ref = this._container.Add(gameObject)
 		gameObject.Init(position, this, newComponents, id)
+		return ref
 	}
 
 	public AddGameObjects<T extends GameObject>(
@@ -204,57 +202,34 @@ export class Scene implements IScene {
 			T,
 			[GameObjectComponent, ComponentParameters?][]
 		][]
-	): void {
+	): SafeReference<GameObject>[] {
+		const refs: SafeReference<GameObject>[] = []
 		for (let gameObjectInit of gameObjectInits)
-			this.AddGameObject(
-				gameObjectInit[0],
-				gameObjectInit[1],
-				gameObjectInit[2]
+			refs.push(
+				this.AddGameObject(
+					gameObjectInit[0],
+					gameObjectInit[1],
+					gameObjectInit[2]
+				)
 			)
+		return refs
 	}
 
-	public GetGameObjectsByFilter(
-		filter: (g: GameObject) => boolean
-	): GameObject[] {
-		return this._gameObjects.filter(filter)
+	public GetGameObjectsRefByFilter(
+		filter: (g: SafeReference<GameObject>) => boolean
+	): SafeReference<GameObject>[] {
+		return this.GetSafeRefsByFilter(filter)
 	}
 
-	public RemoveGameObjectsByFilter(filter: (g: GameObject) => boolean): void {
-		const destroyedObjects = this._gameObjects.filter(g => filter(g))
-		for (let object of destroyedObjects) object.OnDestroy()
-		this._gameObjects = this._gameObjects.filter(g => !filter(g))
-	}
-
-	private OnDestroy(): void {
-		for (let gameObject of this.gameObjects) gameObject.OnDestroy()
-	}
-
-	private OnSceneStart(): void {
-		for (let gameObject of this.gameObjects) gameObject.OnSceneStart()
-	}
-
-	private OnBeforeFrameRender(currentFrame: number, frameCount: number): void {
-		for (let gameObject of this.gameObjects)
-			gameObject.OnBeforeFrameRender(currentFrame, frameCount)
-	}
-
-	private OnAfterFrameRender(currentFrame: number, frameCount: number): void {
-		for (let gameObject of this.gameObjects)
-			gameObject.OnAfterFrameRender(currentFrame, frameCount)
-	}
-
-	private OnFixedUpdate(turnIndex: number): void {
-		for (let gameObject of this.gameObjects) gameObject.OnFixedUpdate(turnIndex)
-	}
-
-	private OnFixedUpdateEnded(turnIndex: number): void {
-		for (let gameObject of this.gameObjects)
-			gameObject.OnFixedUpdateEnded(turnIndex)
+	public RemoveGameObjectsByFilter(
+		filter: (g: SafeReference<GameObject>) => boolean
+	): void {
+		return this.DestroyObjectsByFilter(filter)
 	}
 
 	public Start(): void {
 		this.state = SceneState.Starting
-		this.OnSceneStart()
+		this.OnStart()
 		this.turnIndex = 0
 		this.state = SceneState.ReadyToNextTurn
 		this.RenderFrame()
@@ -263,21 +238,23 @@ export class Scene implements IScene {
 	public RenderFrame(): void {
 		if (this.playModeParameters.disableRender) return
 
-		let renderComponents: AbstractRenderComponent[] =
-			new Array<AbstractRenderComponent>()
+		let renderRefs: SafeReference<RenderComponent>[] = []
 		for (let gameObject of this.gameObjects) {
-			renderComponents = renderComponents.concat(
-				gameObject.GetComponents(AbstractRenderComponent)
+			renderRefs = renderRefs.concat(
+				gameObject.object.GetComponents(
+					RenderComponent
+				) as SafeReference<RenderComponent>[]
 			)
 		}
 
-		renderComponents = renderComponents.sort((a, b) => a.zOrder - b.zOrder)
+		renderRefs = renderRefs.sort((a, b) => a.object.zOrder - b.object.zOrder)
 
 		const context = <CanvasRenderingContext2D>this.canvas.getContext('2d')
 
 		context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
-		for (let component of renderComponents) {
+		for (let ref of renderRefs) {
+			const component = ref.object
 			const image = component.Image
 			const pos = component.gameObject.position
 				.Add(component.offset)

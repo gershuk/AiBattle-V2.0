@@ -13,6 +13,7 @@ import { HealthComponent } from './Health'
 import { DestructibleWall } from './DestructibleWall'
 import { Wall } from './Wall'
 import { BombData } from './MapData'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
 export class BombController extends GameObjectComponent {
 	private _pattern: Vector2[] = [
@@ -68,7 +69,7 @@ export class BombController extends GameObjectComponent {
 
 		if (index === this._turnToExplosion) {
 			this.gameObject.scene.RemoveGameObjectsByFilter(
-				g => this.gameObject === g
+				r => this.gameObject == r.object
 			)
 			this.DamageTile(this.gameObject.position)
 
@@ -79,7 +80,8 @@ export class BombController extends GameObjectComponent {
 						pos.x,
 						pos.y
 					).owner
-					const destructibleWall = cellOwner?.gameObject?.GetComponents(DestructibleWall)
+					const destructibleWall =
+						cellOwner?.gameObject?.GetComponents(DestructibleWall)
 					const wall = cellOwner?.gameObject?.GetComponents(Wall)
 					if (wall && wall.length > 0) break
 					if (destructibleWall && destructibleWall.length > 0) {
@@ -102,9 +104,9 @@ export class BombController extends GameObjectComponent {
 		if (cellOwner) {
 			let healthComponent = cellOwner.gameObject.GetComponents(
 				HealthComponent
-			)[0] as any as HealthComponent
+			)[0] as SafeReference<HealthComponent>
 			if (healthComponent) {
-				healthComponent.TakeDamage(this._damage)
+				healthComponent.object.TakeDamage(this._damage)
 			}
 		}
 	}
