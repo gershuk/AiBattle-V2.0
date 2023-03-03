@@ -13,7 +13,7 @@ export class SafeReference<T> {
 	private _object: T
 
 	public get object(): T {
-		if (this._isDestroyed) throw 'Object is destroyed'
+		if (this._isDestroyed) throw new Error('Object is destroyed')
 		return this._object
 	}
 

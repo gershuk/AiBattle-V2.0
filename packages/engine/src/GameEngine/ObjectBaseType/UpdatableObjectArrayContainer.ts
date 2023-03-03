@@ -58,21 +58,33 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 	public GetSafeRefsByFilter(
 		filter: (s: SafeReference<T>) => boolean
 	): SafeReference<T>[] {
-		return this.references.filter(filter)
+		const refs: SafeReference<T>[] = []
+
+		for (let ref of this.references) {
+			if (ref.isDestroyed) continue
+			if (filter(ref)) refs.push(ref)
+		}
+
+		return refs
 	}
 
 	public DestroyObjectsByFilter(
 		filter: (s: SafeReference<T>) => boolean
 	): void {
-		const removedRefs = this.references.filter(filter)
+		const refs: SafeReference<T>[] = []
 
-		for (let ref of removedRefs) {
+		for (let ref of this.references) {
+			if (ref.isDestroyed) continue
+			if (filter(ref)) refs.push(ref)
+		}
+
+		for (let ref of refs) {
 			ref.Destroy()
 		}
 	}
 
 	public ClearDestroyed(): void {
-		this.references = this.GetSafeRefsByFilter(
+		this.references = this._references.filter(
 			(s: SafeReference<T>): boolean => !s.isDestroyed
 		)
 		this.SortArray()
@@ -109,7 +121,6 @@ export class UpdatableObjectContainerIterator<T extends UpdatableObject>
 		// 	throw new Error('Container version was changed')
 
 		this.SkipToFirstAliveOrEnd()
-
 		const result: IteratorResult<SafeReference<T>, any> = {
 			done: this._index >= this._references.length,
 			value:
@@ -124,7 +135,10 @@ export class UpdatableObjectContainerIterator<T extends UpdatableObject>
 	}
 
 	private SkipToFirstAliveOrEnd() {
-		while (this._index < length && this._references[this._index].isDestroyed)
+		while (
+			this._index < this._references.length &&
+			this._references[this._index].isDestroyed
+		)
 			this._index++
 	}
 }
