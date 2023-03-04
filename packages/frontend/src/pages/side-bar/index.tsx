@@ -1,6 +1,6 @@
 import { useUnit } from 'effector-react'
 import { JSXInternal } from 'preact/src/jsx'
-import { pathIsActive, RoutesPath, routesView } from 'pages/routing'
+import { pathIsActive, RoutesPath } from 'pages/routing'
 import { $locationSearch, historyMethods } from '../../model'
 import './styles.scss'
 
