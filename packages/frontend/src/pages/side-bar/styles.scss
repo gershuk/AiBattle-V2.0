@@ -2,43 +2,18 @@
 	height: 100%;
 	overflow: visible;
 	width: 50px;
-	min-width: 50px;
+	width: 50px;
 	position: relative;
-
-	.side-bar-content {
-		position: absolute;
-		left: 0;
-		top: 0;
-		height: 100%;
-		overflow: auto;
-		background: var(--color-medium-bg);
-		z-index: 6;
-
-		.side-bar-item-title {
-			display: none;
-		}
-
-		&:hover {
-			.side-bar-item-title {
-				display: block;
-			}
-			& + .side-bar-overlay {
-				background: var(--color-overlay);
-				position: fixed;
-				left: 0;
-				top: 0;
-				width: 100vw;
-				height: 100vh;
-				z-index: 5;
-			}
-		}
-	}
+	background: var(--color-medium-bg);
 
 	.side-bar-item {
 		height: 50px;
 		width: 100%;
 		display: flex;
 		align-items: center;
+		justify-content: center;
+		flex-flow: column;
+
 		cursor: pointer;
 		&.active {
 			background: var(--color-active-item);
@@ -66,9 +41,7 @@
 			}
 		}
 		.side-bar-item-title {
-			white-space: nowrap;
-			font-size: 14px;
-			padding: 0 16px 0 0;
+			font-size: 10px;
 		}
 	}
 }

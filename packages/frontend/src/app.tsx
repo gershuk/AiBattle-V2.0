@@ -1,7 +1,6 @@
-import { SideBar } from 'features/side-bar'
 import { readCodesFromLocalStorageFx, readMapsFromLocalStorageFx } from 'model'
+import { RoutesView, SideBar } from 'pages'
 import './styles.scss'
-import { RoutesView } from 'pages'
 
 export const App = () => {
 	return (
