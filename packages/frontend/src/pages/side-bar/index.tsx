@@ -1,7 +1,7 @@
 import { useUnit } from 'effector-react'
 import { JSXInternal } from 'preact/src/jsx'
-import { pathIsActive, RoutesPath } from 'pages/routing'
-import { $locationSearch, historyMethods } from '../../model'
+import { pathIsActive, RoutesPath } from '../routing'
+import { $locationSearch, historyMethods } from 'model'
 import './styles.scss'
 
 export const SideBar = () => {
