@@ -1,5 +1,4 @@
 .button {
-	color: rgb(255, 255, 255);
 	font-size: 14px;
 	line-height: 140%;
 	padding: 4px 8px;
@@ -8,30 +7,31 @@
 	display: inline-flex;
 	justify-content: center;
 	align-items: center;
+	color: var(--color-text-light);
 	cursor: pointer;
 
 	&:not(.disabled) {
 		&.primary {
-			background: rgb(0, 122, 204);
+			background: var(--color-primary);
 			&:hover {
-				background: rgb(0, 98, 163);
+				background: var(--color-primary-hover);
 			}
 		}
 		&.warning {
-			background: rgb(204, 173, 0);
+			background: var(--color-warning);
 			&:hover {
-				background: rgb(172, 146, 0);
+				background: var(--color-warning-hover);
 			}
 		}
 		&.danger {
-			background: rgb(204, 41, 0);
+			background: var(--color-danger);
 			&:hover {
-				background: rgb(168, 34, 0);
+				background: var(--color-danger-hover);
 			}
 		}
 	}
 
 	&.disabled {
-		background: rgb(221 221 221);
+		background: var(--color-input-disable);
 	}
 }

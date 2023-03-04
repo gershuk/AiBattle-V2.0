@@ -1,3 +1,5 @@
+@import './color-variables.css'; 
+
 .app {
 	display: flex;
 	height: 100%;
@@ -8,7 +10,7 @@
 }
 
 body {
-	background: white;
+	background: var(--color-light-bg);
 	padding: 0;
 	margin: 0;
 	height: 100vh;

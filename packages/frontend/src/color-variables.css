@@ -1,0 +1,32 @@
+:root {
+	--color-light-bg: white;
+	--color-medium-bg: #f3f3f3;
+
+	--color-text: black;
+	--color-text-light: white;
+
+	--color-secondary-text: rgb(63, 62, 62);;
+
+	--color-primary: rgb(0, 122, 204);
+	--color-primary-hover: rgb(0, 98, 163);
+
+	--color-warning: rgb(204, 173, 0);
+	--color-warning-hover: rgb(172, 146, 0);
+
+	--color-danger: rgb(204, 41, 0);
+	--color-danger-hover: rgb(168, 34, 0);
+
+	--color-border: rgb(216, 222, 233);
+
+	--color-active-item: #d8d8d8;
+	--color-hover-item: #e8e8e8;
+
+	--color-input-bg: white;
+	--color-input-disable: rgb(221 221 221);
+	--color-input-text: rgb(97, 97, 97);
+
+	--color-overlay: rgba(0, 0, 0, 0.3);
+	--color-light-overlay: rgba(255, 255, 255, 0.5);
+
+	--color-box-shadow: rgba(34, 60, 80, 0.2);
+}

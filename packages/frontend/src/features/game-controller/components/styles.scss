@@ -1,6 +1,6 @@
 .game-controller {
 	padding: 8px;
-	background: #f3f3f3;
+	background: var(--color-medium-bg);
 	height: 100%;
 	display: flex;
 	flex-flow: column;
@@ -21,8 +21,8 @@
 			width: 30px;
 			height: 30px;
 			svg {
-				fill: white;
-				stroke: white;
+				fill: var(--color-text-light);
+				stroke: var(--color-text-light);
 			}
 		}
 	}

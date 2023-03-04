@@ -8,13 +8,13 @@
 	z-index: 100;
 	left: 0;
 	top: 0;
-	background: rgba(0, 0, 0, 0.3);
+	background: var(--color-overlay);
 }
 
 .popup-body {
 	min-width: 300px;
-	background: #f3f3f3;
-	box-shadow: 0px 4px 8px 0px rgba(34, 60, 80, 0.2);
+	background: var(--color-medium-bg);
+	box-shadow: 0px 4px 8px 0px var(--color-box-shadow);
 	font-size: 14px;
 }
 
@@ -23,7 +23,7 @@
 	gap: 8px;
 	justify-content: flex-end;
 	padding: 8px;
-	border-top: 1px solid rgb(216, 222, 233);
+	border-top: 1px solid var(--color-border);
 }
 
 .popup-content {
@@ -32,6 +32,6 @@
 
 .popup-header {
 	padding: 8px 8px 8px 8px;
-	background: white;
-	border-bottom: 1px solid rgb(216, 222, 233);
+	background: var(--color-light-bg);
+	border-bottom: 1px solid var(--color-border);
 }
