@@ -5,6 +5,7 @@ import {
 	removeCode,
 	$codesData,
 	readCodesFromLocalStorageFx,
+	changeCode,
 } from 'model'
 import {
 	openFileExplorer,
@@ -14,6 +15,7 @@ import {
 } from 'api'
 import { createSessionsManager } from 'libs/ace-editor'
 import { alertErrors } from 'libs/failer/failer'
+import { showConfirm } from 'ui'
 
 const _codeExample = `// example random bot
 class Controller { 
@@ -35,8 +37,9 @@ class Controller {
 new Controller()`
 
 const errorReadStringFile = new Error('Невозможно преобразовать файл в строку')
+const errorAbortLoadFileUser = new Error('Пользователь отменил загрузку')
 
-const { $sessions, addSession, removeSession, $sessionsValue } =
+const { $sessions, $sessionsValue, addSession, removeSession, resetSession } =
 	createSessionsManager({
 		mode: 'ace/mode/javascript',
 	})
@@ -65,12 +68,20 @@ const loadScriptFx = attach({
 		const content = await readFile(file)
 		if (typeof content === 'string') {
 			const fileExits = !!codes.find(code => code.name === file.name)
-			//TODO: убрать запрещение загружать файл с таким файлом
-			if (fileExits)
-				return Promise.reject(new Error('Файл с таким именем уже загружен'))
+			let overwriteFile = false
+			if (fileExits) {
+				const { status } = await showConfirm({
+					content: 'Файл с таким именем уже загружен. Перезаписать?',
+				})
+				if (status === 'cancel') return Promise.reject(errorAbortLoadFileUser)
+				else overwriteFile = true
+			}
 			return {
-				content,
-				name: file.name,
+				overwriteFile,
+				file: {
+					content,
+					name: file.name,
+				},
 			}
 		}
 		return Promise.reject(errorReadStringFile)
@@ -84,7 +95,16 @@ sample({
 
 sample({
 	clock: loadScriptFx.doneData,
+	filter: ({ overwriteFile }) => !overwriteFile,
+	fn: ({ file }) => file,
 	target: addCode,
+})
+
+sample({
+	clock: loadScriptFx.doneData,
+	filter: ({ overwriteFile }) => overwriteFile,
+	fn: ({ file }) => file,
+	target: [changeCode, resetSession],
 })
 
 sample({
@@ -119,6 +139,10 @@ alertErrors({
 		{
 			guard: error => error instanceof OpenFileExplorerError,
 			ignore: true,
+		},
+		{
+			guard: error => error === errorAbortLoadFileUser,
+			ignore: true
 		},
 		{
 			guard: error => error instanceof ReadFileError,

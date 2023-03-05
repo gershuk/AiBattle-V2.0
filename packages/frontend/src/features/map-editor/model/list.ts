@@ -53,9 +53,11 @@ const loadMapFx = attach({
 				else overwriteFile = true
 			}
 			return {
-				content,
-				name: file.name,
 				overwriteFile,
+				file: {
+					name: file.name,
+					content,
+				},
 			}
 		}
 		return Promise.reject(errorReadStringFile)
@@ -70,12 +72,14 @@ sample({
 sample({
 	clock: loadMapFx.doneData,
 	filter: ({ overwriteFile }) => !overwriteFile,
+	fn: ({ file }) => file,
 	target: addMap,
 })
 
 sample({
 	clock: loadMapFx.doneData,
 	filter: ({ overwriteFile }) => overwriteFile,
+	fn: ({ file }) => file,
 	target: [resetSession, changeMap],
 })
 
