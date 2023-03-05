@@ -1,10 +1,10 @@
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 import { ComponentParameters } from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
-import { AbstractRenderComponent } from './AbstractRenderComponent'
-import { StaticRenderComponentParameters } from './StaticRenderComponent'
+import { StaticRenderComponentParameters } from './StaticImageRenderComponent'
+import { AbstractImageRenderComponent } from './AbstractImageRenderComponent'
 
-export class AnimationRenderComponent extends AbstractRenderComponent {
+export class AnimationRenderComponent extends AbstractImageRenderComponent {
 	private _frameIndex: number
 	private _frames: AnimationFrame[]
 
@@ -28,7 +28,7 @@ export class AnimationRenderComponent extends AbstractRenderComponent {
 		return this.CurrentFrameData.zOrder
 	}
 
-	public get Image(): HTMLImageElement {
+	public get image(): HTMLImageElement {
 		return this.CurrentFrameData.image
 	}
 

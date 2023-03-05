@@ -7,9 +7,9 @@ import {
 	DiscreteMovementComponentParameters,
 } from 'GameEngine/BaseComponents/DiscreteColliderSystem/DiscreteMovementComponent'
 import {
-	StaticRenderComponent,
+	StaticImageRenderComponent,
 	StaticRenderComponentParameters,
-} from 'GameEngine/BaseComponents/RenderComponents/StaticRenderComponent'
+} from 'GameEngine/BaseComponents/RenderComponents/StaticImageRenderComponent'
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import { GameEngine, GameEngineParameters } from 'GameEngine/GameEngine'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
@@ -18,7 +18,7 @@ import { SceneParameters } from 'GameEngine/Scene/IScene'
 import { shuffle } from 'Utilities/ShuffleArray'
 import { ManBody, ManBodyParameters } from './ManBody'
 import { BombController, BombControllerParameters } from './BombController'
-import { Blast } from './Blast'
+import { BlastRender } from './BlastRender'
 import { HealthComponent, HealthComponentParameters } from './Health'
 import { DestructibleWall } from './DestructibleWall'
 import { Wall } from './Wall'
@@ -61,21 +61,21 @@ export class BombermanGame extends GameEngine {
 			for (let x = 0; x < width; ++x) {
 				switch (this._map.field[y][x]) {
 					case 1:
-						await this.CreateDestructibleWall(new Vector2(x, y), colliderSystem)
+						this.CreateDestructibleWall(new Vector2(x, y), colliderSystem)
 						break
 					case 2:
-						await this.CreateSimpleWall(new Vector2(x, y), colliderSystem)
+						this.CreateSimpleWall(new Vector2(x, y), colliderSystem)
 						break
 					default:
 						break
 				}
-				await this.CreateGrass(new Vector2(x, y))
+				this.CreateGrass(new Vector2(x, y))
 			}
 		}
 
 		let i = 0
 		for (let controller of parameters.controllers) {
-			await this.CreateMan(shuffledSpawns[i], colliderSystem, controller)
+			this.CreateMan(shuffledSpawns[i], colliderSystem, controller)
 			++i
 		}
 	}
@@ -84,7 +84,7 @@ export class BombermanGame extends GameEngine {
 		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
-				new StaticRenderComponent(),
+				new StaticImageRenderComponent(),
 				new StaticRenderComponentParameters(
 					new Vector2(1, 1),
 					this.imageLoader.GetPng('./Resources/Grass.png'),
@@ -101,7 +101,7 @@ export class BombermanGame extends GameEngine {
 		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
-				new StaticRenderComponent(),
+				new StaticImageRenderComponent(),
 				new StaticRenderComponentParameters(
 					new Vector2(1, 1),
 					this.imageLoader.GetPng('./Resources/Wall.png'),
@@ -121,14 +121,13 @@ export class BombermanGame extends GameEngine {
 		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
-				new StaticRenderComponent(),
+				new BlastRender(),
 				new StaticRenderComponentParameters(
 					new Vector2(1, 1),
 					this.imageLoader.GetPng('./Resources/Blast.png'),
 					3
 				),
 			],
-			[new Blast()],
 		])
 	}
 
@@ -139,7 +138,7 @@ export class BombermanGame extends GameEngine {
 		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
-				new StaticRenderComponent(),
+				new StaticImageRenderComponent(),
 				new StaticRenderComponentParameters(
 					new Vector2(1, 1),
 					this.imageLoader.GetPng('./Resources/Metal.png'),
@@ -167,7 +166,6 @@ export class BombermanGame extends GameEngine {
 		) {
 			return null
 		}
-
 		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
@@ -213,7 +211,7 @@ export class BombermanGame extends GameEngine {
 		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
-				new StaticRenderComponent(),
+				new StaticImageRenderComponent(),
 				new StaticRenderComponentParameters(
 					new Vector2(1, 1),
 					this.imageLoader.GetPng('./Resources/Man.png'),

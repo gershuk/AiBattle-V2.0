@@ -1,11 +1,9 @@
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
-import {
-	ComponentParameters,
-} from '../GameObjectComponent'
+import { ComponentParameters } from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
-import { AbstractRenderComponent } from './AbstractRenderComponent'
+import { AbstractImageRenderComponent } from './AbstractImageRenderComponent'
 
-export class StaticRenderComponent extends AbstractRenderComponent {
+export class StaticImageRenderComponent extends AbstractImageRenderComponent {
 	private _offset: Vector2
 	public get offset(): Vector2 {
 		return this._offset
@@ -22,19 +20,11 @@ export class StaticRenderComponent extends AbstractRenderComponent {
 		this._size = s
 	}
 
-	private _zOrder: number
-	public get zOrder(): number {
-		return this._zOrder
-	}
-	public set zOrder(v: number) {
-		this._zOrder = v
-	}
-
 	private _image: HTMLImageElement
-	public get Image(): HTMLImageElement {
+	public get image(): HTMLImageElement {
 		return this._image
 	}
-	protected set Image(image: HTMLImageElement) {
+	protected set image(image: HTMLImageElement) {
 		this._image = image
 	}
 
@@ -43,7 +33,7 @@ export class StaticRenderComponent extends AbstractRenderComponent {
 		if (parameters) {
 			this.size = parameters.size
 			this.offset = parameters.offset
-			this.Image = parameters.image
+			this.image = parameters.image
 			this.zOrder = parameters.zOrder
 		}
 	}

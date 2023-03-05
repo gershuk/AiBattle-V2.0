@@ -1,4 +1,4 @@
-import { StaticRenderComponentParameters } from 'GameEngine/BaseComponents/RenderComponents/StaticRenderComponent'
+import { StaticRenderComponentParameters } from 'GameEngine/BaseComponents/RenderComponents/StaticImageRenderComponent'
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import {
 	GameEngine,

@@ -7,7 +7,10 @@ import { IScene, PlayModeParameters, SceneParameters } from './IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
-import { AbstractRenderComponent as RenderComponent } from 'GameEngine/BaseComponents/RenderComponents/AbstractRenderComponent'
+import {
+	AbstractRenderComponent,
+	ViewPort,
+} from 'GameEngine/BaseComponents/RenderComponents/AbstractRenderComponent'
 import { Delay } from 'Utilities/Delay'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
@@ -238,12 +241,12 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	public RenderFrame(): void {
 		if (this.playModeParameters.disableRender) return
 
-		let renderRefs: SafeReference<RenderComponent>[] = []
+		let renderRefs: SafeReference<AbstractRenderComponent>[] = []
 		for (let gameObject of this.gameObjects) {
 			renderRefs = renderRefs.concat(
 				gameObject.object.GetComponents(
-					RenderComponent
-				) as SafeReference<RenderComponent>[]
+					AbstractRenderComponent
+				) as SafeReference<AbstractRenderComponent>[]
 			)
 		}
 
@@ -253,21 +256,15 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 
 		context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
+		const viewPort = new ViewPort(
+			context,
+			this.tileSizeScale,
+			this.renderOffset
+		)
+
 		for (let ref of renderRefs) {
 			const component = ref.object
-			const image = component.Image
-			const pos = component.gameObject.position
-				.Add(component.offset)
-				.Add(this.renderOffset)
-			const dw = component.size.x
-			const dh = component.size.y
-			context.drawImage(
-				image,
-				pos.x * this.tileSizeScale,
-				pos.y * this.tileSizeScale,
-				dw * this.tileSizeScale,
-				dh * this.tileSizeScale
-			)
+			component.Render(viewPort)
 		}
 	}
 
