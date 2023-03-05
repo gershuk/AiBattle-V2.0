@@ -33,12 +33,14 @@ export class GameObject
 		position: Vector2,
 		scene?: IScene,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
-		id?: string
+		id?: string,
+		executionPriority: number = 0
 	) {
 		this._position = position
 		this._container = new UpdatableObjectArrayContainer()
 		this.uuid = id ?? Utilities.GenerateUUID()
 		this._scene = scene
+		this.executionPriority = executionPriority
 		this.AddComponents(newComponents)
 		this.OnInit()
 	}
@@ -59,7 +61,9 @@ export class GameObject
 	}
 
 	//ToDo : Try change return type to T
-	public GetComponents<T extends typeof GameObjectComponent>(type: T): SafeReference<GameObjectComponent>[] {
+	public GetComponents<T extends typeof GameObjectComponent>(
+		type: T
+	): SafeReference<GameObjectComponent>[] {
 		return this.GetSafeRefsByFilter(r => r.object instanceof type)
 	}
 
