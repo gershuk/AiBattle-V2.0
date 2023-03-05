@@ -30,35 +30,8 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 
 	const createCodeFile = async () => {
 		const { status, htmlElement } = await showPopup({
-			content: ({ cancel, ok }) => (
-				<form
-					onSubmit={e => {
-						e.preventDefault()
-						const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
-						const fileExists = !!codes.find(
-							({ name }) => name === dataForm.name
-						)
-						if (fileExists)
-							showMessage({ content: 'Файл с таким именем уже существует.' })
-						else ok()
-					}}
-				>
-					<div className={'popup-header'}>Создать скрипт</div>
-					<div className={'popup-content'}>
-						<div className={'create-map-popup-item'}>
-							<div>Имя файла</div>
-							<Input autoFocus required name={'name'} />
-						</div>
-					</div>
-					<div className={'popup-footer'}>
-						<Button onClick={() => cancel()} type="button" color="danger">
-							Отмена
-						</Button>
-						<Button type="submit" color="primary">
-							Ок
-						</Button>
-					</div>
-				</form>
+			content: props => (
+				<CreateCodeForm {...props} codesName={codes.map(({ name }) => name)} />
 			),
 		})
 		if (status !== 'ok') return
@@ -123,3 +96,40 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 		</div>
 	)
 }
+
+const CreateCodeForm = ({
+	ok,
+	cancel,
+	codesName,
+}: {
+	ok: () => void
+	cancel: () => void
+	codesName: string[]
+}) => (
+	<form
+		onSubmit={e => {
+			e.preventDefault()
+			const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
+			const fileExists = !!codesName.find(name => name === dataForm.name)
+			if (fileExists)
+				showMessage({ content: 'Файл с таким именем уже существует.' })
+			else ok()
+		}}
+	>
+		<div className={'popup-header'}>Создать скрипт</div>
+		<div className={'popup-content'}>
+			<div className={'create-map-popup-item'}>
+				<div>Имя файла</div>
+				<Input autoFocus required name={'name'} />
+			</div>
+		</div>
+		<div className={'popup-footer'}>
+			<Button onClick={() => cancel()} type="button" color="danger">
+				Отмена
+			</Button>
+			<Button type="submit" color="primary">
+				Ок
+			</Button>
+		</div>
+	</form>
+)
