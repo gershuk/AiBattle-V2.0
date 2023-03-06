@@ -3,8 +3,7 @@ import { useUnit } from 'effector-react'
 import { htmlFormToJson } from 'libs'
 import { $codesData, $dataMaps } from 'model'
 import { useMemo } from 'preact/hooks'
-import { Button, FormGenerator } from 'ui'
-import { AllFields } from 'ui'
+import { Button, FormGenerator, AllFields } from 'ui'
 import {
 	$formValues,
 	$startedAutoTurn,

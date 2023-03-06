@@ -1,6 +1,6 @@
 import { createAndDownloadFile } from 'api'
 import { useUnit } from 'effector-react'
-import { htmlFormToJson } from 'libs'
+import { htmlFormToJson, createTranslation } from 'libs'
 import {
 	Button,
 	Input,
@@ -20,6 +20,39 @@ import {
 } from '../model'
 import './styles.scss'
 
+const { useTranslation } = createTranslation({
+	ru: {
+		removeFile: 'Удалить файл?',
+		remove: 'Удалить',
+		saveToDevice: 'Сохранить на устройство',
+		fileList: 'Список файлов',
+		fileExists: 'Файл с таким именем уже существует.',
+		fileName: 'Имя файла',
+		ok: 'Ок',
+		cancel: 'Отмена',
+		createMap: 'Создать карту',
+		widthMap: 'Ширина карты',
+		heightMap: 'Высота карты',
+		fillCode: 'Заполнение карты (код клетки)',
+		fillBorderCode: 'Заполнение краев карты (код клетки)'
+	},
+	en: {
+		removeFile: 'Remove file?',
+		remove: 'Remove',
+		saveToDevice: 'Save to device',
+		fileList: 'File list',
+		fileExists: 'A file with the same name already exists.',
+		fileName: 'File name',
+		ok: 'Ок',
+		cancel: 'Cancel',
+		createMap: 'Create map',
+		widthMap: 'Map width',
+		heightMap: 'Map height',
+		fillCode: 'Filling out the card (cell code)',
+		fillBorderCode: 'Filling the edges of the map (cell code)'
+	},
+})
+
 interface MapsListProps {
 	active?: string | null
 	ontToggleSelect?: (code: { content: string; name: string } | null) => void
@@ -27,6 +60,7 @@ interface MapsListProps {
 
 export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 	const maps = useUnit($mapsWithSessionValue)
+	const t = useTranslation()
 
 	const handlerClickItemList = (item: ListItem) => {
 		const value = active === item.id ? null : item.id
@@ -68,7 +102,7 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 	return (
 		<div className={'maps-list'}>
 			<div className={'header'}>
-				<div className={'title'}>Список файлов</div>
+				<div className={'title'}>{t('fileList')}</div>
 				<div className={'toolbar'}>
 					<div onClick={createMapFile}>
 						<AddIcon />
@@ -92,9 +126,9 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 				}))}
 				onClick={handlerClickItemList}
 				contextMenu={[
-					{ text: 'Удалить', onClick: handlerRemove },
+					{ text: t('remove'), onClick: handlerRemove },
 					{
-						text: 'Сохранить на устройство',
+						text: t('saveToDevice'),
 						onClick: handlerDeviceSave,
 					},
 				]}
@@ -111,47 +145,51 @@ const CreateMapForm = ({
 	ok: () => void
 	cancel: () => void
 	mapsName: string[]
-}) => (
-	<form
-		onSubmit={e => {
-			e.preventDefault()
-			const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
-			const fileExists = !!mapsName.find(name => name === dataForm.name)
-			if (fileExists)
-				showMessage({ content: 'Файл с таким именем уже существует.' })
-			else ok()
-		}}
-	>
-		<div className={'popup-header'}>Создать карту</div>
-		<div className={'popup-content create-map-popup'}>
-			<div className={'create-map-popup-item'}>
-				<div>Имя файла</div>
-				<Input autoFocus required name={'name'} />
+}) => {
+	const t = useTranslation()
+
+	return (
+		<form
+			onSubmit={e => {
+				e.preventDefault()
+				const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
+				const fileExists = !!mapsName.find(name => name === dataForm.name)
+				if (fileExists)
+					showMessage({ content: t('fileExists') })
+				else ok()
+			}}
+		>
+			<div className={'popup-header'}>{t('createMap')}</div>
+			<div className={'popup-content create-map-popup'}>
+				<div className={'create-map-popup-item'}>
+					<div>{t('fileName')}</div>
+					<Input autoFocus required name={'name'} />
+				</div>
+				<div className={'create-map-popup-item'}>
+					<div>{t('widthMap')}</div>
+					<InputNumber required min={3} max={50} name={'rows'} />
+				</div>
+				<div className={'create-map-popup-item'}>
+					<div>{t('heightMap')}</div>
+					<InputNumber required min={3} max={50} name={'columns'} />
+				</div>
+				<div className={'create-map-popup-item'}>
+					<div>{t('fillCode')}</div>
+					<InputNumber initValue={0} required name={'fillCode'} />
+				</div>
+				<div className={'create-map-popup-item'}>
+					<div>{t('fillBorderCode')}</div>
+					<InputNumber initValue={2} required name={'borderCode'} />
+				</div>
 			</div>
-			<div className={'create-map-popup-item'}>
-				<div>Ширина карты</div>
-				<InputNumber required min={3} max={50} name={'rows'} />
+			<div className={'popup-footer'}>
+				<Button onClick={() => cancel()} type="button" color="danger">
+					{t('cancel')}
+				</Button>
+				<Button type="submit" color="primary">
+					{t('ok')}
+				</Button>
 			</div>
-			<div className={'create-map-popup-item'}>
-				<div>Высота карты</div>
-				<InputNumber required min={3} max={50} name={'columns'} />
-			</div>
-			<div className={'create-map-popup-item'}>
-				<div>Заполнение карты (код клетки)</div>
-				<InputNumber initValue={0} required name={'fillCode'} />
-			</div>
-			<div className={'create-map-popup-item'}>
-				<div>Заполнение краев карты (код клетки)</div>
-				<InputNumber initValue={2} required name={'borderCode'} />
-			</div>
-		</div>
-		<div className={'popup-footer'}>
-			<Button onClick={() => cancel()} type="button" color="danger">
-				Отмена
-			</Button>
-			<Button type="submit" color="primary">
-				Ок
-			</Button>
-		</div>
-	</form>
-)
+		</form>
+	)
+}

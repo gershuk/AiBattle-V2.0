@@ -18,15 +18,41 @@ import {
 	showMessage,
 	showPopup,
 } from 'ui'
-import { htmlFormToJson } from 'libs'
+import { createTranslation, htmlFormToJson } from 'libs'
 
 export interface LoaderScriptProps {
 	active?: string | null
 	ontToggleSelect?: (code: UploadedCode | null) => void
 }
 
+const { useTranslation } = createTranslation({
+	ru: {
+		removeFile: 'Удалить файл?',
+		remove: 'Удалить',
+		saveToDevice: 'Сохранить на устройство',
+		fileList: 'Список файлов',
+		fileExists: 'Файл с таким именем уже существует.',
+		fileName: 'Имя файла',
+		ok: 'Ок',
+		cancel: 'Отмена',
+		createScript: 'Создать скрипт',
+	},
+	en: {
+		removeFile: 'Remove file?',
+		remove: 'Remove',
+		saveToDevice: 'Save to device',
+		fileList: 'File list',
+		fileExists: 'A file with the same name already exists.',
+		fileName: 'File name',
+		ok: 'Ок',
+		cancel: 'Cancel',
+		createScript: 'Create script',
+	},
+})
+
 export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 	const codes = useUnit($codesModified)
+	const t = useTranslation()
 
 	const createCodeFile = async () => {
 		const { status, htmlElement } = await showPopup({
@@ -55,14 +81,14 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 	}
 
 	const handlerRemove = async (item: ListItem) => {
-		const { status } = await showConfirm({ content: 'Удалить файл?' })
+		const { status } = await showConfirm({ content: t('removeFile') })
 		if (status === 'ok') removedFileCode(item.id)
 	}
 
 	return (
 		<div className={'code-loader'}>
 			<div className={'header'}>
-				<div className={'title'}>Список файлов</div>
+				<div className={'title'}>{t('fileList')}</div>
 				<div className={'toolbar'}>
 					<div onClick={createCodeFile}>
 						<AddIcon />
@@ -86,9 +112,9 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 				}))}
 				onClick={handlerClickItemList}
 				contextMenu={[
-					{ text: 'Удалить', onClick: handlerRemove },
+					{ text: t('remove'), onClick: handlerRemove },
 					{
-						text: 'Сохранить на устройство',
+						text: t('saveToDevice'),
 						onClick: handlerDeviceSave,
 					},
 				]}
@@ -105,31 +131,34 @@ const CreateCodeForm = ({
 	ok: () => void
 	cancel: () => void
 	codesName: string[]
-}) => (
-	<form
-		onSubmit={e => {
-			e.preventDefault()
-			const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
-			const fileExists = !!codesName.find(name => name === dataForm.name)
-			if (fileExists)
-				showMessage({ content: 'Файл с таким именем уже существует.' })
-			else ok()
-		}}
-	>
-		<div className={'popup-header'}>Создать скрипт</div>
-		<div className={'popup-content'}>
-			<div className={'create-map-popup-item'}>
-				<div>Имя файла</div>
-				<Input autoFocus required name={'name'} />
+}) => {
+	const t = useTranslation()
+
+	return (
+		<form
+			onSubmit={e => {
+				e.preventDefault()
+				const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
+				const fileExists = !!codesName.find(name => name === dataForm.name)
+				if (fileExists) showMessage({ content: t('fileExists') })
+				else ok()
+			}}
+		>
+			<div className={'popup-header'}>{t('createScript')}</div>
+			<div className={'popup-content'}>
+				<div className={'create-map-popup-item'}>
+					<div>{t('fileName')}</div>
+					<Input autoFocus required name={'name'} />
+				</div>
 			</div>
-		</div>
-		<div className={'popup-footer'}>
-			<Button onClick={() => cancel()} type="button" color="danger">
-				Отмена
-			</Button>
-			<Button type="submit" color="primary">
-				Ок
-			</Button>
-		</div>
-	</form>
-)
+			<div className={'popup-footer'}>
+				<Button onClick={() => cancel()} type="button" color="danger">
+					{t('cancel')}
+				</Button>
+				<Button type="submit" color="primary">
+					{t('ok')}
+				</Button>
+			</div>
+		</form>
+	)
+}
