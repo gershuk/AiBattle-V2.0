@@ -1,5 +1,4 @@
 import { Effect } from 'effector'
-import { showMessage } from 'ui'
 import { ErrorItem, isDisplayedError, isIgnoreError } from './type'
 
 // export interface FailedList<T = any> {
@@ -25,24 +24,19 @@ export const alertErrors = (config: {
 	fxs: Effect<any, any, Error>[]
 	errorList: ErrorItem[]
 	defaultMessage?: string
+	showMessage: (params: { msg: string; errorItem?: ErrorItem }) => void
 }) => {
-	const { fxs, errorList, defaultMessage } = config
+	const { fxs, errorList, defaultMessage, showMessage } = config
 	fxs.forEach(fx => {
 		fx.failData.watch(error => {
 			const findError = errorList.find(({ guard }) => guard(error))
 			if (findError) {
 				if (isIgnoreError(findError)) return
 				else if (isDisplayedError(findError)) {
-					showMessage({
-						content: findError.msg,
-						okButtonText: 'Ок',
-					})
+					showMessage({ msg: findError.msg, errorItem: findError })
 				}
 			} else if (defaultMessage) {
-				showMessage({
-					content: defaultMessage,
-					okButtonText: 'Ок',
-				})
+				showMessage({ msg: defaultMessage })
 			}
 		})
 	})

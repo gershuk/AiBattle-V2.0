@@ -15,7 +15,7 @@ import {
 } from 'api'
 import { createSessionsManager } from 'libs/ace-editor'
 import { alertErrors } from 'libs/failer/failer'
-import { showConfirm } from 'ui'
+import { showConfirm, showMessage } from 'ui'
 
 const _codeExample = `// example random bot
 class Controller { 
@@ -142,7 +142,7 @@ alertErrors({
 		},
 		{
 			guard: error => error === errorAbortLoadFileUser,
-			ignore: true
+			ignore: true,
 		},
 		{
 			guard: error => error instanceof ReadFileError,
@@ -154,6 +154,7 @@ alertErrors({
 		},
 	],
 	defaultMessage: 'Произошла ошибка',
+	showMessage: ({ msg }) => showMessage({ content: msg }),
 })
 
 export {

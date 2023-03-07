@@ -14,7 +14,7 @@ import {
 	readMapsFromLocalStorageFx,
 	removeMap,
 } from 'model'
-import { showConfirm } from 'ui'
+import { showConfirm, showMessage } from 'ui'
 import { makeMap } from '../utils'
 import { addSession, removeSession, resetSession } from './session'
 
@@ -138,6 +138,7 @@ alertErrors({
 		},
 	],
 	defaultMessage: 'Произошла ошибка',
+	showMessage: ({ msg }) => showMessage({ content: msg }),
 })
 
 export { uploadedFile, removedFileMap, createdFile }
