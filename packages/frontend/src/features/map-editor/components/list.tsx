@@ -2,6 +2,7 @@ import { createAndDownloadFile } from 'api'
 import { useUnit } from 'effector-react'
 import { htmlFormToJson, createTranslation } from 'libs'
 import {
+	AddIcon,
 	Button,
 	Input,
 	InputNumber,
@@ -10,8 +11,8 @@ import {
 	showConfirm,
 	showMessage,
 	showPopup,
+	UploadIcon,
 } from 'ui'
-import { AddIcon, UploadIcon } from '../assets/icons'
 import {
 	$mapsWithSessionValue,
 	createdFile,

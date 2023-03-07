@@ -3,7 +3,7 @@ import { useUnit } from 'effector-react'
 import { htmlFormToJson } from 'libs'
 import { $codesData, $dataMaps } from 'model'
 import { useMemo } from 'preact/hooks'
-import { Button, FormGenerator, AllFields } from 'ui'
+import { Button, FormGenerator, AllFields, StartIcon, StopIcon } from 'ui'
 import {
 	$formValues,
 	$startedAutoTurn,
@@ -131,29 +131,7 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 						color={startedAutoTurn ? 'danger' : 'primary'}
 						className={'submit-debug-setting'}
 					>
-						{startedAutoTurn ? (
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
-								<rect width="256" height="256" fill="none" />
-								<rect
-									x="52"
-									y="52"
-									width="152"
-									height="152"
-									rx="6.9"
-									fill="none"
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="24"
-								/>
-							</svg>
-						) : (
-							<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16">
-								<path
-									stroke="none"
-									d="M10.804 8 5 4.633v6.734L10.804 8zm.792-.696a.802.802 0 0 1 0 1.392l-6.363 3.692C4.713 12.69 4 12.345 4 11.692V4.308c0-.653.713-.998 1.233-.696l6.363 3.692z"
-								/>
-							</svg>
-						)}
+						{startedAutoTurn ? <StopIcon /> : <StartIcon />}
 					</Button>
 				</form>
 			</div>

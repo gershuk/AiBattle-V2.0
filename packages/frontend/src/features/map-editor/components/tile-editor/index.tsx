@@ -8,7 +8,15 @@ import {
 } from 'libs'
 import { MapData } from 'model'
 import { useCallback, useState, useEffect } from 'preact/hooks'
-import { Button, Checkbox, RangeInput, showMessage } from 'ui'
+import {
+	Button,
+	Checkbox,
+	RangeInput,
+	RedoIcon,
+	SaveIcon,
+	showMessage,
+	UndoIcon,
+} from 'ui'
 import {
 	$activeCode,
 	$cellSize,
@@ -136,23 +144,17 @@ export const TileEditor = ({
 			<div className={'tile-editor-toolbar'}>
 				<div className={'tile-editor-toolbar-row tile-editor-toolbar-actions'}>
 					<Button color="warning" onClick={() => onUndo()} disabled={!canUndo}>
-						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-							<path d="M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z" />
-						</svg>
+						<UndoIcon />
 					</Button>
 					<Button color="warning" onClick={() => onRedo()} disabled={!canRedo}>
-						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-							<path d="M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16a8.002 8.002 0 0 1 7.6-5.5c1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z" />
-						</svg>
+						<RedoIcon />
 					</Button>
 					<Button
 						color="warning"
 						onClick={() => onSave(jsonToBeautifulString(mapData))}
 						disabled={!modify}
 					>
-						<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-							<path d="M17 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z" />
-						</svg>
+						<SaveIcon />
 					</Button>
 				</div>
 				<div className={'tile-editor-toolbar-row tile-scale-wrapper'}>
