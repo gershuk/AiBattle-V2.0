@@ -33,7 +33,14 @@ export const alertErrors = (config: {
 			if (findError) {
 				if (isIgnoreError(findError)) return
 				else if (isDisplayedError(findError)) {
-					showMessage({ msg: findError.msg, errorItem: findError })
+					const strMsg =
+						typeof findError.msg === 'function'
+							? findError.msg()
+							: findError.msg
+					showMessage({
+						msg: strMsg,
+						errorItem: findError,
+					})
 				}
 			} else if (defaultMessage) {
 				showMessage({ msg: defaultMessage })

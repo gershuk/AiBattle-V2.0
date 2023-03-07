@@ -3,7 +3,7 @@ interface ErrorBase {
 }
 
 interface DisplayedError extends ErrorBase {
-	msg: string
+	msg: string | (() => string)
 }
 
 interface IgnoreError extends ErrorBase {

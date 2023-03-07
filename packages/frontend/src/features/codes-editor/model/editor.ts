@@ -16,6 +16,20 @@ import {
 import { createSessionsManager } from 'libs/ace-editor'
 import { alertErrors } from 'libs/failer/failer'
 import { showConfirm, showMessage } from 'ui'
+import { createTranslation } from 'libs'
+
+const { getTranslationItem } = createTranslation({
+	ru: {
+		errorConvertString: 'Невозможно преобразовать файл в строку',
+		errorRead: 'Произошла ошибка при чтении файла',
+		overwriteFile: 'Файл с таким именем уже существует. Перезаписать файл?',
+	},
+	en: {
+		errorConvertString: 'Unable to convert file to image',
+		errorRead: 'An error occurred while reading the file',
+		overwriteFile: 'A file with the same name already exists. Overwrite file?',
+	},
+})
 
 const _codeExample = `// example random bot
 class Controller { 
@@ -36,8 +50,8 @@ class Controller {
 
 new Controller()`
 
-const errorReadStringFile = new Error('Невозможно преобразовать файл в строку')
-const errorAbortLoadFileUser = new Error('Пользователь отменил загрузку')
+const errorReadStringFile = new Error('error read string from file')
+const errorAbortLoadFileUser = new Error('user abort upload file')
 
 const { $sessions, $sessionsValue, addSession, removeSession, resetSession } =
 	createSessionsManager({
@@ -71,7 +85,7 @@ const loadScriptFx = attach({
 			let overwriteFile = false
 			if (fileExits) {
 				const { status } = await showConfirm({
-					content: 'Файл с таким именем уже загружен. Перезаписать?',
+					content: getTranslationItem('overwriteFile'),
 				})
 				if (status === 'cancel') return Promise.reject(errorAbortLoadFileUser)
 				else overwriteFile = true
@@ -146,11 +160,11 @@ alertErrors({
 		},
 		{
 			guard: error => error instanceof ReadFileError,
-			msg: 'Произошла ошибка при чтении файла',
+			msg: () => getTranslationItem('errorRead'),
 		},
 		{
 			guard: error => error === errorReadStringFile,
-			msg: errorReadStringFile.message,
+			msg: () => getTranslationItem('errorConvertString'),
 		},
 	],
 	defaultMessage: 'Произошла ошибка',

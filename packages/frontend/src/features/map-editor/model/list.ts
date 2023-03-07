@@ -5,7 +5,7 @@ import {
 	ReadFileError,
 } from 'api'
 import { attach, createEvent, sample } from 'effector'
-import { alertErrors, jsonToBeautifulString, make2dArray } from 'libs'
+import { alertErrors, createTranslation, jsonToBeautifulString } from 'libs'
 import {
 	$dataMaps,
 	$maps,
@@ -18,9 +18,24 @@ import { showConfirm, showMessage } from 'ui'
 import { makeMap } from '../utils'
 import { addSession, removeSession, resetSession } from './session'
 
-const errorReadStringFile = new Error('Невозможно преобразовать файл в строку')
-const errorReadJson = new Error('Невалидный json')
-const loadMapAborted = new Error('Пользователь отменил загрузку файла')
+const { getTranslationItem } = createTranslation({
+	ru: {
+		errorConvertString: 'Невозможно преобразовать файл в строку',
+		errorRead: 'Произошла ошибка при чтении файла',
+		errorJson: 'Невалидный json',
+		overwriteFile: 'Файл с таким именем уже существует. Перезаписать файл?'
+	},
+	en: {
+		errorConvertString: 'Unable to convert file to image',
+		errorRead: 'An error occurred while reading the file',
+		errorJson: 'Invalid json',
+		overwriteFile: 'A file with the same name already exists. Overwrite file?'
+	},
+})
+
+const errorReadStringFile = new Error('error read string from file')
+const errorReadJson = new Error('invalid json')
+const loadMapAborted = new Error('user abort upload file')
 
 const uploadedFile = createEvent()
 const createdFile = createEvent<{
@@ -47,7 +62,7 @@ const loadMapFx = attach({
 			let overwriteFile = false
 			if (fileIsExits) {
 				const { status } = await showConfirm({
-					content: 'Файл с таким именем уже существует. Перезаписать файл?',
+					content: getTranslationItem('overwriteFile'),
 				})
 				if (status === 'cancel') return Promise.reject(loadMapAborted)
 				else overwriteFile = true
@@ -126,15 +141,15 @@ alertErrors({
 		},
 		{
 			guard: error => error instanceof ReadFileError,
-			msg: 'Произошла ошибка при чтении файла',
+			msg: () => getTranslationItem('errorRead'),
 		},
 		{
 			guard: error => error === errorReadStringFile,
-			msg: errorReadStringFile.message,
+			msg: () => getTranslationItem('errorConvertString'),
 		},
 		{
 			guard: error => error === errorReadJson,
-			msg: errorReadJson.message,
+			msg: () => getTranslationItem('errorJson'),
 		},
 	],
 	defaultMessage: 'Произошла ошибка',
