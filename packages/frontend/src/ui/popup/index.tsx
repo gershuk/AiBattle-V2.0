@@ -3,6 +3,18 @@ import { Button } from 'ui/button'
 import { ComponentChild, createRef, RefObject, render } from 'preact'
 import './styles.scss'
 import { useState } from 'preact/hooks'
+import { createTranslation } from 'libs'
+
+const { getTranslationItem } = createTranslation({
+	ru: {
+		ok: 'Ок',
+		cancel: 'Отмена',
+	},
+	en: {
+		ok: 'Ok',
+		cancel: 'Cancel',
+	},
+})
 
 export const usePopup = () => {
 	const [open, setOpen] = useState(false)
@@ -64,8 +76,8 @@ export const showPopup = ({
 
 export const showConfirm = ({
 	content,
-	okButtonText = 'Ок',
-	cancelButtonText = 'Отмена',
+	okButtonText = getTranslationItem('ok'),
+	cancelButtonText = getTranslationItem('cancel'),
 	okButtonClick,
 	cancelButtonClick,
 	title,
@@ -122,7 +134,7 @@ export const showConfirm = ({
 
 export const showMessage = ({
 	content,
-	okButtonText = 'Ок',
+	okButtonText = getTranslationItem('ok'),
 	okButtonClick,
 	title,
 }: {

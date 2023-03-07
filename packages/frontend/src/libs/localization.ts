@@ -16,7 +16,8 @@ enum Languages {
 const initLanguage = (() => {
 	try {
 		const languageLocalStorage = localStorage.getItem('language')
-		if (languageLocalStorage && languageLocalStorage in Languages) return languageLocalStorage
+		if (languageLocalStorage && languageLocalStorage in Languages)
+			return languageLocalStorage
 	} catch (_) {}
 	return Languages.en
 })()
@@ -68,8 +69,12 @@ const createTranslation = <L extends TranslationItem>(
 		(scheme, activeLanguage) => scheme[activeLanguage] as L
 	)
 
-	const createGetterTranslationItem = () =>
-		createGetterTranslation($schemeByActiveLanguage.getState())
+	const getTranslationItem: GetterTranslation<L> = (param: any) => {
+		const getter = createGetterTranslation<L>(
+			$schemeByActiveLanguage.getState()
+		)
+		return getter(param)
+	}
 
 	const useTranslation = () => {
 		const schemeByActiveLanguage = useUnit($schemeByActiveLanguage)
@@ -80,7 +85,7 @@ const createTranslation = <L extends TranslationItem>(
 		return getter
 	}
 
-	return { createGetterTranslationItem, useTranslation }
+	return { getTranslationItem, useTranslation }
 }
 
 export { $activeLanguage, changeLanguage, Languages, createTranslation }
