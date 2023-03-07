@@ -2,9 +2,9 @@ import { useUnit } from 'effector-react'
 import { $codesData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { DropDown, Input } from 'ui'
-import { $activeGame } from '../../model'
-import { $selectedMap } from '../../model/select-map'
+import { $activeGame, $selectedMap } from '../../model'
 import './styles.scss'
+import { createTranslation } from 'libs'
 
 const colors = [
 	'red',
@@ -17,7 +17,19 @@ const colors = [
 	'purple',
 ]
 
+const { useTranslation } = createTranslation({
+	ru: {
+		configBot: 'Конфигурация ботов',
+		botName: 'Имя бота'
+	},
+	en: {
+		configBot: 'Bot configuration',
+		botName: 'Bot name'
+	},
+})
+
 export const BotsSetting = () => {
+	const t = useTranslation()
 	const { activeMap, codesData, startedGame } = useUnit({
 		activeMap: $selectedMap,
 		codesData: $codesData,
@@ -33,7 +45,7 @@ export const BotsSetting = () => {
 
 	return (
 		<div className={'bot-setting'}>
-			<div className={'title'}>Конфигурация ботов</div>
+			<div className={'title'}>{t('configBot')}</div>
 			<div className={'bot-list'}>
 				{activeMap?.data?.spawns.map((_, i) => (
 					<div className={'bot-setting-item'}>
@@ -41,7 +53,7 @@ export const BotsSetting = () => {
 						<Input
 							name={`bot[${i}].name`}
 							className="bot-name"
-							placeholder="Имя бота"
+							placeholder={t('botName')}
 							value={`bot#${i}`}
 							disabled={startedGame}
 						/>

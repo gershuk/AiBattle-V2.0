@@ -1,4 +1,5 @@
 import { useUnit } from 'effector-react'
+import { createTranslation } from 'libs'
 import { $dataMaps } from 'model'
 import { useMemo } from 'preact/hooks'
 import { DropDown } from 'ui'
@@ -6,7 +7,17 @@ import { $activeGame } from '../../model'
 import { $selectedMap, selected } from '../../model/select-map'
 import './styles.scss'
 
+const { useTranslation } = createTranslation({
+	ru: {
+		map: 'Карта',
+	},
+	en: {
+		map: 'Map',
+	},
+})
+
 export const MapSelection = () => {
+	const t = useTranslation()
 	const { mapsHashMap, activeMap, startedGame } = useUnit({
 		mapsHashMap: $dataMaps,
 		activeMap: $selectedMap,
@@ -17,7 +28,7 @@ export const MapSelection = () => {
 	}, [mapsHashMap])
 	return (
 		<div className={'map-selection'}>
-			<div className={'title'}>Карта</div>
+			<div className={'title'}>{t('map')}</div>
 			<div>
 				<DropDown
 					disabled={startedGame}

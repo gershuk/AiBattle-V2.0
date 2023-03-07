@@ -55,7 +55,7 @@ export const DropDown = ({
 					<option disabled selected style="display:none"></option>
 				) : null}
 				{options.map(({ id, text }) => (
-					<option key={id} value={id}>
+					<option key={id} selected={id === value} value={id}>
 						{text}
 					</option>
 				))}

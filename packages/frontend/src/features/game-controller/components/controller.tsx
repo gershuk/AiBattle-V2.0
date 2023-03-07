@@ -7,10 +7,24 @@ import { $activeGame, engine, startedGame, stoppedGame } from '../model/game'
 import { $selectedMap } from '../model/select-map'
 import './styles.scss'
 import { Button } from 'ui'
-import { htmlFormToJson } from 'libs'
+import { createTranslation, htmlFormToJson } from 'libs'
 import { SubmitForm } from '../types'
 
+const { useTranslation } = createTranslation({
+	ru: {
+		startAutoStep: 'Запустить авто шаг',
+		stopAutoStep: 'Остановить авто шаг',
+		nextStep: 'Сделать 1 шаг',
+	},
+	en: {
+		startAutoStep: 'Run auto step',
+		stopAutoStep: 'Stop auto step',
+		nextStep: 'Take 1 step',
+	},
+})
+
 export const GameController = () => {
+	const t = useTranslation()
 	const {
 		activeMap,
 		startedGame: startedGameFlag,
@@ -29,7 +43,6 @@ export const GameController = () => {
 					e.preventDefault()
 					if (!startedGameFlag) {
 						const jsonForm = htmlFormToJson<SubmitForm>(e.currentTarget)
-						console.log('jsonForm', jsonForm)
 						startedGame(jsonForm)
 					} else {
 						stoppedGame()
@@ -53,13 +66,14 @@ export const GameController = () => {
 								color={autoStep ? 'warning' : 'primary'}
 								onClick={engine.methods.toggleAutoTurn}
 							>
-								{autoStep ? 'Остановить авто шаг' : 'Запустить авто шаг'}
+								{t(autoStep ? 'stopAutoStep' : 'startAutoStep')}
 							</Button>
 							<Button
+								disabled={autoStep}
 								className="full-width"
 								onClick={engine.methods.doNextTurn}
 							>
-								Next шаг
+								{t('nextStep')}
 							</Button>
 						</>
 					) : null}

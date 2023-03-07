@@ -1,4 +1,5 @@
 import { useUnit } from 'effector-react'
+import { createTranslation } from 'libs'
 import { ComponentChild } from 'preact'
 import { useMemo } from 'preact/hooks'
 import { FormGenerator, AllFields } from 'ui'
@@ -45,7 +46,17 @@ const _formFields: AllFields[] = [
 	},
 ]
 
+const { useTranslation } = createTranslation({
+	ru: {
+		configGame: 'Конфигурация игры',
+	},
+	en: {
+		configGame: 'Game configuration',
+	},
+})
+
 export const GameSettings = () => {
+	const t = useTranslation()
 	const { startedGame, formValues } = useUnit({
 		startedGame: $activeGame,
 		formValues: $formValues,
@@ -65,7 +76,7 @@ export const GameSettings = () => {
 
 	return (
 		<div className={'pre-game-settings'}>
-			<div className={'title'}>Конфигурация игры</div>
+			<div className={'title'}>{t('configGame')}</div>
 			<div className={'wrapper-settings'}>
 				{/* <div className={'setting-item'}>
 					<div>Название реплея</div>

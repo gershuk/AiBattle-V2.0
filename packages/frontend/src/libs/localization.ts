@@ -1,4 +1,10 @@
-import { combine, createStore } from 'effector'
+import {
+	combine,
+	createEffect,
+	createEvent,
+	createStore,
+	sample,
+} from 'effector'
 import { useUnit } from 'effector-react'
 import { useCallback } from 'react'
 
@@ -7,11 +13,29 @@ enum Languages {
 	ru = 'ru',
 }
 
-const $rawLanguage = createStore<Languages>(Languages.en)
+const initLanguage = (() => {
+	try {
+		const languageLocalStorage = localStorage.getItem('language')
+		if (languageLocalStorage && languageLocalStorage in Languages) return languageLocalStorage
+	} catch (_) {}
+	return Languages.en
+})()
 
-export const $activeLanguage = $rawLanguage.map(rawLanguage =>
-	rawLanguage === Languages.ru ? Languages.ru : Languages.en
+const $rawLanguage = createStore<string>(initLanguage)
+
+const $activeLanguage = $rawLanguage.map<Languages>(rawLanguage =>
+	rawLanguage in Languages ? (rawLanguage as Languages) : Languages.en
 )
+
+const changeLanguage = createEvent<Languages>()
+
+const saveLanguageToLocalStorageFx = createEffect((language: Languages) => {
+	localStorage.setItem('language', language)
+})
+
+$rawLanguage.on(changeLanguage, (_, newLanguage) => newLanguage)
+
+sample({ clock: changeLanguage, target: saveLanguageToLocalStorageFx })
 
 interface TranslationItem {
 	[k: string]: string | number | TranslationItem
@@ -26,9 +50,7 @@ type GetterTranslation<T> = {
 	<G extends keyof T>(param: G): T[G]
 }
 
-export const createGetterTranslation = <T extends TranslationItem>(
-	scheme: T
-) => {
+const createGetterTranslation = <T extends TranslationItem>(scheme: T) => {
 	const getter: GetterTranslation<T> = (getterText: any) => {
 		if (typeof getterText === 'function') return getterText(scheme)
 		return scheme[getterText]
@@ -36,7 +58,7 @@ export const createGetterTranslation = <T extends TranslationItem>(
 	return getter
 }
 
-export const createTranslation = <L extends TranslationItem>(
+const createTranslation = <L extends TranslationItem>(
 	scheme: Translation<L>
 ) => {
 	const $scheme = createStore(scheme)
@@ -53,10 +75,12 @@ export const createTranslation = <L extends TranslationItem>(
 		const schemeByActiveLanguage = useUnit($schemeByActiveLanguage)
 		const getter = useCallback(
 			createGetterTranslation(schemeByActiveLanguage),
-			[scheme]
+			[schemeByActiveLanguage]
 		)
 		return getter
 	}
 
 	return { createGetterTranslationItem, useTranslation }
 }
+
+export { $activeLanguage, changeLanguage, Languages, createTranslation }

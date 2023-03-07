@@ -1,9 +1,25 @@
 import { useUnit } from 'effector-react'
+import { createTranslation } from 'libs'
 import { useMemo } from 'preact/hooks'
 import { $selectedMap } from '../../model/select-map'
 import './styles.scss'
 
+const { useTranslation } = createTranslation({
+	ru: {
+		infoMap: 'Информация о карте',
+		cellCount: 'Количество клеток',
+		spawnCount: 'Количество спавнов'
+	},
+	en: {
+		infoMap: 'Map Information',
+		cellCount: 'Number of cells',
+		spawnCount: 'Number of spawns'
+	},
+})
+
+
 export const MapInfo = () => {
+	const t = useTranslation()
 	const activeMap = useUnit($selectedMap)
 	const countCell = useMemo(() => {
 		const countCell = (activeMap?.data?.map || []).reduce(
@@ -14,10 +30,10 @@ export const MapInfo = () => {
 	}, [activeMap])
 	return (
 		<div className={'map-info'}>
-			<div className={'title'}>Информация о карте</div>
+			<div className={'title'}>{t('infoMap')}</div>
 			<div className={'infos-list'}>
-				<div>Количество клеток - {countCell}</div>
-				<div>Количество спавнов - {activeMap?.data?.spawns.length}</div>
+				<div>{t('cellCount')} - {countCell}</div>
+				<div>{t('spawnCount')} - {activeMap?.data?.spawns.length}</div>
 			</div>
 		</div>
 	)
