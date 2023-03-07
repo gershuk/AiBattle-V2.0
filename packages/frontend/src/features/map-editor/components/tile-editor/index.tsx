@@ -5,6 +5,7 @@ import {
 	debounce,
 	deepCopyJson,
 	useKeyboard,
+	createTranslation,
 } from 'libs'
 import { MapData } from 'model'
 import { useCallback, useState, useEffect } from 'preact/hooks'
@@ -33,6 +34,23 @@ import { ListSpawns } from './list-spawns'
 import './styles.scss'
 import { TileTable } from './tile-table'
 
+const { useTranslation } = createTranslation({
+	ru: {
+		spawnExit: 'Невозможно поставить 2 одинаковые точки спавна.',
+		tileSize: 'Размер тайла',
+		setActiveTile: 'Выберите активный тайл для рисования:',
+		showCodes: 'Показать коды ячеек',
+		enableGrid: 'Включить сетку',
+	},
+	en: {
+		spawnExit: 'Cannot place 2 identical spawn points.',
+		tileSize: 'Tile Size',
+		setActiveTile: 'Select active tile to draw:',
+		showCodes: 'Show cell codes',
+		enableGrid: 'Enable Grid',
+	},
+})
+
 interface TileEditorProps {
 	mapData: MapData
 	onChange: (value: string) => void
@@ -60,6 +78,7 @@ export const TileEditor = ({
 	canUndo,
 	canRedo,
 }: TileEditorProps) => {
+	const t = useTranslation()
 	const { activeCode, visibleCode, visibleGrid, cellSize, mode } = useUnit({
 		activeCode: $activeCode,
 		visibleCode: $visibleCode,
@@ -114,7 +133,7 @@ export const TileEditor = ({
 			const spawnExists = mapData.spawns.find(({ x, y }) => x === j && y === i)
 			if (spawnExists) {
 				showMessage({
-					content: 'Невозможно поставить 2 одинаковые точки спавна.',
+					content: t('spawnExit'),
 				})
 				return
 			}
@@ -158,7 +177,7 @@ export const TileEditor = ({
 					</Button>
 				</div>
 				<div className={'tile-editor-toolbar-row tile-scale-wrapper'}>
-					<span className={'tile-scale-title'}>Размер тайла</span>
+					<span className={'tile-scale-title'}>{t('tileSize')}</span>
 					<RangeInput
 						min={1}
 						max={100}
@@ -170,22 +189,20 @@ export const TileEditor = ({
 				</div>
 				<div className={'tile-editor-toolbar-row'}>
 					<Checkbox
-						label="Показать коды ячеек"
+						label={t('showCodes')}
 						initValue={visibleCode}
 						onChange={toggleVisibleCode}
 					/>
 				</div>
 				<div className={'tile-editor-toolbar-row'}>
 					<Checkbox
-						label="Включить сетку"
+						label={t('enableGrid')}
 						initValue={visibleGrid}
 						onChange={toggleVisibleGrid}
 					/>
 				</div>
 				<div className={'tile-editor-toolbar-row'}>
-					<span className={'type-cell-title'}>
-						Выберите активный тайл для рисования:
-					</span>
+					<span className={'type-cell-title'}>{t('setActiveTile')}</span>
 					<div className={'type-cell-wrapper'}>
 						{typeCells.map(({ code, uriImg }) => (
 							<div

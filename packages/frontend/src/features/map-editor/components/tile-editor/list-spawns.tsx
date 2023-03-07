@@ -1,9 +1,19 @@
 import { useUnit } from 'effector-react'
-import { clsx, deepCopyJson } from 'libs'
+import { clsx, createTranslation } from 'libs'
 import { Spawn } from 'model'
 import { Button, PlusIcon } from 'ui'
 import { $mode, setMode } from '../../model'
 
+const { useTranslation } = createTranslation({
+	ru: {
+		spawnList: 'Места спавнов:',
+		addSpawn: 'Укажите точку спавна на карте',
+	},
+	en: {
+		spawnList: 'Spawn list:',
+		addSpawn: 'Specify a spawn point on the map',
+	},
+})
 export interface ListSpawnsProps {
 	spawns: Spawn[]
 	classNameWrapper?: string
@@ -15,6 +25,7 @@ export const ListSpawns = ({
 	classNameWrapper,
 	onChangeSpawn,
 }: ListSpawnsProps) => {
+	const t = useTranslation()
 	const mode = useUnit($mode)
 
 	const onAddSpawnHandler = () => {
@@ -30,7 +41,7 @@ export const ListSpawns = ({
 
 	return (
 		<div className={clsx(classNameWrapper, 'list-spawner-wrapper')}>
-			<span className={'type-cell-title'}>Места спавнов:</span>
+			<span className={'type-cell-title'}>{t('spawnList')}</span>
 			<div className={'wrapper-spawn'}>
 				{spawns.map(({ x, y }, i) => (
 					<div className={'item-spawn'}>
@@ -52,7 +63,7 @@ export const ListSpawns = ({
 				>
 					+
 				</Button>
-				{activeSpawnMode ? <span>Укажите точку спавна на карте</span> : null}
+				{activeSpawnMode ? <span>{t('addSpawn')}</span> : null}
 			</div>
 		</div>
 	)

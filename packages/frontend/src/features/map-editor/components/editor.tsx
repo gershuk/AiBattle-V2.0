@@ -1,5 +1,5 @@
 import { useUnit } from 'effector-react'
-import { createPanelSizeController } from 'libs'
+import { createPanelSizeController, createTranslation } from 'libs'
 import { MapData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor, SplitPanel } from 'ui'
@@ -17,7 +17,19 @@ const { $sizes, setSizes } = createPanelSizeController(
 	'vertical'
 )
 
+const { useTranslation } = createTranslation({
+	ru: {
+		jsonInvalid: 'JSON не валиден',
+		mapInvalid: 'Структура JSON не соответствует карте',
+	},
+	en: {
+		jsonInvalid: 'JSON is not valid',
+		mapInvalid: 'JSON structure does not match the map',
+	},
+})
+
 export const EditorMap = ({ active, onSave }: EditorCode) => {
+	const t = useTranslation()
 	const { maps, sizes, sessions } = useUnit({
 		maps: $mapsWithSessionValue,
 		sizes: $sizes,
@@ -63,10 +75,7 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 				<div className={'preview-map'}>
 					{!selectMap.modifyJsonValid || !selectMap.modifyValidDataMap ? (
 						<div className={'error-valid-json'}>
-							Предпросмотр не доступен по причине:{' '}
-							{!selectMap.modifyJsonValid
-								? 'JSON не валиден'
-								: 'структура JSON не соответствует карте'}
+							{t(!selectMap.modifyJsonValid ? 'jsonInvalid' : 'mapInvalid')}
 						</div>
 					) : activeSession ? (
 						<TileEditor
