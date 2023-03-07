@@ -51,8 +51,8 @@ export const DropDown = ({
 				onChange={e => handlerChange(e.currentTarget.value)}
 				{...props}
 			>
-				{initValue === null || initValue === undefined ? (
-					<option disabled selected style="display:none"></option>
+				{initValue === null || initValue === undefined || value === null ? (
+					<option selected style="display:none"></option>
 				) : null}
 				{options.map(({ id, text }) => (
 					<option key={id} selected={id === value} value={id}>
