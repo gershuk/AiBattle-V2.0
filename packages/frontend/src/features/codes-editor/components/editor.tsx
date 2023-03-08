@@ -48,12 +48,13 @@ export const EditorCode = ({ active, onSave }: EditorCode) => {
 			gutterSize={5}
 			direction={'vertical'}
 			Left={
-				<CodeEditor
-					session={session}
-					mode="javascript"
-					fileName={selectCode.name}
-					onSave={value => onSave?.(value)}
-				/>
+				session ? (
+					<CodeEditor
+						session={session}
+						fileName={selectCode.name}
+						onSave={value => onSave?.(value)}
+					/>
+				) : null
 			}
 			Right={<Debug selectedCodeName={selectCode.name} />}
 		/>

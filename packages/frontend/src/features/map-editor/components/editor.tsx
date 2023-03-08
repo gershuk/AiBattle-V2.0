@@ -65,11 +65,13 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 			gutterSize={5}
 			direction={'vertical'}
 			Left={
-				<CodeEditor
-					session={activeSession}
-					fileName={selectMap.name}
-					onSave={value => onSave?.(value)}
-				/>
+				activeSession ? (
+					<CodeEditor
+						session={activeSession}
+						fileName={selectMap.name}
+						onSave={value => onSave?.(value)}
+					/>
+				) : null
 			}
 			Right={
 				<div className={'preview-map'}>

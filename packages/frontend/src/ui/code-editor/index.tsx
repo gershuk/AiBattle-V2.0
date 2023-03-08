@@ -1,19 +1,17 @@
+import { Ace, createEditSession } from 'ace-builds'
 import AceEditor from 'react-ace'
 import './styles.scss'
-import 'ace-builds/src-noconflict/mode-javascript'
-import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/theme-tomorrow'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import { useCallback, useEffect, useRef } from 'preact/hooks'
-import { Ace, createEditSession } from 'ace-builds'
 import { createTranslation, createAndDownloadFile } from 'libs'
+import { useMemo } from 'react'
 
 interface CodeEditorProps {
-	mode?: 'javascript' | 'json'
 	onChange?: (value: string) => void
 	onSave?: (value: string) => void
 	fileName: string
-	session?: Ace.EditSession
+	session: Ace.EditSession
 }
 
 const { useTranslation } = createTranslation({
@@ -28,7 +26,6 @@ const { useTranslation } = createTranslation({
 })
 
 export const CodeEditor = ({
-	mode,
 	onChange,
 	onSave,
 	fileName,
@@ -36,6 +33,7 @@ export const CodeEditor = ({
 }: CodeEditorProps) => {
 	const t = useTranslation()
 	const refEditor = useRef<Ace.Editor | null>(null)
+	const mode = useMemo(() => session.getMode(), [session])
 
 	useEffect(() => {
 		if (session && refEditor.current) {
@@ -118,7 +116,7 @@ export const CodeEditor = ({
 				setOptions={{
 					enableBasicAutocompletion: true,
 					enableLiveAutocompletion: true,
-					enableSnippets: true,
+					enableSnippets: false,
 					showLineNumbers: true,
 					tabSize: 2,
 				}}

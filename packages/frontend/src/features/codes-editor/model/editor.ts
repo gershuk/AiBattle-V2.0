@@ -8,7 +8,6 @@ import {
 	changeCode,
 } from 'model'
 import { createSessionsManager } from 'libs/ace-editor'
-import { alertErrors } from 'libs/failer/failer'
 import { showConfirm, showMessage } from 'ui'
 import {
 	createTranslation,
@@ -16,7 +15,15 @@ import {
 	OpenFileExplorerError,
 	readFile,
 	ReadFileError,
+	alertErrors,
 } from 'libs'
+import 'ace-builds/src-noconflict/mode-javascript'
+import { config } from 'ace-builds'
+
+config.setModuleUrl(
+	'ace/mode/javascript_worker',
+	'./ace-editor-staff/worker-javascript.min.js'
+)
 
 const { getTranslationItem } = createTranslation({
 	ru: {

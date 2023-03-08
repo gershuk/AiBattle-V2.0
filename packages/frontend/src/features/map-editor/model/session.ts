@@ -1,4 +1,11 @@
 import { createSessionsManager } from 'libs/ace-editor'
+import 'ace-builds/src-noconflict/mode-json'
+import { config } from 'ace-builds'
+
+config.setModuleUrl(
+	'ace/mode/json_worker',
+	'./ace-editor-staff/worker-json.min.js'
+)
 
 const {
 	$sessions,
