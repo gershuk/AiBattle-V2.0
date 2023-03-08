@@ -48,7 +48,7 @@ const { useTranslation } = createTranslation({
 		configGame: 'Конфигурация игры',
 		'sceneParams.tileSize': 'Размер тайла',
 		'sceneParams.maxTurnIndex': 'Максимальное количество ходов',
-		'sceneParams.animTicksCount': 'Количество тиков проигрывание анимации',
+		'sceneParams.animTicksCount': 'Количество тиков проигрывания анимации',
 		'sceneParams.animTicksTime': 'Время тика анимации',
 		'sceneParams.autoTurnTime': 'Время между ходами',
 	},

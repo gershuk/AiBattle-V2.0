@@ -1,6 +1,6 @@
 import { SceneParameters } from '@ai-battle/engine'
 import { useUnit } from 'effector-react'
-import { htmlFormToJson } from 'libs'
+import { createTranslation, htmlFormToJson } from 'libs'
 import { $codesData, $dataMaps } from 'model'
 import { useMemo } from 'preact/hooks'
 import { Button, FormGenerator, AllFields, StartIcon, StopIcon } from 'ui'
@@ -16,46 +16,61 @@ interface DebugProps {
 	selectedCodeName: string
 }
 
-const _formFields: AllFields[] = [
+const _formFields = [
 	{
 		type: 'number',
 		min: 1,
 		name: 'sceneParams.tileSize',
 		required: true,
 		className: 'game-settings-range',
-		title: 'Размер тайла',
 	},
 	{
 		type: 'number',
 		required: true,
 		name: 'sceneParams.maxTurnIndex',
 		min: 1,
-		title: 'maxTurnIndex',
 	},
 	{
 		type: 'number',
 		required: true,
 		name: 'sceneParams.animTicksCount',
 		min: 1,
-		title: 'animTicksCount',
 	},
 	{
 		type: 'number',
 		required: true,
 		name: 'sceneParams.animTicksTime',
 		min: 1,
-		title: 'animTicksTime',
 	},
 	{
 		type: 'number',
 		required: true,
 		name: 'sceneParams.autoTurnTime',
 		min: 1,
-		title: 'autoTurnTime',
 	},
-]
+] as const
+
+const { useTranslation } = createTranslation({
+	ru: {
+		map: 'Карта',
+		'sceneParams.tileSize': 'Размер тайла',
+		'sceneParams.maxTurnIndex': 'Количество ходов',
+		'sceneParams.animTicksCount': 'Количество тиков анимации',
+		'sceneParams.animTicksTime': 'Время тика анимации',
+		'sceneParams.autoTurnTime': 'Время между ходами',
+	},
+	en: {
+		map: 'Map',
+		'sceneParams.tileSize': 'Tile size',
+		'sceneParams.maxTurnIndex': 'Maximum number of moves',
+		'sceneParams.animTicksCount': 'Number of ticks animation',
+		'sceneParams.animTicksTime': 'Animation tick time',
+		'sceneParams.autoTurnTime': 'Time between turns',
+	},
+})
 
 export const Debug = ({ selectedCodeName }: DebugProps) => {
+	const t = useTranslation()
 	const { startedAutoTurn, mapsHashMap, codesHashMap, formValues } = useUnit({
 		startedAutoTurn: $startedAutoTurn,
 		mapsHashMap: $dataMaps,
@@ -79,7 +94,7 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 						setFieldValue({ value, fieldName: 'mapName' }),
 					name: 'mapName',
 					required: true,
-					title: 'Карта',
+					title: t('map'),
 					disabled: startedAutoTurn,
 					initValue: formValues['mapName'],
 				},
@@ -89,9 +104,10 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 					onChange: (value: any) =>
 						setFieldValue({ value, fieldName: field.name }),
 					initValue: formValues[field.name],
+					title: t(field.name),
 				})),
 			] as AllFields[],
-		[maps, startedAutoTurn]
+		[maps, startedAutoTurn, t]
 	)
 
 	return (
