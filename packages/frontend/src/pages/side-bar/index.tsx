@@ -60,6 +60,7 @@ export const SideBar = () => {
 					showPopup({ content: props => <SettingsApp {...props} /> })
 				}
 				className={clsx('side-bar-item', 'app-settings')}
+				title={t('appSettings')}
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"

@@ -48,6 +48,14 @@
 
 		&.app-settings {
 			margin-top: auto;
+			&:hover {
+				svg {
+					transform: rotate(90deg);
+				}
+			}
+			svg {
+				transition: 1s transform;
+			}
 		}
 	}
 }
