@@ -13,6 +13,7 @@
 	"license": "ISC",
 	"devDependencies": {
 		"@types/react": "^18.0.24",
+		"copy-webpack-plugin": "^11.0.0",
 		"css-loader": "^6.7.1",
 		"html-webpack-plugin": "^5.5.0",
 		"sass": "^1.55.0",
@@ -26,6 +27,7 @@
 		"webpack-merge": "^5.8.0"
 	},
 	"dependencies": {
+		"@ai-battle/engine": "1.0.0",
 		"ace-builds": "^1.12.3",
 		"effector": "^22.3.0",
 		"effector-react": "^22.3.4",
@@ -33,7 +35,6 @@
 		"react": "npm:@preact/compat",
 		"react-ace": "^10.1.0",
 		"react-dom": "npm:@preact/compat",
-		"react-split": "^2.0.14",
-		"@ai-battle/engine": "1.0.0"
+		"react-split": "^2.0.14"
 	}
 }
