@@ -6,7 +6,7 @@ import { FormGenerator, AllFields } from 'ui'
 import { $activeGame, $formValues, setFieldValue } from '../../model'
 import './styles.scss'
 
-const _formFields: AllFields[] = [
+const _formFields = [
 	{
 		type: 'range',
 		min: 1,
@@ -21,21 +21,18 @@ const _formFields: AllFields[] = [
 		required: true,
 		name: 'sceneParams.maxTurnIndex',
 		min: 1,
-		title: 'maxTurnIndex',
 	},
 	{
 		type: 'number',
 		required: true,
 		name: 'sceneParams.animTicksCount',
 		min: 1,
-		title: 'animTicksCount',
 	},
 	{
 		type: 'number',
 		required: true,
 		name: 'sceneParams.animTicksTime',
 		min: 1,
-		title: 'animTicksTime',
 	},
 	{
 		type: 'number',
@@ -44,14 +41,24 @@ const _formFields: AllFields[] = [
 		min: 1,
 		title: 'autoTurnTime',
 	},
-]
+] as const
 
 const { useTranslation } = createTranslation({
 	ru: {
 		configGame: 'Конфигурация игры',
+		'sceneParams.tileSize': 'Размер тайла',
+		'sceneParams.maxTurnIndex': 'Максимальное количество ходов',
+		'sceneParams.animTicksCount': 'Количество тиков проигрывание анимации',
+		'sceneParams.animTicksTime': 'Время тика анимации',
+		'sceneParams.autoTurnTime': 'Время между ходами',
 	},
 	en: {
 		configGame: 'Game configuration',
+		'sceneParams.tileSize': 'Tile size',
+		'sceneParams.maxTurnIndex': 'Maximum number of moves',
+		'sceneParams.animTicksCount': 'Number of ticks to play animation',
+		'sceneParams.animTicksTime': 'Animation tick time',
+		'sceneParams.autoTurnTime': 'Time between turns',
 	},
 })
 
@@ -70,18 +77,15 @@ export const GameSettings = () => {
 				onChange: (value: any) =>
 					setFieldValue({ value, fieldName: field.name }),
 				initValue: formValues[field.name],
+				title: t(field.name),
 			})),
-		[_formFields, startedGame, formValues]
+		[_formFields, startedGame, formValues, t]
 	)
 
 	return (
 		<div className={'pre-game-settings'}>
 			<div className={'title'}>{t('configGame')}</div>
 			<div className={'wrapper-settings'}>
-				{/* <div className={'setting-item'}>
-					<div>Название реплея</div>
-					<Input required name="replay-name" />
-				</div> */}
 				<FormGenerator
 					fields={formFields}
 					renderUnit={(Unit, fieldData) => (
