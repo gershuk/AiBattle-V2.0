@@ -7,16 +7,16 @@ import {
 	readCodesFromLocalStorageFx,
 	changeCode,
 } from 'model'
+import { createSessionsManager } from 'libs/ace-editor'
+import { alertErrors } from 'libs/failer/failer'
+import { showConfirm, showMessage } from 'ui'
 import {
+	createTranslation,
 	openFileExplorer,
 	OpenFileExplorerError,
 	readFile,
 	ReadFileError,
-} from 'api'
-import { createSessionsManager } from 'libs/ace-editor'
-import { alertErrors } from 'libs/failer/failer'
-import { showConfirm, showMessage } from 'ui'
-import { createTranslation } from 'libs'
+} from 'libs'
 
 const { getTranslationItem } = createTranslation({
 	ru: {

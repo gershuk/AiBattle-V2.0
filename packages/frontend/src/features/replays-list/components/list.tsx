@@ -1,4 +1,4 @@
-import { createAndDownloadFile } from 'api'
+import { createAndDownloadFile } from 'libs'
 import { useUnit } from 'effector-react'
 import { Replay } from 'model'
 import { $replays } from 'model/replays/model'

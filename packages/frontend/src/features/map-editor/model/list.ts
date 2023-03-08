@@ -1,11 +1,13 @@
+import { attach, createEvent, sample } from 'effector'
 import {
+	alertErrors,
+	createTranslation,
+	jsonToBeautifulString,
 	openFileExplorer,
 	OpenFileExplorerError,
 	readFile,
 	ReadFileError,
-} from 'api'
-import { attach, createEvent, sample } from 'effector'
-import { alertErrors, createTranslation, jsonToBeautifulString } from 'libs'
+} from 'libs'
 import {
 	$dataMaps,
 	$maps,
@@ -23,13 +25,13 @@ const { getTranslationItem } = createTranslation({
 		errorConvertString: 'Невозможно преобразовать файл в строку',
 		errorRead: 'Произошла ошибка при чтении файла',
 		errorJson: 'Невалидный json',
-		overwriteFile: 'Файл с таким именем уже существует. Перезаписать файл?'
+		overwriteFile: 'Файл с таким именем уже существует. Перезаписать файл?',
 	},
 	en: {
 		errorConvertString: 'Unable to convert file to image',
 		errorRead: 'An error occurred while reading the file',
 		errorJson: 'Invalid json',
-		overwriteFile: 'A file with the same name already exists. Overwrite file?'
+		overwriteFile: 'A file with the same name already exists. Overwrite file?',
 	},
 })
 

@@ -1,5 +1,5 @@
 import { combine, createEvent, createStore, sample } from 'effector'
-import { createEngine } from 'libs/engine'
+import { createEngine } from 'api'
 import { $codesData, MapData } from 'model'
 import { SubmitForm } from '../types'
 import { $selectedMap } from './select-map'

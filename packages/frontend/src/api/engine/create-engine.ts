@@ -2,7 +2,6 @@ import {
 	BombermanGame,
 	BombermanGameParameters,
 	BombermanMap,
-	ImageLoader,
 	SceneParameters,
 	Vector2,
 } from '@ai-battle/engine'
@@ -19,7 +18,6 @@ export interface SceneParams {
 }
 
 export const createEngine = () => {
-	const imageLoader = new ImageLoader()
 	const engine = new BombermanGame()
 
 	const $engine = createStore(engine)
@@ -103,7 +101,7 @@ export const createEngine = () => {
 	})
 
 	sample({
-		clock: stopAutoTurn.done,
+		clock: stopAutoTurn.finally,
 		fn: () => false,
 		target: $startedAutoTurn,
 	})

@@ -6,7 +6,6 @@ import {
 	$codesModified,
 } from '../model'
 import { UploadedCode } from 'model'
-import { createAndDownloadFile } from 'api'
 import './styles.scss'
 import {
 	AddIcon,
@@ -19,7 +18,7 @@ import {
 	showPopup,
 	UploadIcon,
 } from 'ui'
-import { createTranslation, htmlFormToJson } from 'libs'
+import { createTranslation, htmlFormToJson, createAndDownloadFile } from 'libs'
 
 export interface LoaderScriptProps {
 	active?: string | null

@@ -1,4 +1,4 @@
-import { openFileExplorer, readFile } from 'api'
+import { openFileExplorer, readFile } from 'libs'
 import { attach, createEvent, sample } from 'effector'
 import { $replays, addReplay, removeReplay } from 'model/replays/model'
 

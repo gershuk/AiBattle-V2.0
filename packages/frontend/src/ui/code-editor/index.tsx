@@ -5,9 +5,8 @@ import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/theme-tomorrow'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import { useCallback, useEffect, useRef } from 'preact/hooks'
-import { createAndDownloadFile } from 'api'
 import { Ace, createEditSession } from 'ace-builds'
-import { createTranslation } from 'libs'
+import { createTranslation, createAndDownloadFile } from 'libs'
 
 interface CodeEditorProps {
 	mode?: 'javascript' | 'json'
