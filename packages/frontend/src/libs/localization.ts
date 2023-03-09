@@ -15,9 +15,10 @@ enum Languages {
 
 const initLanguage = (() => {
 	try {
-		const languageLocalStorage = localStorage.getItem('language')
+		const languageLocalStorage = localStorage.getItem('language') || navigator.language
 		if (languageLocalStorage && languageLocalStorage in Languages)
 			return languageLocalStorage
+		
 	} catch (_) {}
 	return Languages.en
 })()
