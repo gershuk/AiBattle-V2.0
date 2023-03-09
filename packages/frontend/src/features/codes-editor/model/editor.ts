@@ -22,7 +22,7 @@ import { config } from 'ace-builds'
 
 config.setModuleUrl(
 	'ace/mode/javascript_worker',
-	'./ace-editor-staff/worker-javascript.min.js'
+	'./ace-editor-resources/worker-javascript.min.js'
 )
 
 const { getTranslationItem } = createTranslation({

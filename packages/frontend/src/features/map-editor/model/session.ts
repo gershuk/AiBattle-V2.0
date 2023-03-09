@@ -4,7 +4,7 @@ import { config } from 'ace-builds'
 
 config.setModuleUrl(
 	'ace/mode/json_worker',
-	'./ace-editor-staff/worker-json.min.js'
+	'./ace-editor-resources/worker-json.min.js'
 )
 
 const {
