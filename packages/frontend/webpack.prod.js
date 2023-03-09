@@ -13,8 +13,8 @@ module.exports = merge(common, {
 					to: path.resolve(common.output.path, 'resources'),
 				},
 				{
-					from: path.resolve(__dirname, 'public/ace-editor-staff'),
-					to: path.resolve(common.output.path, 'ace-editor-staff'),
+					from: path.resolve(__dirname, 'public/ace-editor-resources'),
+					to: path.resolve(common.output.path, 'ace-editor-resources'),
 				},
 			],
 		}),
