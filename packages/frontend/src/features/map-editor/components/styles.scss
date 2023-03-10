@@ -10,6 +10,7 @@
 		.title {
 			font-size: 14px;
 			white-space: nowrap;
+			color: var(--color-text);
 		}
 		.toolbar {
 			display: flex;
@@ -47,6 +48,7 @@
 		.title {
 			font-size: 14px;
 			margin-bottom: 8px;
+			color: var(--color-text);
 		}
 		.error-valid-json {
 			color: var(--color-danger);

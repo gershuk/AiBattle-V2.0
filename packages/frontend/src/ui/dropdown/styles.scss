@@ -1,6 +1,7 @@
 .dropdown {
 	display: inline-flex;
 	.dropdown-select {
+		color: var(--color-input-text);
 		background-color: var(--color-input-bg);
 		padding: 2px 6px 2px 8px;
 		border: none;
@@ -31,7 +32,7 @@
 			position: absolute;
 			width: 12px;
 			height: 1px;
-			background: var(--color-text);
+			background: var(--color-input-text);
 		}
 		&:before {
 			transform: rotate(45deg);

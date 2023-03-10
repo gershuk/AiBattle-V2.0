@@ -10,6 +10,7 @@
 		.title {
 			font-size: 14px;
 			white-space: nowrap;
+			color: var(--color-text);
 		}
 		.toolbar {
 			display: flex;
@@ -65,6 +66,7 @@
 			font-size: 16px;
 			margin-bottom: 4px;
 			white-space: nowrap;
+			color: var(--color-text);
 		}
 		.game-settings-range {
 			width: 100%;
