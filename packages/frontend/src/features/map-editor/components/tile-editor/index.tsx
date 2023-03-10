@@ -90,14 +90,21 @@ export const TileEditor = ({
 	const [mouseDown, setMouseDown] = useState(false)
 
 	useKeyboard({
-		guard: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 'z',
+		filter: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 'z',
 		fn: onUndo,
 		targetElement: htmlRef,
 		dependencies: [onUndo, htmlRef],
 	})
 
 	useKeyboard({
-		guard: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 's',
+		filter: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 'y',
+		fn: onRedo,
+		targetElement: htmlRef,
+		dependencies: [onUndo, htmlRef],
+	})
+
+	useKeyboard({
+		filter: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 's',
 		fn: () => onSave(jsonToBeautifulString(mapData)),
 		targetElement: htmlRef,
 		dependencies: [onSave, htmlRef],

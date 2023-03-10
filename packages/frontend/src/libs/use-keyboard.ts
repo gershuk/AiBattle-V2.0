@@ -1,7 +1,7 @@
-import { useCallback, useEffect } from 'preact/hooks'
+import { useCallback, useEffect, useRef } from 'preact/hooks'
 
 interface UseKeyboardParams {
-	guard: (p: {
+	filter: (p: {
 		key: KeyboardEvent['key']
 		ctrlKey: KeyboardEvent['ctrlKey']
 		event: KeyboardEvent
@@ -12,25 +12,34 @@ interface UseKeyboardParams {
 }
 
 export const useKeyboard = ({
-	guard,
+	filter,
 	fn,
 	targetElement = document,
 	dependencies,
 }: UseKeyboardParams) => {
 	const handlerKeyboard = useCallback((e: KeyboardEvent) => {
-		if (guard({ key: e.key, ctrlKey: e.ctrlKey, event: e })) {
+		if (filter({ key: e.key, ctrlKey: e.ctrlKey, event: e })) {
 			e.preventDefault()
 			fn()
 		}
-	}, dependencies ?? [guard, fn])
+	}, dependencies ?? [filter, fn])
+	const oldHandler = useRef(handlerKeyboard)
+	const oldTargetElement = useRef(targetElement)
 
 	useEffect(() => {
+		if (oldTargetElement.current) {
+			oldTargetElement.current.removeEventListener(
+				'keydown',
+				oldHandler.current
+			)
+		}
 		if (targetElement) {
-			targetElement.removeEventListener('keydown', handlerKeyboard)
 			targetElement.addEventListener('keydown', handlerKeyboard)
 			return () => {
 				targetElement.removeEventListener('keydown', handlerKeyboard)
 			}
 		}
+		oldTargetElement.current = targetElement
+		oldHandler.current = handlerKeyboard
 	}, [handlerKeyboard, targetElement])
 }
