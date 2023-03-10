@@ -6,37 +6,27 @@ import {
 	sample,
 } from 'effector'
 import { MapData } from './type'
-import { stringToJson } from 'libs'
+import { arrayObjectToHasMap, stringToJson } from 'libs'
 import { isMapData } from './type.guard'
 
 const $maps = createStore<{ content: string; name: string }[]>([])
 
 const $dataMaps = $maps.map(maps =>
-	maps.reduce<{
-		[name: string]: {
-			data: MapData | null
-			validJson: boolean
-			validDataMap: boolean
-			valid: boolean
-			name: string
-			content: string
-		}
-	}>((acc, { content, name }) => {
+	arrayObjectToHasMap(maps, 'name', ({ content, name }) => {
 		const { status: validJson, parsedJson: jsonParseResult } =
 			stringToJson(content)
 		const validDataMap = validJson ? isMapData(jsonParseResult) : false
 		return {
-			...acc,
-			[name]: {
-				validJson,
-				validDataMap,
-				valid: validJson && validDataMap,
-				data: validJson && validDataMap ? jsonParseResult : null,
-				name,
-				content,
-			},
+			validJson,
+			validDataMap,
+			valid: validJson && validDataMap,
+			data: (validJson && validDataMap
+				? jsonParseResult
+				: null) as MapData | null,
+			name,
+			content,
 		}
-	}, {})
+	})
 )
 
 const addMap = createEvent<{ content: string; name: string }>()

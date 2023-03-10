@@ -5,6 +5,7 @@ import {
 	createStore,
 	sample,
 } from 'effector'
+import { arrayObjectToHasMap } from 'libs'
 
 export interface UploadedCode {
 	name: string
@@ -13,22 +14,7 @@ export interface UploadedCode {
 
 const $codes = createStore<UploadedCode[]>([])
 
-const $codesData = $codes.map(codes =>
-	codes.reduce<{
-		[k: string]: {
-			name: string
-			content: string
-		}
-	}>((acc, { name, content }) => {
-		return {
-			...acc,
-			[name]: {
-				name,
-				content,
-			},
-		}
-	}, {})
-)
+const $codesData = $codes.map(codes => arrayObjectToHasMap(codes, 'name'))
 
 const addCode = createEvent<UploadedCode>()
 const changeCode = createEvent<UploadedCode>()
