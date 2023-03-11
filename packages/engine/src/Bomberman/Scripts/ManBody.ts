@@ -6,8 +6,10 @@ import { DiscreteMovementComponent } from 'GameEngine/BaseComponents/DiscreteCol
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
-import { AbstractController } from 'GameEngine/UserAIRuner/AbstractController'
-import { LoadControllerFromString } from 'GameEngine/UserAIRuner/SafeEval'
+import {
+	ControllerBody,
+	ControllerBodyParameters,
+} from 'GameEngine/UserAIRuner/AbstractController'
 import { HealthComponent } from './Health'
 import {
 	BodyPublicData,
@@ -22,8 +24,19 @@ import { Wall } from './Wall'
 import { BombController } from './BombController'
 import { DiscreteColliderSystem } from 'GameEngine/BaseComponents/DiscreteColliderSystem/DiscreteColliderSystem'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
+import {
+	BombermanActions,
+	BombermanController,
+	BombermanControllerCommand,
+	BombermanControllerData,
+} from './BombermanController'
 
-export class ManBody extends GameObjectComponent {
+export class ManBody extends ControllerBody<
+	BombermanControllerData,
+	BombermanControllerData,
+	BombermanControllerCommand,
+	BombermanController
+> {
 	private _bombSpawnFunction: (
 		position: Vector2,
 		damage: number,
@@ -45,7 +58,7 @@ export class ManBody extends GameObjectComponent {
 	private _healthComponent: SafeReference<HealthComponent>
 	private _discreteColliderSystem: DiscreteColliderSystem
 
-	private _controller: AbstractController
+	private _controller: BombermanController
 
 	Init(gameObject: IGameObject, parameters?: ManBodyParameters): void {
 		super.Init(gameObject, parameters)
@@ -106,7 +119,7 @@ export class ManBody extends GameObjectComponent {
 		const bodiesData: BodyPublicData[] = []
 		const playerData = this.GetAllData()
 		const refObjects: SafeReference<GameObject>[] =
-			this.gameObject.scene.gameObjects
+			this.gameObject.scene.gameObjectRefs
 
 		for (let ref of refObjects) {
 			if (ref.object === this.gameObject) continue
@@ -141,48 +154,42 @@ export class ManBody extends GameObjectComponent {
 		)
 	}
 
-	OnFixedUpdate(index: number) {
-		const command = this._controller.GetCommand(this.GetMapData())
-		if (
-			this._lastRestoreTurn + this._bombsRestoreTicks ===
-			this.gameObject.scene.turnIndex
-		) {
-			this._lastRestoreTurn = this.gameObject.scene.turnIndex
-			this._bombsCount = Math.max(
-				this._bombsCount + this._bombsRestoreCount,
-				this._bombsMaxCount
-			)
-		}
-
-		switch (command) {
-			case 0:
+	public async CalcAndExecuteCommand(turnIndex: number): Promise<unknown> {
+		const command = await this.GetCommandWithTimeout(
+			new BombermanControllerData(this.GetMapData())
+		).catch(reason => {
+			console.warn(reason)
+			return BombermanControllerCommand.GetIdleCommand()
+		})
+		switch (command.bombermanAction) {
+			case BombermanActions.idle:
 				//idle
 				break
-			case 1:
+			case BombermanActions.up:
 				this._movementComponentRef.object.bufferNewPosition =
 					this._movementComponentRef.object.currentPosition.Add(
 						new Vector2(0, 1)
 					)
 				break
-			case 2:
+			case BombermanActions.right:
 				this._movementComponentRef.object.bufferNewPosition =
 					this._movementComponentRef.object.currentPosition.Add(
 						new Vector2(1, 0)
 					)
 				break
-			case 3:
+			case BombermanActions.down:
 				this._movementComponentRef.object.bufferNewPosition =
 					this._movementComponentRef.object.currentPosition.Add(
 						new Vector2(0, -1)
 					)
 				break
-			case 4:
+			case BombermanActions.left:
 				this._movementComponentRef.object.bufferNewPosition =
 					this._movementComponentRef.object.currentPosition.Add(
 						new Vector2(-1, 0)
 					)
 				break
-			case 5:
+			case BombermanActions.bomb:
 				if (this._bombsCount == 0) return
 				const bomb = this._bombSpawnFunction(
 					this._movementComponentRef.object.currentPosition,
@@ -200,9 +207,27 @@ export class ManBody extends GameObjectComponent {
 				break
 		}
 	}
+
+	OnFixedUpdate(index: number) {
+		if (
+			this._lastRestoreTurn + this._bombsRestoreTicks ===
+			this.gameObject.scene.turnIndex
+		) {
+			this._lastRestoreTurn = this.gameObject.scene.turnIndex
+			this._bombsCount = Math.max(
+				this._bombsCount + this._bombsRestoreCount,
+				this._bombsMaxCount
+			)
+		}
+	}
 }
 
-export class ManBodyParameters extends ComponentParameters {
+export class ManBodyParameters extends ControllerBodyParameters<
+	BombermanControllerData,
+	BombermanControllerData,
+	BombermanControllerCommand,
+	BombermanController
+> {
 	bombDamage: number
 	blastRange: number
 	ticksToExplosion: number
@@ -212,7 +237,6 @@ export class ManBodyParameters extends ComponentParameters {
 	bombsRestoreCount: number
 
 	discreteColliderSystem: DiscreteColliderSystem
-	controller: AbstractController
 
 	bombSpawnFunction: (
 		position: Vector2,
@@ -222,7 +246,7 @@ export class ManBodyParameters extends ComponentParameters {
 	) => GameObject
 
 	constructor(
-		controllerText: string,
+		controller: BombermanController,
 		discreteColliderSystem: DiscreteColliderSystem,
 		bombSpawnFunction: (
 			position: Vector2,
@@ -235,11 +259,14 @@ export class ManBodyParameters extends ComponentParameters {
 		ticksToExplosion: number = 3,
 		bombsMaxCount: number = 1,
 		bombsRestoreTicks: number = 3,
-		bombsRestoreCount: number = 1
+		bombsRestoreCount: number = 1,
+		initTimeout: number = -1,
+		commandCalcTimeout: number = -1,
+		executionPriority: number = 0,
+		uuid?: string
 	) {
-		super()
+		super(controller, initTimeout, commandCalcTimeout, executionPriority, uuid)
 		this.discreteColliderSystem = discreteColliderSystem
-		this.controller = LoadControllerFromString(controllerText)
 		this.bombDamage = bombDamage
 		this.blastRange = blastRange
 		this.ticksToExplosion = ticksToExplosion

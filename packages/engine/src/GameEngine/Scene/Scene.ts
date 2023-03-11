@@ -15,11 +15,18 @@ import { Delay } from 'Utilities/Delay'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
 import { UpdatableObjectArrayContainer } from 'GameEngine/ObjectBaseType/UpdatableObjectArrayContainer'
+import {
+	AbstractController,
+	AbstractControllerCommand,
+	AbstractControllerData,
+	ControllerBody,
+} from 'GameEngine/UserAIRuner/AbstractController'
 
 enum SceneState {
 	Init,
 	Starting,
 	ReadyToNextTurn,
+	CalcCommands,
 	NextTurn,
 	Animation,
 }
@@ -67,7 +74,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this._renderOffset = v
 	}
 
-	public get gameObjects(): SafeReference<GameObject>[] {
+	public get gameObjectRefs(): SafeReference<GameObject>[] {
 		return this._container.GetSafeRefsByFilter(() => true)
 	}
 
@@ -149,6 +156,26 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		if (this.state && this.state !== SceneState.Starting) this.RenderFrame()
 	}
 
+	private _initTimeout: number
+
+	public get initTimeout(): number {
+		return this._initTimeout
+	}
+
+	public set initTimeout(v: number) {
+		this._initTimeout = v
+	}
+
+	private _turnCalcTimeout: number
+
+	public get commandCalcTimeout(): number {
+		return this._turnCalcTimeout
+	}
+
+	public set commandCalcTimeout(v: number) {
+		this._turnCalcTimeout = v
+	}
+
 	Init(parameters: SceneParameters): void {
 		if (this.autoTurnTimerId) this.StopAutoTurn()
 
@@ -158,6 +185,8 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this.autoTurnTime = parameters.autoTurnTime
 		this.animTicksCount = parameters.animTicksCount
 		this.animTicksTime = parameters.animTicksTime
+		this.initTimeout = parameters.initTimeout
+		this.commandCalcTimeout = parameters.commandCalcTimeout
 		this.canvas = parameters.canvas
 		this.tileSizeScale = parameters.tileSizeScale
 
@@ -230,19 +259,21 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		return this.DestroyObjectsByFilter(filter)
 	}
 
-	public Start(): void {
+	public async Start(): Promise<unknown> {
 		this.state = SceneState.Starting
+		await this.InitControllers()
 		this.OnStart()
 		this.turnIndex = 0
 		this.state = SceneState.ReadyToNextTurn
 		this.RenderFrame()
+		return Promise.resolve()
 	}
 
 	public RenderFrame(): void {
 		if (this.playModeParameters.disableRender) return
 
 		let renderRefs: SafeReference<AbstractRenderComponent>[] = []
-		for (let gameObject of this.gameObjects) {
+		for (let gameObject of this.gameObjectRefs) {
 			renderRefs = renderRefs.concat(
 				gameObject.object.GetComponents(
 					AbstractRenderComponent
@@ -282,7 +313,59 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		}
 	}
 
-	public async DoNextTurn() {
+	protected async InitControllers(): Promise<unknown> {
+		const promises: Promise<unknown>[] = []
+		for (let gameObject of this.gameObjectRefs) {
+			const bodiesRefs = gameObject.object.GetComponents(
+				ControllerBody
+			) as SafeReference<
+				ControllerBody<
+					AbstractControllerData,
+					AbstractControllerData,
+					AbstractControllerCommand,
+					AbstractController<
+						AbstractControllerData,
+						AbstractControllerData,
+						AbstractControllerCommand
+					>
+				>
+			>[]
+
+			for (let body of bodiesRefs) {
+				promises.push(body.object.InitStartData())
+			}
+		}
+
+		return Promise.all(promises)
+	}
+
+	protected async CalcCommands(turnIndex: number) {
+		const promises: Promise<unknown>[] = []
+		for (let gameObject of this.gameObjectRefs) {
+			const bodiesRefs = gameObject.object.GetComponents(
+				ControllerBody
+			) as SafeReference<
+				ControllerBody<
+					AbstractControllerData,
+					AbstractControllerData,
+					AbstractControllerCommand,
+					AbstractController<
+						AbstractControllerData,
+						AbstractControllerData,
+						AbstractControllerCommand
+					>
+				>
+			>[]
+
+			for (let body of bodiesRefs) {
+				promises.push(body.object.CalcAndExecuteCommand(turnIndex))
+			}
+		}
+
+		return Promise.all(promises)
+	}
+
+	public async DoNextTurn(): Promise<unknown> {
 		if (this.state != SceneState.ReadyToNextTurn) {
 			throw new Error(
 				`Expected state==${SceneState.ReadyToNextTurn}, but got ${this.state}`
@@ -299,6 +382,9 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 			this.StopAutoTurn()
 		}
 
+		this.state = SceneState.CalcCommands
+		await this.CalcCommands(this.turnIndex)
+
 		this.state = SceneState.NextTurn
 		this.OnFixedUpdate(this.turnIndex)
 
@@ -307,6 +393,8 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 
 		this.OnFixedUpdateEnded(this.turnIndex)
 		this.state = SceneState.ReadyToNextTurn
+
+		return Promise.resolve()
 	}
 
 	public StopAutoTurn(): void {

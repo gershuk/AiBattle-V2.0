@@ -4,6 +4,13 @@ import { Message } from './MessageBroker/Message'
 import { ImageLoader } from './ResourceStorage/ImageLoader'
 import { IScene, PlayModeParameters, SceneParameters } from './Scene/IScene'
 import { Scene } from './Scene/Scene'
+import {
+	AbstractController,
+	AbstractControllerCommand,
+	AbstractControllerData,
+	RemoteController,
+} from './UserAIRuner/AbstractController'
+import { LoadControllerFromString } from './UserAIRuner/SafeEval'
 
 export interface IGameEngine {
 	get renderOffset(): Vector2
@@ -16,11 +23,11 @@ export interface IGameEngine {
 
 	Init(parameters: GameEngineParameters): void
 
-	Start(): void
+	Start(): Promise<unknown>
 
 	RenderFrame(): void
 
-	DoNextTurn(): void
+	DoNextTurn(): Promise<unknown>
 
 	StopAutoTurn(): void
 
@@ -35,6 +42,15 @@ export interface IGameEngine {
 	): number
 
 	GetMessage(component: GameObjectComponent): [number, Message?]
+
+	CreateController<
+		TInitData extends AbstractControllerData,
+		TTurnData extends AbstractControllerData,
+		TCommand extends AbstractControllerCommand,
+		TController extends AbstractController<TInitData, TTurnData, TCommand>
+	>(
+		controllerData: ControllerCreationData
+	): TController | RemoteController<TInitData, TTurnData, TCommand>
 }
 
 export class GameEngine implements IGameEngine {
@@ -84,16 +100,18 @@ export class GameEngine implements IGameEngine {
 		this.imageLoader = parameters.imageLoader
 	}
 
-	public Start(): void {
-		this.scene?.Start()
+	public async Start(): Promise<unknown> {
+		await this.scene?.Start()
+		return Promise.resolve()
 	}
 
 	public RenderFrame(): void {
 		this.scene?.RenderFrame()
 	}
 
-	public DoNextTurn(): void {
-		this.scene?.DoNextTurn()
+	public async DoNextTurn(): Promise<unknown> {
+		await this.scene?.DoNextTurn()
+		return Promise.resolve()
 	}
 
 	public StopAutoTurn(): void {
@@ -119,19 +137,48 @@ export class GameEngine implements IGameEngine {
 	public GetMessage(component: GameObjectComponent): [number, Message?] {
 		return this.scene.messageBroker.GetMessage(component)
 	}
+
+	CreateController<
+		TInitData extends AbstractControllerData,
+		TTurnData extends AbstractControllerData,
+		TCommand extends AbstractControllerCommand,
+		TController extends AbstractController<TInitData, TTurnData, TCommand>
+	>(
+		controllerData: ControllerCreationData
+	): TController | RemoteController<TInitData, TTurnData, TCommand> {
+		return controllerData.isRemote
+			? new RemoteController<TInitData, TTurnData, TCommand>()
+			: LoadControllerFromString<TInitData, TTurnData, TCommand, TController>(
+					controllerData.text
+			  )
+	}
+}
+
+export class ControllerCreationData {
+	text: string
+	uuid: string | undefined
+	isRemote: boolean
+
+	constructor(text: string, uuid?: string, isRemote: boolean = false) {
+		this.text = text
+		this.uuid = uuid
+		this.isRemote = isRemote
+	}
 }
 
 export class GameEngineParameters {
 	scene: IScene | undefined
 	sceneParameters: SceneParameters
 	imageLoader?: ImageLoader
-
+	controllers: ControllerCreationData[]
 	constructor(
 		sceneParameters: SceneParameters,
+		controllers: ControllerCreationData[],
 		imageLoader?: ImageLoader,
 		scene?: Scene
 	) {
 		this.sceneParameters = sceneParameters
+		this.controllers = controllers
 		this.imageLoader = imageLoader ?? new ImageLoader()
 		this.scene = scene
 	}

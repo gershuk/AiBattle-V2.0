@@ -11,7 +11,11 @@ import {
 	StaticRenderComponentParameters,
 } from 'GameEngine/BaseComponents/RenderComponents/StaticImageRenderComponent'
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
-import { GameEngine, GameEngineParameters } from 'GameEngine/GameEngine'
+import {
+	ControllerCreationData,
+	GameEngine,
+	GameEngineParameters,
+} from 'GameEngine/GameEngine'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
 import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
 import { SceneParameters } from 'GameEngine/Scene/IScene'
@@ -27,6 +31,10 @@ import {
 	AnimationRenderComponent,
 	AnimationRenderComponentParameters,
 } from 'GameEngine/BaseComponents/RenderComponents/AnimationRenderComponent'
+import {
+	BombermanController,
+	BombermanControllerData,
+} from './BombermanController'
 
 export class BombermanGame extends GameEngine {
 	private _map: BombermanMap
@@ -74,8 +82,24 @@ export class BombermanGame extends GameEngine {
 		}
 
 		let i = 0
-		for (let controller of parameters.controllers) {
-			this.CreateMan(shuffledSpawns[i], colliderSystem, controller)
+		for (let controllerData of parameters.controllers) {
+			const manBodyParameters = new ManBodyParameters(
+				this.CreateController(controllerData),
+				colliderSystem,
+				(position: Vector2, damage: number, range: number, ticksToExplosion) =>
+					this.CreateBomb(
+						position,
+						colliderSystem,
+						damage,
+						range,
+						ticksToExplosion
+					)
+			)
+			manBodyParameters.initTimeout = this.scene.initTimeout
+			manBodyParameters.commandCalcTimeout = this.scene.commandCalcTimeout
+
+			this.CreateMan(shuffledSpawns[i], manBodyParameters)
+
 			++i
 		}
 	}
@@ -203,11 +227,7 @@ export class BombermanGame extends GameEngine {
 		return gameObject
 	}
 
-	private CreateMan(
-		position: Vector2,
-		discreteColliderSystem: DiscreteColliderSystem,
-		controllerText: string
-	) {
+	private CreateMan(position: Vector2, manBodyParameters: ManBodyParameters) {
 		const gameObject = new GameObject()
 		this.scene.AddGameObject(position, gameObject, [
 			[
@@ -220,28 +240,11 @@ export class BombermanGame extends GameEngine {
 			],
 			[
 				new DiscreteMovementComponent(),
-				new DiscreteMovementComponentParameters(discreteColliderSystem),
-			],
-			[
-				new ManBody(),
-				new ManBodyParameters(
-					controllerText,
-					discreteColliderSystem,
-					(
-						position: Vector2,
-						damage: number,
-						range: number,
-						ticksToExplosion: number
-					) =>
-						this.CreateBomb(
-							position,
-							discreteColliderSystem,
-							damage,
-							range,
-							ticksToExplosion
-						)
+				new DiscreteMovementComponentParameters(
+					manBodyParameters.discreteColliderSystem
 				),
 			],
+			[new ManBody(), manBodyParameters],
 			[new HealthComponent(), new HealthComponentParameters()],
 		])
 	}
@@ -274,15 +277,13 @@ export class BombermanMap {
 
 export class BombermanGameParameters extends GameEngineParameters {
 	map: BombermanMap
-	controllers: string[]
 	constructor(
 		sceneParameters: SceneParameters,
 		map: BombermanMap,
-		controllers: string[],
+		controllers: ControllerCreationData[],
 		imageLoader?: ImageLoader
 	) {
-		super(sceneParameters, imageLoader)
+		super(sceneParameters, controllers, imageLoader)
 		this.map = map
-		this.controllers = controllers
 	}
 }

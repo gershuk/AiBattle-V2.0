@@ -1,4 +1,4 @@
-function PromiseWithTimeout<T>(
+export function PromiseWithTimeout<T>(
 	promise: Promise<T>,
 	ms: number,
 	timeoutError: Error = new Error('Promise timed out')

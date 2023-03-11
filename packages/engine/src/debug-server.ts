@@ -1,3 +1,4 @@
+import { ControllerCreationData } from 'GameEngine/GameEngine'
 import {
 	BombermanGame,
 	BombermanGameParameters,
@@ -34,7 +35,8 @@ engine
 				[new Vector2(1, 1), new Vector2(8, 8)]
 			),
 			[
-				'class Controller { \
+				new ControllerCreationData(
+					'class Controller { \
 					Init(info) {}\
 					\
 					GetRandomInt(min, max) {\
@@ -44,12 +46,14 @@ engine
 					}\
 					\
 					GetCommand(info) { \
-						return this.GetRandomInt(0, 6);\
+						return {bombermanAction:this.GetRandomInt(0, 6)};\
 					}\
 					\
 				} \
-				new Controller()',
-				'class Controller { \
+				new Controller()'
+				),
+				new ControllerCreationData(
+					'class Controller { \
 					Init(info) {}\
 					\
 					GetRandomInt(min, max) {\
@@ -59,15 +63,15 @@ engine
 					}\
 					\
 					GetCommand(info) { \
-						return this.GetRandomInt(0, 6);\
+						return {bombermanAction:this.GetRandomInt(0, 6)};\
 					}\
 					\
 				} \
-				new Controller()',
+				new Controller()'
+				),
 			]
 		)
 	)
 	.then(() => {
-		engine.Start()
-		engine.StartAutoTurn()
+		engine.Start().then(() => engine.StartAutoTurn())
 	})

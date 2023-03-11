@@ -21,7 +21,7 @@ export interface IScene extends UpdatableGroup<GameObject> {
 
 	get canvas(): HTMLCanvasElement
 
-	get gameObjects(): SafeReference<GameObject>[]
+	get gameObjectRefs(): SafeReference<GameObject>[]
 
 	get renderOffset(): Vector2
 
@@ -50,6 +50,10 @@ export interface IScene extends UpdatableGroup<GameObject> {
 	set autoTurnTimerId(autoTurnTimerId: number | undefined)
 
 	get autoTurnTimerId(): number | undefined
+
+	get initTimeout(): number
+
+	get commandCalcTimeout(): number
 
 	CreateDefaultGameObject(
 		position: Vector2,
@@ -80,11 +84,11 @@ export interface IScene extends UpdatableGroup<GameObject> {
 		filter: (r: SafeReference<GameObject>) => boolean
 	): void
 
-	Start(): void
+	Start(): Promise<unknown>
 
 	RenderFrame(): void
 
-	DoNextTurn(): void
+	DoNextTurn(): Promise<unknown>
 
 	StopAutoTurn(): void
 
@@ -96,7 +100,6 @@ export interface IScene extends UpdatableGroup<GameObject> {
 export class PlayModeParameters {
 	disableAnimation: boolean = false
 	disableRender: boolean = false
-	useRemoteControllers: boolean = false
 }
 
 export class SceneParameters {
@@ -104,6 +107,8 @@ export class SceneParameters {
 	animTicksCount: number
 	animTicksTime: number
 	autoTurnTime: number
+	initTimeout: number
+	commandCalcTimeout: number
 	canvas: HTMLCanvasElement
 	tileSizeScale: number
 	playModeParameters: PlayModeParameters
@@ -115,12 +120,16 @@ export class SceneParameters {
 		autoTurnTime: number,
 		canvas: HTMLCanvasElement,
 		tileSizeScale: number = 1,
+		initTimeout: number = -1,
+		commandCalcTimeout: number = -1,
 		playModeParameters: PlayModeParameters = new PlayModeParameters()
 	) {
 		this.maxTurnIndex = maxTurnIndex
 		this.animTicksCount = animTicksCount
 		this.animTicksTime = animTicksTime
 		this.autoTurnTime = autoTurnTime
+		this.initTimeout = initTimeout
+		this.commandCalcTimeout = commandCalcTimeout
 		this.canvas = canvas
 		this.tileSizeScale = tileSizeScale
 		this.playModeParameters = playModeParameters
