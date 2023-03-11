@@ -119,7 +119,7 @@ export class ControllerBody<
 	}
 }
 
-// ToDo: add time out parameters to scene or to body controller body
+
 export class ControllerBodyParameters<
 	TInitData extends AbstractControllerData,
 	TTurnData extends AbstractControllerData,
