@@ -92,7 +92,7 @@ export class ControllerBody<
 				reject(e)
 			}
 		})
-		return this.initTimeout < 0
+		return this.initTimeout > 0
 			? PromiseWithTimeout(promise, this.commandCalcTimeout)
 			: promise
 	}
@@ -105,7 +105,7 @@ export class ControllerBody<
 				reject(e)
 			}
 		})
-		return this.commandCalcTimeout < 0
+		return this.commandCalcTimeout > 0
 			? PromiseWithTimeout(promise, this.commandCalcTimeout)
 			: promise
 	}

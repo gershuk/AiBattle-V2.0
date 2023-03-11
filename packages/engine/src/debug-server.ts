@@ -17,7 +17,9 @@ engine
 				12,
 				1100,
 				document.getElementById('canvas') as HTMLCanvasElement,
-				50
+				50,
+				10,
+				10
 			),
 			new BombermanMap(
 				[
