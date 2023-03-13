@@ -22,8 +22,23 @@ export class ImageLoader {
 				img.addEventListener('error', err => reject(err))
 				img.src = path
 			} else {
-				resolve(this.loadedPngs.get(path))
+				resolve(this.GetPng(path))
 			}
 		})
+	}
+
+	async LoadPngs(paths: string[]): Promise<HTMLImageElement[]> {
+		const promises: Promise<HTMLImageElement>[] = []
+
+		for (let path of paths) promises.push(this.LoadPng(path))
+
+		const images: HTMLImageElement[] = []
+		for (let promise of promises) images.push(await promise)
+
+		return images
+	}
+
+	GetPng(path: string): HTMLImageElement {
+		return this.loadedPngs.get(path)
 	}
 }

@@ -1,12 +1,12 @@
-import { AbstractObjectComponent } from 'GameEngine/BaseComponents/AbstractObjectComponent'
+import { GameObjectComponent } from 'GameEngine/BaseComponents/GameObjectComponent'
 import { Message } from './Message'
 
 export interface IMessageBroker {
 	SendMessage(
-		component: AbstractObjectComponent,
+		component: GameObjectComponent,
 		receiverUuid: string,
 		data: any
 	): number
 
-	GetMessage(component: AbstractObjectComponent): [number, Message?]
+	GetMessage(component: GameObjectComponent): [number, Message?]
 }

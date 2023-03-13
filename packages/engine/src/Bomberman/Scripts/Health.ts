@@ -1,10 +1,10 @@
 import {
-	AbstractObjectComponent,
+	GameObjectComponent,
 	ComponentParameters,
-} from 'GameEngine/BaseComponents/AbstractObjectComponent'
+} from 'GameEngine/BaseComponents/GameObjectComponent'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 
-export class HealthComponent extends AbstractObjectComponent {
+export class HealthComponent extends GameObjectComponent {
 	private _maxHealth: number
 	public get maxHealth(): number {
 		return this._maxHealth
@@ -25,24 +25,18 @@ export class HealthComponent extends AbstractObjectComponent {
 		this.health = Math.max(this.health - damage, 0)
 
 		if (this.health === 0)
-			this.owner.owner.RemoveGameObjectsByFilter(g => g === this.owner)
+			this.gameObject.scene.RemoveGameObjectsByFilter(
+				r => r.object == this.gameObject
+			)
 	}
 
-	Init(owner: IGameObject, parameters?: HealthComponentParameters): void {
-		super.Init(owner, parameters)
+	Init(gameObject: IGameObject, parameters?: HealthComponentParameters): void {
+		super.Init(gameObject, parameters)
 		if (parameters) {
 			this.health = parameters.health ?? parameters.maxHealth
 			this.maxHealth = parameters.maxHealth
 		}
 	}
-
-	OnOwnerInit(): void {}
-	OnDestroy(): void {}
-	OnSceneStart(): void {}
-	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {}
-	OnAfterFrameRender(currentFrame: number, frameCount: number): void {}
-	OnFixedUpdate(index: number): void {}
-	OnFixedUpdateEnded(index: number): void {}
 }
 
 export class HealthComponentParameters extends ComponentParameters {

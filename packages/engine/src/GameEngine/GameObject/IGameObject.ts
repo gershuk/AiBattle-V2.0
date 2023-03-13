@@ -1,14 +1,14 @@
 import {
-	AbstractObjectComponent,
+	GameObjectComponent,
 	ComponentParameters,
-} from '../BaseComponents/AbstractObjectComponent'
+} from '../BaseComponents/GameObjectComponent'
 import { IScene } from '../Scene/IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
+import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
-export interface IGameObject {
-	get owner(): IScene
-
-	get id(): string
+export interface IGameObject extends UpdatableGroup<GameObjectComponent> {
+	get scene(): IScene
 
 	get position(): Vector2
 
@@ -16,26 +16,18 @@ export interface IGameObject {
 
 	Init(
 		position: Vector2,
-		owner?: IScene,
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		scene?: IScene,
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
 	): void
 
 	AddComponents(
-		newComponents: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents: [GameObjectComponent, ComponentParameters?][]
 	): void
 
-	RemoveComponents<T extends typeof AbstractObjectComponent>(type: T): void
+	RemoveComponents<T extends typeof GameObjectComponent>(type: T): void
 
-	GetComponents<T extends typeof AbstractObjectComponent>(type: T): T[]
-
-	OnSceneStart(): void
-
-	OnBeforeFrameRender(currentFrame: number, frameCount: number): void
-
-	OnAfterFrameRender(currentFrame: number, frameCount: number): void
-
-	OnFixedUpdateEnded(index: number): void
-
-	OnFixedUpdate(index: number): void
+	GetComponents<T extends typeof GameObjectComponent>(
+		type: T
+	): SafeReference<GameObjectComponent>[]
 }

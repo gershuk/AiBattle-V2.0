@@ -1,25 +1,38 @@
 import {
-	AbstractObjectComponent,
+	GameObjectComponent,
 	ComponentParameters,
-} from '../BaseComponents/AbstractObjectComponent'
+} from '../BaseComponents/GameObjectComponent'
 import { GameObject } from '../GameObject/GameObject'
-import { IScene, SceneParameters } from './IScene'
+import { IScene, PlayModeParameters, SceneParameters } from './IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
-import { AbstractRenderComponent } from 'GameEngine/BaseComponents/RenderComponents/AbstractRenderComponent'
+import {
+	AbstractRenderComponent,
+	ViewPort,
+} from 'GameEngine/BaseComponents/RenderComponents/AbstractRenderComponent'
+import { Delay } from 'Utilities/Delay'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
+import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
+import { UpdatableObjectArrayContainer } from 'GameEngine/ObjectBaseType/UpdatableObjectArrayContainer'
+import {
+	AbstractController,
+	AbstractControllerCommand,
+	AbstractControllerData,
+	ControllerBody,
+} from 'GameEngine/UserAIRuner/AbstractController'
 
 enum SceneState {
 	Init,
 	Starting,
 	ReadyToNextTurn,
+	CalcCommands,
 	NextTurn,
 	Animation,
 }
 
-export class Scene implements IScene {
-	private _tileSize: number
-	private _gameObjects: GameObject[]
+export class Scene extends UpdatableGroup<GameObject> implements IScene {
+	private _tileSizeScale: number
 	private _turnIndex: number
 	private _maxTurnIndex: number
 	private _autoTurnTime: number
@@ -28,6 +41,14 @@ export class Scene implements IScene {
 	private _animTicksCount: number
 	private _animTicksTime: number
 	private _canvas: HTMLCanvasElement
+
+	private _playModeParameters: PlayModeParameters
+	public get playModeParameters(): PlayModeParameters {
+		return this._playModeParameters
+	}
+	protected set playModeParameters(v: PlayModeParameters) {
+		this._playModeParameters = v
+	}
 
 	private _messageBroker: IMessageBroker
 	public get messageBroker(): IMessageBroker {
@@ -53,12 +74,8 @@ export class Scene implements IScene {
 		this._renderOffset = v
 	}
 
-	protected set gameObjects(gameObjects: GameObject[]) {
-		this._gameObjects = gameObjects
-	}
-
-	public get gameObjects(): GameObject[] {
-		return this._gameObjects
+	public get gameObjectRefs(): SafeReference<GameObject>[] {
+		return this._container.GetSafeRefsByFilter(() => true)
 	}
 
 	public set turnIndex(turnIndex: number) {
@@ -130,17 +147,33 @@ export class Scene implements IScene {
 		this._canvas = canvas
 	}
 
-	constructor(parameters: SceneParameters) {
-		this.Init(parameters)
+	get tileSizeScale(): number {
+		return this._tileSizeScale
 	}
 
-	get tileSize(): number {
-		return this._tileSize
-	}
-
-	set tileSize(v: number) {
-		this._tileSize = v
+	set tileSizeScale(v: number) {
+		this._tileSizeScale = v
 		if (this.state && this.state !== SceneState.Starting) this.RenderFrame()
+	}
+
+	private _initTimeout: number
+
+	public get initTimeout(): number {
+		return this._initTimeout
+	}
+
+	public set initTimeout(v: number) {
+		this._initTimeout = v
+	}
+
+	private _turnCalcTimeout: number
+
+	public get commandCalcTimeout(): number {
+		return this._turnCalcTimeout
+	}
+
+	public set commandCalcTimeout(v: number) {
+		this._turnCalcTimeout = v
 	}
 
 	Init(parameters: SceneParameters): void {
@@ -152,10 +185,12 @@ export class Scene implements IScene {
 		this.autoTurnTime = parameters.autoTurnTime
 		this.animTicksCount = parameters.animTicksCount
 		this.animTicksTime = parameters.animTicksTime
+		this.initTimeout = parameters.initTimeout
+		this.commandCalcTimeout = parameters.commandCalcTimeout
 		this.canvas = parameters.canvas
-		this.tileSize = parameters.tileSize
+		this.tileSizeScale = parameters.tileSizeScale
 
-		this.gameObjects = new Array<GameObject>()
+		this._container = new UpdatableObjectArrayContainer()
 		this.renderOffset = new Vector2(0, 0)
 
 		this.state = SceneState.Init
@@ -169,169 +204,231 @@ export class Scene implements IScene {
 			const y = event.clientY - rect.top
 			this.mousePositionOnCanvas.SetXY(x, y)
 		})
+
+		this.playModeParameters = parameters.playModeParameters
+	}
+
+	CreateDefaultGameObject(
+		position: Vector2,
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
+		id?: string
+	): SafeReference<GameObject> {
+		const gameObject = new GameObject()
+		return this.AddGameObject(position, gameObject, newComponents, id)
 	}
 
 	public AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
-	): void {
-		this._gameObjects.push(gameObject)
+	): SafeReference<GameObject> {
+		const ref = this._container.Add(gameObject)
 		gameObject.Init(position, this, newComponents, id)
+		return ref
 	}
 
 	public AddGameObjects<T extends GameObject>(
 		gameObjectInits: [
 			Vector2,
 			T,
-			[AbstractObjectComponent, ComponentParameters?][]
+			[GameObjectComponent, ComponentParameters?][]
 		][]
-	): void {
+	): SafeReference<GameObject>[] {
+		const refs: SafeReference<GameObject>[] = []
 		for (let gameObjectInit of gameObjectInits)
-			this.AddGameObject(
-				gameObjectInit[0],
-				gameObjectInit[1],
-				gameObjectInit[2]
+			refs.push(
+				this.AddGameObject(
+					gameObjectInit[0],
+					gameObjectInit[1],
+					gameObjectInit[2]
+				)
 			)
+		return refs
 	}
 
-	public GetGameObjectsByFilter(
-		filter: (g: GameObject) => boolean
-	): GameObject[] {
-		return this._gameObjects.filter(filter)
+	public GetGameObjectsRefByFilter(
+		filter: (g: SafeReference<GameObject>) => boolean
+	): SafeReference<GameObject>[] {
+		return this.GetSafeRefsByFilter(filter)
 	}
 
-	public RemoveGameObjectsByFilter(filter: (g: GameObject) => boolean): void {
-		const destroyedObjects = this._gameObjects.filter(g => filter(g))
-		for (let object of destroyedObjects) object.OnDestroy()
-		this._gameObjects = this._gameObjects.filter(g => !filter(g))
+	public RemoveGameObjectsByFilter(
+		filter: (g: SafeReference<GameObject>) => boolean
+	): void {
+		return this.DestroyObjectsByFilter(filter)
 	}
 
-	private OnDestroy(): void {
-		for (let gameObject of this.gameObjects) gameObject.OnDestroy()
-	}
-
-	private OnSceneStart(): void {
-		for (let gameObject of this.gameObjects) gameObject.OnSceneStart()
-	}
-
-	private OnBeforeFrameRender(currentFrame: number, frameCount: number): void {
-		for (let gameObject of this.gameObjects)
-			gameObject.OnBeforeFrameRender(currentFrame, frameCount)
-	}
-
-	private OnAfterFrameRender(currentFrame: number, frameCount: number): void {
-		for (let gameObject of this.gameObjects)
-			gameObject.OnAfterFrameRender(currentFrame, frameCount)
-	}
-
-	private OnFixedUpdate(turnIndex: number): void {
-		for (let gameObject of this.gameObjects) gameObject.OnFixedUpdate(turnIndex)
-	}
-
-	private OnFixedUpdateEnded(turnIndex: number): void {
-		for (let gameObject of this.gameObjects)
-			gameObject.OnFixedUpdateEnded(turnIndex)
-	}
-
-	public Start(): void {
+	public async Start(): Promise<unknown> {
 		this.state = SceneState.Starting
-		this.OnSceneStart()
+		await this.InitControllers()
+		this.OnStart()
 		this.turnIndex = 0
 		this.state = SceneState.ReadyToNextTurn
 		this.RenderFrame()
+		return Promise.resolve()
 	}
 
 	public RenderFrame(): void {
-		let renderComponents: AbstractRenderComponent[] =
-			new Array<AbstractRenderComponent>()
-		for (let gameObject of this.gameObjects) {
-			renderComponents = renderComponents.concat(
-				gameObject.GetComponents(AbstractRenderComponent)
+		if (this.playModeParameters.disableRender) return
+
+		let renderRefs: SafeReference<AbstractRenderComponent>[] = []
+		for (let gameObject of this.gameObjectRefs) {
+			renderRefs = renderRefs.concat(
+				gameObject.object.GetComponents(
+					AbstractRenderComponent
+				) as SafeReference<AbstractRenderComponent>[]
 			)
 		}
 
-		renderComponents = renderComponents.sort((a, b) => a.zOder - b.zOder)
+		renderRefs = renderRefs.sort((a, b) => a.object.zOrder - b.object.zOrder)
 
 		const context = <CanvasRenderingContext2D>this.canvas.getContext('2d')
-		//ToDo : test ctx.beginPath();
+
 		context.clearRect(0, 0, this.canvas.width, this.canvas.height)
 
-		for (let component of renderComponents) {
-			const image = component.Image
-			const pos = component.owner.position
-				.Add(component.offset)
-				.Add(this.renderOffset)
-			const dw = component.size.x
-			const dh = component.size.y
-			context.drawImage(
-				image,
-				pos.x * this.tileSize,
-				pos.y * this.tileSize,
-				dw * this.tileSize,
-				dh * this.tileSize
-			)
+		const viewPort = new ViewPort(
+			context,
+			this.tileSizeScale,
+			this.renderOffset
+		)
+
+		for (let ref of renderRefs) {
+			const component = ref.object
+			component.Render(viewPort)
 		}
 	}
 
-	private AnimationStep(index: number, animTicksCount: number) {
-		this.OnBeforeFrameRender(index, this.animTicksCount)
-		this.RenderFrame()
-		this.OnAfterFrameRender(index, this.animTicksCount)
-		if (index + 1 < animTicksCount) {
-			setTimeout(
-				() => this.AnimationStep(index + 1, animTicksCount),
-				this.animTicksTime
-			)
-		} else {
-			this.OnFixedUpdateEnded(this.turnIndex)
-			this.state = SceneState.ReadyToNextTurn
+	private async AnimationStep() {
+		if (this.playModeParameters.disableAnimation) {
+			this.RenderFrame()
+			return
+		}
+
+		for (let i = 0; i < this.animTicksCount; ++i) {
+			this.OnBeforeFrameRender(i, this.animTicksCount)
+			this.RenderFrame()
+			this.OnAfterFrameRender(i, this.animTicksCount)
+			await Delay(this.animTicksTime)
 		}
 	}
 
-	public DoNextTurn(): void {
-		if (this.state == SceneState.ReadyToNextTurn) {
-			if (this.turnIndex >= this.maxTurnIndex) {
-				throw new Error('turnIndex == this.maxTurnIndex')
+	protected async InitControllers(): Promise<unknown> {
+		const promises: Promise<unknown>[] = []
+		for (let gameObject of this.gameObjectRefs) {
+			const bodiesRefs = gameObject.object.GetComponents(
+				ControllerBody
+			) as SafeReference<
+				ControllerBody<
+					AbstractControllerData,
+					AbstractControllerData,
+					AbstractControllerCommand,
+					AbstractController<
+						AbstractControllerData,
+						AbstractControllerData,
+						AbstractControllerCommand
+					>
+				>
+			>[]
+
+			for (let body of bodiesRefs) {
+				promises.push(body.object.InitStartData())
 			}
-			this.turnIndex++
-			this.state = SceneState.NextTurn
-			this.OnFixedUpdate(this.turnIndex)
-			this.state = SceneState.Animation
-			this.AnimationStep(0, this.animTicksCount)
-			if (this.turnIndex == this.maxTurnIndex) {
-				this.StopAutoTurn()
+		}
+
+		return Promise.all(promises)
+	}
+
+	protected async CalcCommands(turnIndex: number) {
+		const promises: Promise<unknown>[] = []
+		for (let gameObject of this.gameObjectRefs) {
+			const bodiesRefs = gameObject.object.GetComponents(
+				ControllerBody
+			) as SafeReference<
+				ControllerBody<
+					AbstractControllerData,
+					AbstractControllerData,
+					AbstractControllerCommand,
+					AbstractController<
+						AbstractControllerData,
+						AbstractControllerData,
+						AbstractControllerCommand
+					>
+				>
+			>[]
+
+			for (let body of bodiesRefs) {
+				promises.push(body.object.CalcAndExecuteCommand(turnIndex))
 			}
-		} else {
+		}
+
+		return Promise.all(promises)
+	}
+
+	public async DoNextTurn(): Promise<unknown> {
+		if (this.state != SceneState.ReadyToNextTurn) {
 			throw new Error(
-				`Expected state==SceneState.ReadyToNextTurn, but got ${this.state}`
+				`Expected state==${SceneState.ReadyToNextTurn}, but got ${this.state}`
 			)
 		}
+
+		if (this.turnIndex >= this.maxTurnIndex) {
+			throw new Error('turnIndex == this.maxTurnIndex')
+		}
+
+		this.turnIndex++
+
+		if (this.turnIndex == this.maxTurnIndex) {
+			this.StopAutoTurn()
+		}
+
+		this.state = SceneState.CalcCommands
+		await this.CalcCommands(this.turnIndex)
+
+		this.state = SceneState.NextTurn
+		this.OnFixedUpdate(this.turnIndex)
+
+		this.state = SceneState.Animation
+		await this.AnimationStep()
+
+		this.OnFixedUpdateEnded(this.turnIndex)
+		this.state = SceneState.ReadyToNextTurn
+
+		return Promise.resolve()
 	}
 
 	public StopAutoTurn(): void {
-		if (this.autoTurnTimerId) {
-			clearTimeout(this.autoTurnTimerId)
-			this.autoTurnTimerId = undefined
-		} else {
-			throw new Error('AutoNext not started')
+		if (!this.autoTurnTimerId) {
+			throw new Error('AutoTurn not started')
 		}
+		clearTimeout(this.autoTurnTimerId)
+		this.autoTurnTimerId = undefined
 	}
 
 	public StartAutoTurn(): void {
-		if (this.state == SceneState.ReadyToNextTurn) {
-			if (this.turnIndex == this.maxTurnIndex) {
-				throw new Error('turnIndex == this.maxTurnIndex')
-			}
-
-			if (!this.autoTurnTimerId) {
-				this.DoNextTurn()
-				this.autoTurnTimerId = window.setInterval(
-					() => this.DoNextTurn(),
-					this.autoTurnTime
-				)
-			} else throw new Error('AutoTurn already started')
+		if (this.state != SceneState.ReadyToNextTurn) {
+			throw new Error(
+				`Expected state==${SceneState.ReadyToNextTurn}, but got ${this.state}`
+			)
 		}
+
+		if (this.turnIndex == this.maxTurnIndex) {
+			throw new Error('turnIndex == this.maxTurnIndex')
+		}
+
+		if (this.autoTurnTimerId) {
+			throw new Error('AutoTurn already started')
+		}
+
+		this.DoNextTurn().catch(reason => {
+			throw reason
+		})
+		this.autoTurnTimerId = window.setInterval(
+			() =>
+				this.DoNextTurn().catch(reason => {
+					throw reason
+				}),
+			this.autoTurnTime
+		)
 	}
 }

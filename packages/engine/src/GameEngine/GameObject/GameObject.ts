@@ -1,16 +1,20 @@
 import * as Utilities from 'Utilities'
 import {
-	AbstractObjectComponent,
+	GameObjectComponent,
 	ComponentParameters,
-} from '../BaseComponents/AbstractObjectComponent'
+} from '../BaseComponents/GameObjectComponent'
 import { IGameObject } from './IGameObject'
 import { IScene } from '../Scene/IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
+import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
+import { UpdatableObjectArrayContainer } from 'GameEngine/ObjectBaseType/UpdatableObjectArrayContainer'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
-export class GameObject implements IGameObject {
-	private _id: string
-	private _components: AbstractObjectComponent[]
-	private _owner: IScene | undefined
+export class GameObject
+	extends UpdatableGroup<GameObjectComponent>
+	implements IGameObject
+{
+	private _scene: IScene | undefined
 	private _position: Vector2
 
 	public get position(): Vector2 {
@@ -21,92 +25,49 @@ export class GameObject implements IGameObject {
 		this._position = v
 	}
 
-	public get owner(): IScene {
-		return this._owner
-	}
-
-	public get id(): string {
-		return this._id
-	}
-
-	public set id(id: string) {
-		this._id = id
-	}
-
-	constructor(
-		position: Vector2,
-		owner?: IScene,
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
-		id?: string
-	) {
-		this.Init(position, owner, newComponents, id)
+	public get scene(): IScene {
+		return this._scene
 	}
 
 	Init(
 		position: Vector2,
-		owner?: IScene,
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
-		id?: string
+		scene?: IScene,
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
+		id?: string,
+		executionPriority: number = 0
 	) {
 		this._position = position
-		this._components = new Array<AbstractObjectComponent>()
-		this.id = id ?? Utilities.GenerateUUID()
-		this._owner = owner
+		this._container = new UpdatableObjectArrayContainer()
+		this.uuid = id ?? Utilities.GenerateUUID()
+		this._scene = scene
+		this.executionPriority = executionPriority
 		this.AddComponents(newComponents)
 		this.OnInit()
 	}
 
 	public AddComponents(
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][]
+		newComponents?: [GameObjectComponent, ComponentParameters?][]
 	): void {
 		if (newComponents) {
 			for (let component of newComponents) {
 				component[0].Init(this, component[1])
-				this._components.push(component[0])
+				this.Add(component[0])
 			}
 		}
 	}
 
-	public RemoveComponents<T extends typeof AbstractObjectComponent>(
-		type: T
-	): void {
-		this._components = this._components.filter(c => !(c instanceof type))
+	public RemoveComponents<T extends typeof GameObjectComponent>(type: T): void {
+		this.DestroyObjectsByFilter(r => !(r.object instanceof type))
 	}
 
-	public GetComponents<T extends typeof AbstractObjectComponent>(type: T): any {
-		return this._components.filter(c => c instanceof type)
+	//ToDo : Try change return type to T
+	public GetComponents<T extends typeof GameObjectComponent>(
+		type: T
+	): SafeReference<GameObjectComponent>[] {
+		return this.GetSafeRefsByFilter(r => r.object instanceof type)
 	}
 
 	public OnInit(): void {
-		for (let component of this._components) component.OnOwnerInit()
-	}
-
-	public OnDestroy(): void {
-		for (let component of this._components) component.OnDestroy()
-	}
-
-	public OnSceneStart(): void {
-		for (let component of this._components) component.OnSceneStart()
-	}
-
-	public OnBeforeFrameRender(currentFrame: number, frameCount: number): void {
-		for (let component of this._components)
-			component.OnBeforeFrameRender(currentFrame, frameCount)
-	}
-
-	public OnAfterFrameRender(currentFrame: number, frameCount: number): void {
-		for (let component of this._components)
-			component.OnAfterFrameRender(currentFrame, frameCount)
-	}
-
-	//sort only on add\delete
-	public OnFixedUpdate(index: number): void {
-		const sortedArray = this._components.sort((a, b) => a.qNumber - b.qNumber)
-		for (let component of sortedArray) component.OnFixedUpdate(index)
-	}
-
-	public OnFixedUpdateEnded(index: number): void {
-		const sortedArray = this._components.sort((a, b) => a.qNumber - b.qNumber)
-		for (let component of sortedArray) component.OnFixedUpdateEnded(index)
+		for (let componentRef of this._container) componentRef.object.OnOwnerInit()
 	}
 }

@@ -1,6 +1,7 @@
-import { StaticRenderComponentParameters } from 'GameEngine/BaseComponents/RenderComponents/StaticRenderComponent'
+import { StaticRenderComponentParameters } from 'GameEngine/BaseComponents/RenderComponents/StaticImageRenderComponent'
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import {
+	ControllerCreationData,
 	GameEngine,
 	GameEngineParameters,
 	IGameEngine,
@@ -15,35 +16,38 @@ import {
 	BombermanMap,
 } from './Bomberman/Scripts/BombermanGame'
 import {
-	SimpleDemo,
-	SimpleDemoEngineParameters,
-} from 'GameEngine/SimpleDemo/SimpleDemo'
-import {
-	BodyData,
 	BombData,
 	MapData,
 	MapObjectData,
-	MetalData,
-	PlayerData,
 	WallData,
+	DestructibleWallData,
 } from 'Bomberman/Scripts/MapData'
+import {
+	AbstractController,
+	ControllerBodyParameters,
+	ControllerBody,
+	AbstractControllerData,
+	AbstractControllerCommand,
+} from 'GameEngine/UserAIRuner/AbstractController'
 
 export {
 	type IGameEngine,
 	type IScene,
 	GameEngine,
 	GameEngineParameters,
-	SimpleDemo,
-	SimpleDemoEngineParameters,
+	ControllerCreationData,
+	AbstractController,
+	AbstractControllerData,
+	AbstractControllerCommand,
+	ControllerBody,
+	ControllerBodyParameters,
 	BombermanGame,
 	BombermanMap,
 	BombermanGameParameters,
 	MapObjectData,
 	MapData,
-	BodyData,
-	MetalData,
 	WallData,
-	PlayerData,
+	DestructibleWallData,
 	BombData,
 	SceneParameters,
 	ImageLoader,
