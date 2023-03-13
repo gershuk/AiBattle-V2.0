@@ -1,0 +1,8 @@
+{
+	"extends": "../../tsconfig.json",
+	"exclude": ["../../src/debug-server.ts"],
+	"compilerOptions": {
+		"outDir": "../../build-node",
+		"lib": ["ES2015"]
+	}
+}

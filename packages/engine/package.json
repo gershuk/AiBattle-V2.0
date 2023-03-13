@@ -7,14 +7,16 @@
 	"private": true,
 	"scripts": {
 		"test": "echo \"Error: no test specified\" && exit 1",
-		"build": "webpack --config webpack.config.js && tsc-alias",
-		"start": "webpack serve --open --config webpack.server.js"
+		"build-node": "webpack --config ./webpack/build-node/config.js && tsc-alias -p ./webpack/build-node/tsconfig.json",
+		"build": "webpack --config ./webpack/build-browser/config.js && tsc-alias",
+		"start": "webpack serve --open --config ./webpack/debug-server/config.js"
 	},
 	"keywords": [],
 	"author": "",
 	"license": "ISC",
 	"sideEffects": false,
 	"devDependencies": {
+		"generate-package-json-webpack-plugin": "^2.6.0",
 		"ts-loader": "^9.4.1",
 		"tsc-alias": "^1.7.1",
 		"typescript": "^4.8.4",
