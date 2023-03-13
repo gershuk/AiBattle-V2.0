@@ -1,15 +1,13 @@
-import { AbstractObjectComponent } from '../AbstractObjectComponent'
+import { GameObjectComponent } from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
 import { DiscreteColliderSystem } from './DiscreteColliderSystem'
-import { ComponentParameters } from '../AbstractObjectComponent'
+import { ComponentParameters } from '../GameObjectComponent'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
 
 //ToDo : Add a number of moves for the transition and update all the moving methods.
-export class DiscreteMovementComponent extends AbstractObjectComponent {
+export class DiscreteMovementComponent extends GameObjectComponent {
 	private _discreteColliderSystem: DiscreteColliderSystem
-
-	private _turn: number
 
 	private _newPosition: Vector2
 	public get newPosition(): Vector2 {
@@ -36,7 +34,7 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 	}
 
 	public get currentPosition(): Vector2 {
-		return this._owner.position.Clone()
+		return this._gameObject.position.Clone()
 	}
 
 	public SetReceiver(receiver: GameObject) {
@@ -49,16 +47,17 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 		)
 	}
 
-	Init(owner: IGameObject, parameters?: ComponentParameters) {
-		super.Init(owner, parameters)
-		if (parameters instanceof DiscreteMovementComponentParameters) {
+	Init(
+		gameObject: IGameObject,
+		parameters?: DiscreteMovementComponentParameters
+	) {
+		super.Init(gameObject, parameters)
+		if (parameters) {
 			this._discreteColliderSystem = parameters.discreteColliderSystem
 			this._discreteColliderSystem.InitNewObject(this)
-			this.oldPosition = this.owner.position.Clone()
+			this.oldPosition = this.gameObject.position.Clone()
 		}
 	}
-
-	OnOwnerInit(): void {}
 
 	OnDestroy(): void {
 		this._discreteColliderSystem.ClearCell(
@@ -68,11 +67,9 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 		)
 	}
 
-	OnSceneStart(): void {}
-
 	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {
 		if (this.newPosition) {
-			this.owner.position = Vector2.Lerp(
+			this.gameObject.position = Vector2.Lerp(
 				this.oldPosition,
 				this.newPosition,
 				(currentFrame + 1) / frameCount
@@ -80,10 +77,7 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 		}
 	}
 
-	OnAfterFrameRender(currentFrame: number, frameCount: number): void {}
-
 	OnFixedUpdate(index: number): void {
-		this._turn = index
 		if (
 			this.bufferNewPosition &&
 			this._discreteColliderSystem.TryMove(this, this.bufferNewPosition, 1)
@@ -110,7 +104,7 @@ export class DiscreteMovementComponent extends AbstractObjectComponent {
 			)
 			this.oldPosition = this.newPosition.Clone()
 		}
-		this.oldPosition = this.owner.position.Clone()
+		this.oldPosition = this.gameObject.position.Clone()
 	}
 }
 
@@ -119,10 +113,10 @@ export class DiscreteMovementComponentParameters extends ComponentParameters {
 
 	constructor(
 		discreteColliderSystem: DiscreteColliderSystem,
-		qNumber: number = 100,
+		executionPriority: number = -100,
 		uuid?: string
 	) {
-		super(qNumber, uuid)
+		super(executionPriority, uuid)
 		this.discreteColliderSystem = discreteColliderSystem
 	}
 }

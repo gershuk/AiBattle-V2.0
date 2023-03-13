@@ -1,15 +1,19 @@
 import {
-	AbstractObjectComponent,
+	GameObjectComponent,
 	ComponentParameters,
-} from '../BaseComponents/AbstractObjectComponent'
+} from '../BaseComponents/GameObjectComponent'
 import { GameObject } from '../GameObject/GameObject'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
+import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
-export interface IScene {
-	get tileSize(): Number
+export interface IScene extends UpdatableGroup<GameObject> {
+	get playModeParameters(): PlayModeParameters
 
-	set tileSize(v: Number)
+	get tileSizeScale(): Number
+
+	set tileSizeScale(v: Number)
 
 	get messageBroker(): IMessageBroker
 
@@ -17,7 +21,7 @@ export interface IScene {
 
 	get canvas(): HTMLCanvasElement
 
-	get gameObjects(): GameObject[]
+	get gameObjectRefs(): SafeReference<GameObject>[]
 
 	get renderOffset(): Vector2
 
@@ -47,30 +51,44 @@ export interface IScene {
 
 	get autoTurnTimerId(): number | undefined
 
+	get initTimeout(): number
+
+	get commandCalcTimeout(): number
+
+	CreateDefaultGameObject(
+		position: Vector2,
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
+		id?: string
+	): SafeReference<GameObject>
+
 	AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,
-		newComponents?: [AbstractObjectComponent, ComponentParameters?][],
+		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
-	): void
+	): SafeReference<GameObject>
 
 	AddGameObjects<T extends GameObject>(
 		gameObjectInits: [
 			Vector2,
 			T,
-			[AbstractObjectComponent, ComponentParameters?][]
+			[GameObjectComponent, ComponentParameters?][]
 		][]
+	): SafeReference<GameObject>[]
+
+	GetGameObjectsRefByFilter(
+		filter: (r: SafeReference<GameObject>) => boolean
+	): SafeReference<GameObject>[]
+
+	RemoveGameObjectsByFilter(
+		filter: (r: SafeReference<GameObject>) => boolean
 	): void
 
-	GetGameObjectsByFilter(filter: (g: GameObject) => boolean): GameObject[]
-
-	RemoveGameObjectsByFilter(filter: (g: GameObject) => boolean): void
-
-	Start(): void
+	Start(): Promise<unknown>
 
 	RenderFrame(): void
 
-	DoNextTurn(): void
+	DoNextTurn(): Promise<unknown>
 
 	StopAutoTurn(): void
 
@@ -79,13 +97,21 @@ export interface IScene {
 	Init(parameters: SceneParameters): void
 }
 
+export class PlayModeParameters {
+	disableAnimation: boolean = false
+	disableRender: boolean = false
+}
+
 export class SceneParameters {
 	maxTurnIndex: number
 	animTicksCount: number
 	animTicksTime: number
 	autoTurnTime: number
+	initTimeout: number
+	commandCalcTimeout: number
 	canvas: HTMLCanvasElement
-	tileSize: number
+	tileSizeScale: number
+	playModeParameters: PlayModeParameters
 
 	constructor(
 		maxTurnIndex: number,
@@ -93,13 +119,19 @@ export class SceneParameters {
 		animTicksTime: number,
 		autoTurnTime: number,
 		canvas: HTMLCanvasElement,
-		tileSize: number = 1
+		tileSizeScale: number = 1,
+		initTimeout: number = -1,
+		commandCalcTimeout: number = -1,
+		playModeParameters: PlayModeParameters = new PlayModeParameters()
 	) {
 		this.maxTurnIndex = maxTurnIndex
 		this.animTicksCount = animTicksCount
 		this.animTicksTime = animTicksTime
 		this.autoTurnTime = autoTurnTime
+		this.initTimeout = initTimeout
+		this.commandCalcTimeout = commandCalcTimeout
 		this.canvas = canvas
-		this.tileSize = tileSize
+		this.tileSizeScale = tileSizeScale
+		this.playModeParameters = playModeParameters
 	}
 }

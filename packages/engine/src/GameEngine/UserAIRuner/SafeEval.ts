@@ -1,10 +1,25 @@
-import { AbstractController } from './AbstractController'
+import {
+	AbstractController,
+	AbstractControllerCommand,
+	AbstractControllerData,
+} from './AbstractController'
 
-export function RunEval(input: string): AbstractController {
+export function RunEval<
+	TInitData extends AbstractControllerData,
+	TTurnData extends AbstractControllerData,
+	TCommand extends AbstractControllerCommand,
+	TController extends AbstractController<TInitData, TTurnData, TCommand>
+>(input: string): TController {
 	return eval(input)
 }
 
-function ValidateController(controller: AbstractController) {
+//ToDo : Add function parameters` type validation
+function ValidateController<
+	TInitData extends AbstractControllerData,
+	TTurnData extends AbstractControllerData,
+	TCommand extends AbstractControllerCommand,
+	TController extends AbstractController<TInitData, TTurnData, TCommand>
+>(controller: TController) {
 	try {
 		return (
 			controller.Init != null &&
@@ -20,8 +35,13 @@ function ValidateController(controller: AbstractController) {
 	}
 }
 
-export function LoadControllerFromString(input: string): AbstractController {
-	const controller = RunEval(input)
+export function LoadControllerFromString<
+	TInitData extends AbstractControllerData,
+	TTurnData extends AbstractControllerData,
+	TCommand extends AbstractControllerCommand,
+	TController extends AbstractController<TInitData, TTurnData, TCommand>
+>(input: string): TController {
+	const controller = RunEval<TInitData, TTurnData, TCommand, TController>(input)
 	if (!ValidateController(controller)) {
 		throw 'Controller broken'
 	}
