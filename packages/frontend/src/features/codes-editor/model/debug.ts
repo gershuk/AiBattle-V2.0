@@ -6,7 +6,7 @@ const { $values: $formValues, setFieldValue } = createFormValuesSaver({
 	initialValues: {
 		mapName: null,
 		sceneParams: {
-			tileSize: 30,
+			tileSizeScale: 30,
 			maxTurnIndex: 1000000,
 			animTicksCount: 60,
 			animTicksTime: 12,

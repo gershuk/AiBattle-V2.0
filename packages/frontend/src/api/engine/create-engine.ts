@@ -2,42 +2,44 @@ import {
 	BombermanGame,
 	BombermanGameParameters,
 	BombermanMap,
+	ControllerCreationData,
 	SceneParameters,
 	Vector2,
 } from '@ai-battle/engine'
 import { attach, createStore, combine, sample, createEvent } from 'effector'
 import { MapData } from 'model'
 import { createEngineCanvas } from './engine-canvas'
-
-export interface SceneParams {
-	maxTurnIndex: number
-	animTicksCount: number
-	animTicksTime: number
-	autoTurnTime: number
-	tileSize: number
-}
+import { SceneParams } from './type'
 
 export const createEngine = () => {
 	const engine = new BombermanGame()
+	console.log('engine', engine)
 
 	const $engine = createStore(engine)
 
 	const $startedAutoTurn = createStore(false)
 	const $mapData = createStore<MapData | null>(null)
 	const $sceneParams = createStore<SceneParams | null>(null)
+	const $tileSize = createStore<number | null>(null)
 
 	const toggleAutoTurn = createEvent()
 	const setMapData = createEvent<MapData | null>()
 	const setSceneParams = createEvent<SceneParams | null>()
+	const setTileSize = createEvent<number>()
 
 	const { canvas, CanvasComponent } = createEngineCanvas({
 		$map: $mapData.map(mapData => mapData?.map || []),
-		$tileSize: $sceneParams.map(sceneParams => sceneParams?.tileSize ?? 50),
+		$tileSize: $tileSize,
+		onChangeTileSize: newSize => {
+			engine.tileSizeScale = newSize
+			setTileSize(newSize)
+		},
 	})
 	const $canvas = createStore(canvas)
 
 	$mapData.on(setMapData, (_, mapData) => mapData)
 	$sceneParams.on(setSceneParams, (_, sceneParams) => sceneParams)
+	$tileSize.on(setTileSize, (_, newSize) => newSize)
 
 	const init = attach({
 		source: combine({ engine: $engine, canvas: $canvas }),
@@ -57,13 +59,16 @@ export const createEngine = () => {
 						sceneParams?.animTicksTime ?? 1,
 						sceneParams?.autoTurnTime ?? 1,
 						canvas,
-						sceneParams?.tileSize ?? 50
+						sceneParams?.tileSizeScale ?? 50,
+						sceneParams?.initTimeout,
+						sceneParams?.commandCalcTimeout,
+						sceneParams?.playModeParameters
 					),
 					new BombermanMap(
 						mapData.map,
 						mapData.spawns.map(({ x, y }) => new Vector2(x, y))
 					),
-					codesBot
+					codesBot.map(code => new ControllerCreationData(code))
 				)
 			)
 		},
@@ -130,6 +135,13 @@ export const createEngine = () => {
 		clock: init.done,
 		fn: ({ params }) => params.sceneParams,
 		target: setSceneParams,
+	})
+
+	sample({
+		source: $engine,
+		clock: init.done,
+		fn: engine => Number(engine.tileSizeScale),
+		target: setTileSize,
 	})
 
 	return {

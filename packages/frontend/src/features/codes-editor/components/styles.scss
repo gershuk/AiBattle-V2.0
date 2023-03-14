@@ -96,9 +96,16 @@
 	}
 
 	.debug-viewport {
-		overflow: auto;
 		height: 100%;
-		padding: 8px;
+		width: 100%;
+		position: relative;
+		.container-viewport-game {
+			position: absolute;
+			top: 8px;
+			left: 8px;
+			width: calc(100% - 8px) !important;
+			height: calc(100% - 8px) !important;
+		}
 	}
 
 	.logs-wrapper {

@@ -1,4 +1,4 @@
-import { SceneParameters } from '@ai-battle/engine'
+import { SceneParams } from 'api/engine'
 import { useUnit } from 'effector-react'
 import { createTranslation, htmlFormToJson } from 'libs'
 import { $codesData, $dataMaps } from 'model'
@@ -20,7 +20,7 @@ const _formFields = [
 	{
 		type: 'number',
 		min: 1,
-		name: 'sceneParams.tileSize',
+		name: 'sceneParams.tileSizeScale',
 		required: true,
 		className: 'game-settings-range',
 	},
@@ -53,7 +53,7 @@ const _formFields = [
 const { useTranslation } = createTranslation({
 	ru: {
 		map: 'Карта',
-		'sceneParams.tileSize': 'Размер тайла',
+		'sceneParams.tileSizeScale': 'Размер тайла',
 		'sceneParams.maxTurnIndex': 'Количество ходов',
 		'sceneParams.animTicksCount': 'Количество тиков анимации',
 		'sceneParams.animTicksTime': 'Время тика анимации',
@@ -61,7 +61,7 @@ const { useTranslation } = createTranslation({
 	},
 	en: {
 		map: 'Map',
-		'sceneParams.tileSize': 'Tile size',
+		'sceneParams.tileSizeScale': 'Tile size',
 		'sceneParams.maxTurnIndex': 'Maximum number of moves',
 		'sceneParams.animTicksCount': 'Number of ticks animation',
 		'sceneParams.animTicksTime': 'Animation tick time',
@@ -118,7 +118,7 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 						e.preventDefault()
 						if (!startedAutoTurn) {
 							const { sceneParams, mapName } = htmlFormToJson<{
-								sceneParams: SceneParameters
+								sceneParams: SceneParams
 								mapName: string
 							}>(e.currentTarget)
 							const mapData = mapsHashMap[mapName].data!
