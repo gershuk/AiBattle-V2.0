@@ -6,6 +6,7 @@ import {
 	deepCopyJson,
 	useKeyboard,
 	createTranslation,
+	useDrag,
 } from 'libs'
 import { MapData } from 'model'
 import { useCallback, useState, useEffect } from 'preact/hooks'
@@ -88,6 +89,9 @@ export const TileEditor = ({
 	})
 	const [htmlRef, setHtmlRef] = useState<HTMLDivElement | null>(null)
 	const [mouseDown, setMouseDown] = useState(false)
+	const { refDrag, dragEnabled } = useDrag<HTMLDivElement>({
+		enable: activeCode === null,
+	})
 
 	useKeyboard({
 		filter: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 'z',
@@ -188,7 +192,7 @@ export const TileEditor = ({
 					<RangeInput
 						min={1}
 						max={100}
-						initValue={cellSize}
+						value={cellSize}
 						step={1}
 						className={'tile-scale'}
 						onChange={changedCellSize}
@@ -235,7 +239,17 @@ export const TileEditor = ({
 					/>
 				</div>
 			</div>
-			<div className={clsx('tile-map-wrapper')} onMouseLeave={onStopDraw}>
+			<div
+				ref={refDrag}
+				onWheel={e => {
+					if (!e.ctrlKey) return
+					e.preventDefault()
+					const newSize = e.deltaY > 0 ? cellSize - 1 : cellSize + 1
+					changedCellSize(newSize)
+				}}
+				className={clsx('tile-map-wrapper', dragEnabled ? 'dragged' : null)}
+				onMouseLeave={onStopDraw}
+			>
 				<TileTable
 					mapData={mapData}
 					cellSize={cellSize}

@@ -4,6 +4,7 @@ import './styles.scss'
 
 interface RangeInputProps {
 	initValue?: number
+	value?: number
 	min?: number
 	max?: number
 	onChange?: (value: number) => void
@@ -14,6 +15,7 @@ interface RangeInputProps {
 
 export const RangeInput = ({
 	initValue,
+	value: valueProps,
 	min,
 	max,
 	className,
@@ -22,13 +24,19 @@ export const RangeInput = ({
 	...props
 }: RangeInputProps) => {
 	const ref = useRef<HTMLInputElement>(null)
-	const [value, setValue] = useState<null | number>(initValue ?? null)
+	const [value, setValue] = useState<null | number>(
+		valueProps ?? initValue ?? null
+	)
 
 	useEffect(() => {
 		if (ref.current) {
 			ref.current.value = String(value ?? '')
 		}
 	}, [value])
+
+	useEffect(() => {
+		if (valueProps !== undefined) setValue(valueProps)
+	}, [valueProps])
 
 	useEffect(() => {
 		if (ref.current) {

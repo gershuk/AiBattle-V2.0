@@ -2,7 +2,14 @@ import { useCallback, useEffect, useState } from 'preact/hooks'
 import { useMemo, useRef } from 'react'
 import { debounce } from './debounce'
 
-export const useDrag = <T extends HTMLElement = HTMLElement>() => {
+interface UseDragParams {
+	enable?: boolean
+}
+
+export const useDrag = <T extends HTMLElement = HTMLElement>(
+	params?: UseDragParams
+) => {
+	const { enable = true } = params || {}
 	const [drag, setDrag] = useState<{
 		enable: boolean
 		scrollLeft: number
@@ -47,24 +54,28 @@ export const useDrag = <T extends HTMLElement = HTMLElement>() => {
 		}
 	}, [drag])
 
-	useEffect(() => {
-		const mouseDownHandler = (e: MouseEvent) => {
-			setDrag({
-				enable: true,
-				scrollLeft: refDrag.current!.scrollLeft,
-				scrollTop: refDrag.current!.scrollTop,
-				clientX: e.screenX,
-				clientY: e.clientY,
-			})
-		}
+	const mouseDownHandler = useCallback((e: MouseEvent) => {
+		setDrag({
+			enable: true,
+			scrollLeft: refDrag.current!.scrollLeft,
+			scrollTop: refDrag.current!.scrollTop,
+			clientX: e.screenX,
+			clientY: e.clientY,
+		})
+	}, [])
 
-		if (refDrag.current) {
-			refDrag.current.addEventListener('mousedown', mouseDownHandler)
+	useEffect(() => {
+		if (enable) {
+			if (refDrag.current) {
+				refDrag.current.addEventListener('mousedown', mouseDownHandler)
+			}
+		} else {
+			refDrag.current?.removeEventListener('mousedown', mouseDownHandler)
 		}
 		return () => {
 			refDrag.current?.removeEventListener('mousedown', mouseDownHandler)
 		}
-	}, [])
+	}, [enable])
 
 	return { dragEnabled, refDrag }
 }
