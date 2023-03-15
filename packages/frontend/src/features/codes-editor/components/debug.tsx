@@ -1,4 +1,4 @@
-import { SceneParams } from 'api/engine'
+import { GAME_ENGINE_TRANSLATION, SceneParams } from 'api/engine'
 import { useUnit } from 'effector-react'
 import { createTranslation, htmlFormToJson } from 'libs'
 import { $codesData, $dataMaps } from 'model'
@@ -50,24 +50,16 @@ const _formFields = [
 	},
 ] as const
 
-const { useTranslation } = createTranslation({
-	ru: {
-		map: 'Карта',
-		'sceneParams.tileSizeScale': 'Размер тайла',
-		'sceneParams.maxTurnIndex': 'Количество ходов',
-		'sceneParams.animTicksCount': 'Количество тиков анимации',
-		'sceneParams.animTicksTime': 'Время тика анимации',
-		'sceneParams.autoTurnTime': 'Время между ходами',
-	},
-	en: {
-		map: 'Map',
-		'sceneParams.tileSizeScale': 'Tile size',
-		'sceneParams.maxTurnIndex': 'Maximum number of moves',
-		'sceneParams.animTicksCount': 'Number of ticks animation',
-		'sceneParams.animTicksTime': 'Animation tick time',
-		'sceneParams.autoTurnTime': 'Time between turns',
-	},
-})
+const { useTranslation } = createTranslation(
+	GAME_ENGINE_TRANSLATION.merge({
+		ru: {
+			map: 'Карта',
+		},
+		en: {
+			map: 'Map',
+		},
+	})
+)
 
 export const Debug = ({ selectedCodeName }: DebugProps) => {
 	const t = useTranslation()
