@@ -1,3 +1,6 @@
+import { isObject } from './is'
+import { mergeDeep } from './merge-deep'
+
 type HtmlInputs = HTMLInputElement | HTMLSelectElement
 
 interface InputField {
@@ -24,30 +27,6 @@ export const dotToJson = (keys: string, value: any) => {
 		container = container[k] = i == values.length - 1 ? value : {}
 	})
 	return tempObject
-}
-
-const isObject = (item: any): item is { [k: string]: any } => {
-	return item && typeof item === 'object' && !Array.isArray(item)
-}
-
-export const mergeDeep = (
-	target: { [k: string]: any },
-	...sources: { [k: string]: any }[]
-): { [k: string]: any } => {
-	if (!sources.length) return target
-	const source = sources.shift()
-
-	if (isObject(target) && isObject(source)) {
-		for (const key in source) {
-			if (isObject(source[key])) {
-				if (!target[key]) Object.assign(target, { [key]: {} })
-				mergeDeep(target[key], source[key])
-			} else {
-				Object.assign(target, { [key]: source[key] })
-			}
-		}
-	}
-	return mergeDeep(target, ...sources)
 }
 
 const regexpIsArray = /^(\w+)[[]\d+[\]]/

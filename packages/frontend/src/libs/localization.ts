@@ -7,6 +7,7 @@ import {
 } from 'effector'
 import { useUnit } from 'effector-react'
 import { useCallback } from 'react'
+import { mergeDeep } from './merge-deep'
 
 enum Languages {
 	en = 'en',
@@ -15,10 +16,10 @@ enum Languages {
 
 const initLanguage = (() => {
 	try {
-		const languageLocalStorage = localStorage.getItem('language') || navigator.language
+		const languageLocalStorage =
+			localStorage.getItem('language') || navigator.language
 		if (languageLocalStorage && languageLocalStorage in Languages)
 			return languageLocalStorage
-		
 	} catch (_) {}
 	return Languages.en
 })()
@@ -89,4 +90,21 @@ const createTranslation = <L extends TranslationItem>(
 	return { getTranslationItem, useTranslation }
 }
 
-export { $activeLanguage, changeLanguage, Languages, createTranslation }
+const createSourceTranslation = <L extends TranslationItem>(
+	scheme: Translation<L>
+) => {
+	const merge = <T extends TranslationItem>(
+		otherScheme: Translation<T>
+	): Translation<T & L> => {
+		return mergeDeep({}, scheme, otherScheme)
+	}
+	return { scheme, merge }
+}
+
+export {
+	$activeLanguage,
+	changeLanguage,
+	Languages,
+	createTranslation,
+	createSourceTranslation,
+}

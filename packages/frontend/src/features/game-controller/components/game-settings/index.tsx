@@ -1,3 +1,4 @@
+import { GAME_ENGINE_TRANSLATION } from 'api'
 import { useUnit } from 'effector-react'
 import { createTranslation } from 'libs'
 import { ComponentChild } from 'preact'
@@ -8,13 +9,11 @@ import './styles.scss'
 
 const _formFields = [
 	{
-		type: 'range',
+		type: 'number',
 		min: 1,
 		max: 200,
-		name: 'sceneParams.tileSize',
+		name: 'sceneParams.tileSizeScale',
 		required: true,
-		className: 'game-settings-range',
-		title: 'Размер тайла',
 	},
 	{
 		type: 'number',
@@ -39,28 +38,29 @@ const _formFields = [
 		required: true,
 		name: 'sceneParams.autoTurnTime',
 		min: 1,
-		title: 'autoTurnTime',
+	},
+	{
+		type: 'number',
+		required: true,
+		name: 'sceneParams.initTimeout',
+	},
+	{
+		type: 'number',
+		required: true,
+		name: 'sceneParams.commandCalcTimeout',
 	},
 ] as const
 
-const { useTranslation } = createTranslation({
-	ru: {
-		configGame: 'Конфигурация игры',
-		'sceneParams.tileSize': 'Размер тайла',
-		'sceneParams.maxTurnIndex': 'Максимальное количество ходов',
-		'sceneParams.animTicksCount': 'Количество тиков проигрывания анимации',
-		'sceneParams.animTicksTime': 'Время тика анимации',
-		'sceneParams.autoTurnTime': 'Время между ходами',
-	},
-	en: {
-		configGame: 'Game configuration',
-		'sceneParams.tileSize': 'Tile size',
-		'sceneParams.maxTurnIndex': 'Maximum number of moves',
-		'sceneParams.animTicksCount': 'Number of ticks to play animation',
-		'sceneParams.animTicksTime': 'Animation tick time',
-		'sceneParams.autoTurnTime': 'Time between turns',
-	},
-})
+const { useTranslation } = createTranslation(
+	GAME_ENGINE_TRANSLATION.merge({
+		ru: {
+			configGame: 'Конфигурация игры',
+		},
+		en: {
+			configGame: 'Game configuration',
+		},
+	})
+)
 
 export const GameSettings = () => {
 	const t = useTranslation()

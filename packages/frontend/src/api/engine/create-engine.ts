@@ -13,7 +13,6 @@ import { SceneParams } from './type'
 
 export const createEngine = () => {
 	const engine = new BombermanGame()
-	console.log('engine', engine)
 
 	const $engine = createStore(engine)
 
