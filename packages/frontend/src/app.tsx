@@ -1,23 +1,10 @@
-import { createEvent, sample } from 'effector'
+import { useUnit } from 'effector-react'
 import { createTutorial } from 'libs/tutorial'
 import { readCodesFromLocalStorageFx, readMapsFromLocalStorageFx } from 'model'
 import { RoutesView, SideBar } from 'pages'
+import { useEffect } from 'preact/hooks'
 import { createTutorialPanel } from 'ui'
 import './styles.scss'
-
-export const App = () => {
-	return (
-		<div className={'app'}>
-			<SideBar />
-			<div className={'content'}>
-				<RoutesView />
-			</div>
-		</div>
-	)
-}
-
-readCodesFromLocalStorageFx()
-readMapsFromLocalStorageFx()
 
 const tutorial = createTutorial({
 	steps: [
@@ -52,4 +39,22 @@ const tutorial = createTutorial({
 	id: 'side-bar-tutorial',
 })
 
-tutorial.show()
+export const App = () => {
+	const tutorialStatus = useUnit(tutorial.$status)
+
+	useEffect(() => {
+		tutorial.show()
+	}, [])
+
+	return (
+		<div className={'app'}>
+			<SideBar />
+			<div className={'content'}>
+				{tutorialStatus === 'completed' ? <RoutesView /> : null}
+			</div>
+		</div>
+	)
+}
+
+readCodesFromLocalStorageFx()
+readMapsFromLocalStorageFx()
