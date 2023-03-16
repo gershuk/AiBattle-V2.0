@@ -9,6 +9,10 @@
 	align-items: center;
 	color: var(--color-text-light);
 	cursor: pointer;
+	background: var(--color-default-button);
+	&:hover {
+		background: var(--color-default-button-hover);
+	}
 
 	&:not(.disabled) {
 		&.primary {
@@ -33,5 +37,8 @@
 
 	&.disabled {
 		background: var(--color-input-disable);
+		&:hover {
+			background: var(--color-input-disable);
+		}
 	}
 }

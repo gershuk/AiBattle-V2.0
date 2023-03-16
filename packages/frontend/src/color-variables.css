@@ -5,7 +5,10 @@
 	--color-text: black;
 	--color-text-light: white;
 
-	--color-secondary-text: rgb(63, 62, 62);;
+	--color-secondary-text: rgb(63, 62, 62);
+
+	--color-default-button: rgb(52, 52, 52);
+	--color-default-button-hover: rgb(29, 29, 29);
 
 	--color-primary: rgb(0, 122, 204);
 	--color-primary-hover: rgb(0, 98, 163);

@@ -16,7 +16,7 @@ export const Button = ({
 	onClick,
 	children,
 	className,
-	color = 'primary',
+	color,
 	disabled,
 	type = 'button',
 	...props

@@ -36,6 +36,7 @@ const createPopupContainer = () => {
 			render(null, popupContainer)
 			popupContainer.remove()
 		},
+		popupContainer,
 	}
 }
 
