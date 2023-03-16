@@ -1,7 +1,7 @@
+import { createEvent, sample } from 'effector'
 import { createTutorial } from 'libs/tutorial'
 import { readCodesFromLocalStorageFx, readMapsFromLocalStorageFx } from 'model'
 import { RoutesView, SideBar } from 'pages'
-import { render } from 'preact'
 import { createTutorialPanel } from 'ui'
 import './styles.scss'
 
@@ -41,13 +41,15 @@ const tutorial = createTutorial({
 		},
 		{
 			element: () => document.querySelector('.side-bar-item.app-settings')!,
-			message: 'Внизу ты найдешь настройки приложения. Там мало пунктов, но вдруг ты захочешь сменить язык?',
+			message:
+				'Внизу ты найдешь настройки приложения. Там мало пунктов, но вдруг ты захочешь сменить язык?',
 			viewPosition: 'top-right',
 			title: 'Сайдбар',
 		},
 	],
 	delayStart: 1000,
 	view: createTutorialPanel,
+	id: 'side-bar-tutorial',
 })
 
-// tutorial.show()
+tutorial.show()

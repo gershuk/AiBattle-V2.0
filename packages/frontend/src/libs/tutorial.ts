@@ -7,6 +7,48 @@ import {
 	sample,
 } from 'effector'
 import { delay } from './delay'
+import { stringToJson } from './json-is-valid'
+
+type TutorialsStatus = 'pending' | 'not-started' | 'completed'
+
+const initTutorialsStatus = ((): { [id: string]: TutorialsStatus } => {
+	try {
+		const { parsedJson } = stringToJson(
+			localStorage.getItem('tutorials-statuses') || ''
+		)
+		return parsedJson || {}
+	} catch (error) {
+		return {}
+	}
+})()
+
+const $tutorialsStatus = createStore<{ [id: string]: TutorialsStatus }>(
+	initTutorialsStatus
+)
+
+const setTutorialStatus = createEvent<{ id: string; status: TutorialsStatus }>()
+
+//инициализирует статус туторила, если его нет или он не 'completed' то создает запись со статусом 'not-started'
+const initTutorial = createEvent<{ id: string }>()
+
+const saveTutorialsStatusFx = attach({
+	source: $tutorialsStatus,
+	effect: tutorials => {
+		localStorage.setItem('tutorials-statuses', JSON.stringify(tutorials))
+	},
+})
+
+$tutorialsStatus.on(setTutorialStatus, (tutorials, { id, status }) => ({
+	...tutorials,
+	[id]: status,
+}))
+
+$tutorialsStatus.on(initTutorial, (tutorials, { id }) => ({
+	...tutorials,
+	[id]: tutorials?.[id] === 'completed' ? 'completed' : 'not-started',
+}))
+
+sample({ clock: $tutorialsStatus, target: saveTutorialsStatusFx })
 
 interface TutorialStep {
 	element?: null | HTMLElement | (() => HTMLElement | null)
@@ -38,19 +80,24 @@ interface Tutorial {
 	steps: TutorialStep[]
 	delayStart?: number
 	view: (params: ViewParams) => HTMLElement
+	id: string
 }
 
 export const createTutorial = ({
 	steps,
 	delayStart = 0,
 	view: viewCreator,
+	id,
 }: Tutorial) => {
+	initTutorial({ id })
+
 	const $show = createStore(false)
 	const $view = createStore<{
 		view: HTMLElement | null
 		selectedContainer: HTMLDivElement | null
 		overlay: HTMLDivElement | null
 	}>({ view: null, selectedContainer: null, overlay: null })
+	const $status = $tutorialsStatus.map(tutorials => tutorials[id])
 
 	const $steps = createStore(steps)
 	const $activeIndexStep = createStore<number | null>(null)
@@ -226,6 +273,12 @@ export const createTutorial = ({
 	})
 
 	sample({
+		clock: show,
+		fn: () => ({ status: 'pending' as const, id }),
+		target: setTutorialStatus,
+	})
+
+	sample({
 		clock: [show.doneData, setActiveIndexStep],
 		target: createViewFx,
 	})
@@ -233,6 +286,12 @@ export const createTutorial = ({
 	sample({
 		clock: close,
 		target: removeViewFx,
+	})
+
+	sample({
+		clock: close,
+		fn: () => ({ status: 'completed' as const, id }),
+		target: setTutorialStatus,
 	})
 
 	sample({
@@ -248,5 +307,5 @@ export const createTutorial = ({
 
 	createViewFx.fail.watch(console.error)
 
-	return { show, close, setActiveIndexStep }
+	return { $status, show, close, setActiveIndexStep }
 }
