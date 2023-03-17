@@ -18,7 +18,7 @@ export const OtherwisePage = () => {
 	return (
 		<div className={'otherwise-page'}>
 			<div className={'logo-wrapper'}>
-				<img alt="logo" src="./logo.svg" />
+				<img alt="logo" src="./logo.png" />
 			</div>
 			<div>{t('title')}</div>
 			<div>
