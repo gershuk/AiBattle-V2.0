@@ -91,7 +91,9 @@ const Icon = ({ children, routePath, title }: IconProps) => {
 	const active = pathIsActive(routePath, currentPath)
 	return (
 		<div
-			onClick={() => historyMethods.appendParams({ page: routePath })}
+			onClick={() =>
+				historyMethods.appendParams({ page: active ? '' : routePath })
+			}
 			className={clsx('side-bar-item', active ? 'active' : null)}
 			title={title}
 		>

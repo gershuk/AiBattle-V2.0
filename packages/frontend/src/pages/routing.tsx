@@ -5,6 +5,7 @@ import { GamePage } from './game'
 import { MapEditorPage } from './map-editor'
 import { ReplaysPage } from './replays'
 import { useMemo } from 'react'
+import { OtherwisePage } from './otherwise'
 
 export const routesView = Object.freeze({
 	routes: [
@@ -13,7 +14,7 @@ export const routesView = Object.freeze({
 		{ view: MapEditorPage, path: 'map-editor' },
 		{ view: ReplaysPage, path: 'replay' },
 	],
-	homePath: 'controller-editor',
+	otherwise: OtherwisePage,
 } as const)
 
 export type RoutesPath = typeof routesView['routes'][number]['path']
@@ -23,16 +24,13 @@ export const pathExists = (path: string) => {
 }
 
 export const pathIsActive = (targetPath: RoutesPath, currentPath: string) => {
-	const _currentPath = pathExists(currentPath)
-		? currentPath
-		: routesView.homePath
-	return targetPath === _currentPath
+	return pathExists(currentPath) && targetPath === currentPath
 }
 
 const getViewByPath = (route: string) => {
 	const targetView =
 		routesView.routes.find(({ path }) => path === route)?.view ??
-		routesView.routes.find(({ path }) => path === routesView.homePath)!.view
+		routesView.otherwise
 	return targetView
 }
 

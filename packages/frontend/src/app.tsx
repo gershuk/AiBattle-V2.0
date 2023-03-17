@@ -20,14 +20,14 @@ const tutorial = createTutorial({
 			title: 'Сайдбар',
 		},
 		{
-			element: () => document.querySelector('.side-bar-item')!,
+			element: () => document.querySelector('.side-bar-item'),
 			message:
 				'Например нажав на вкадку "Код ИИ" ты окажешься в святая святых этого приложения. Будешь писать код для ботов и устраивать паломничества на <a href="https://learn.javascript.ru/">learn.javascript</a>.',
 			viewPosition: 'bottom-right',
 			title: 'Сайдбар',
 		},
 		{
-			element: () => document.querySelector('.side-bar-item.app-settings')!,
+			element: () => document.querySelector('.side-bar-item.app-settings'),
 			message:
 				'Внизу ты найдешь настройки приложения. Там мало пунктов, но вдруг ты захочешь сменить язык?',
 			viewPosition: 'top-right',
@@ -50,7 +50,7 @@ export const App = () => {
 		<div className={'app'}>
 			<SideBar />
 			<div className={'content'}>
-				{tutorialStatus === 'completed' ? <RoutesView /> : null}
+				<RoutesView />
 			</div>
 		</div>
 	)
