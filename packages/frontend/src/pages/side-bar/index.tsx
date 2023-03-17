@@ -41,10 +41,9 @@ const { useTranslation } = createTranslation({
 
 export const SideBar = () => {
 	const t = useTranslation()
-	const tutorialStatus = useUnit(tutorial.$status)
 
 	useEffect(() => {
-		if (tutorialStatus !== 'completed') tutorial.show()
+		tutorial.start()
 	}, [])
 
 	return (

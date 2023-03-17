@@ -4,6 +4,8 @@ import { SplitPanel } from 'ui'
 import { $selectCode, selectedCode, changedCode } from './model'
 import './styles.scss'
 import { createPanelSizeController } from 'libs'
+import { useEffect } from 'react'
+import { tutorialList } from './tutorials'
 
 const { $sizes, setSizes } = createPanelSizeController(200)
 
@@ -12,6 +14,10 @@ export const ControllerEditorPage = () => {
 		selectCode: $selectCode,
 		sizes: $sizes,
 	})
+
+	useEffect(() => {
+		tutorialList.start()
+	}, [])
 
 	const handlerDragEnd = (sizesPanel: number[]) => {
 		setSizes([...sizesPanel])

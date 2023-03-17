@@ -56,7 +56,7 @@ interface TutorialStep {
 	message: string | (() => string) // html like content
 	viewPosition?:
 		| 'top'
-		| 'down'
+		| 'bottom'
 		| 'right'
 		| 'left'
 		| 'bottom-right'
@@ -116,8 +116,17 @@ export const createTutorial = ({
 	const setActiveIndexStep = createEvent<number>()
 
 	const close = createEvent()
-	const show = createEffect(() => delay(delayStart))
 	const resetStatus = createEvent()
+
+	/**
+	 * всегда запускает туториал
+	 */
+	const show = createEffect(() => delay(delayStart))
+
+	/**
+	 * запускает туториал только тогда когда его статус равен not-started
+	 */
+	const start = createEvent()
 
 	const createViewFx = attach({
 		source: [$view, $currentStep, $activeIndexStep, $steps],
@@ -181,19 +190,19 @@ export const createTutorial = ({
 							top: `${boundary.height / 2}px`,
 							transform: `translate(-100%, -50%)`,
 						}
-					if (viewPosition === 'down')
+					if (viewPosition === 'bottom')
 						return {
 							...styleView,
 							left: `${boundary.width / 2}px`,
 							top: `${boundary.top + boundary.height + 10}px`,
-							transform: `translate(-50%, 0)`,
+							transform: `translate(0, 0)`,
 						}
 					if (viewPosition === 'top')
 						return {
 							...styleView,
 							left: `${boundary.width / 2}px`,
 							top: `${boundary.top - 10}px`,
-							transform: `translate(-50%, -100%)`,
+							transform: `translate(0, -100%)`,
 						}
 					if (viewPosition === 'bottom-right')
 						return {
@@ -325,7 +334,13 @@ export const createTutorial = ({
 		setTutorialStatus,
 	})
 
+	sample({
+		clock: start,
+		filter: $status.map(status => status === 'not-started'),
+		target: show,
+	})
+
 	createViewFx.fail.watch(console.error)
 
-	return { $status, show, close, resetStatus, setActiveIndexStep }
+	return { $status, start, show, close, resetStatus, setActiveIndexStep }
 }
