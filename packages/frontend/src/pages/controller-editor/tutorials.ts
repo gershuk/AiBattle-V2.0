@@ -1,6 +1,5 @@
 import { sample } from 'effector'
 import { createTutorial } from 'libs/tutorial'
-import { createRef } from 'preact'
 import { createTutorialPanel } from 'ui'
 import { $selectCode } from './model'
 
@@ -36,8 +35,24 @@ export const tutorialEditor = createTutorial({
 	steps: [
 		{
 			element: () => document.querySelector('.code-editor'),
-			message:
-				'Сверху редактор кода. Бот представляет из себя контроллер, который должен возвращать код действия.',
+			message: `
+					Бот представляет из себя контроллер, который должен возвращать код действия.
+					<div>
+						Метод <b>GetCommand</b> получает всю необходимую тебе информацию. 
+						Пользуйся браузерными инструментами разработки, чтобы логировать информацию. 
+					</div>
+					<div style="margin-top: 8px;">
+						Назначение кодов:
+					</div>
+					<div style="padding-left: 8px;">
+						<div>0 - ничего</div>
+						<div>1 - вниз</div>
+						<div>2 - право</div>
+						<div>3 - верх</div>
+						<div>4 - лево</div>
+						<div>5 - бомба</div>
+					</div>
+				`,
 			viewPosition: 'bottom',
 			title: 'Редактор бота',
 		},

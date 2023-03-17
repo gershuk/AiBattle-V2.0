@@ -61,6 +61,8 @@ interface TutorialStep {
 		| 'left'
 		| 'bottom-right'
 		| 'top-right'
+		| 'top-left'
+		| 'bottom-left'
 }
 
 export interface ViewParams {
@@ -208,15 +210,29 @@ export const createTutorial = ({
 						return {
 							...styleView,
 							left: `${boundary.left + boundary.width + 10}px`,
-							top: `${boundary.top + boundary.height}px`,
+							top: `${boundary.top + boundary.height + 10}px`,
 							transform: `translate(0, 0)`,
 						}
 					if (viewPosition === 'top-right')
 						return {
 							...styleView,
 							left: `${boundary.left + boundary.width + 10}px`,
-							top: `${boundary.top}px`,
+							top: `${boundary.top - 10}px`,
 							transform: `translate(0, -100%)`,
+						}
+					if (viewPosition === 'top-left')
+						return {
+							...styleView,
+							left: `${boundary.left - 10}px`,
+							top: `${boundary.top - 10}px`,
+							transform: `translate(-100%, -100%)`,
+						}
+					if (viewPosition === 'bottom-left')
+						return {
+							...styleView,
+							left: `${boundary.left - 10}px`,
+							top: `${boundary.top + boundary.height + 10}px`,
+							transform: `translate(-100%, 0)`,
 						}
 					return {}
 				})()

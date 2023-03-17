@@ -5,7 +5,7 @@ import { $selectCode, selectedCode, changedCode } from './model'
 import './styles.scss'
 import { createPanelSizeController } from 'libs'
 import { useEffect } from 'react'
-import { tutorialList } from './tutorials'
+import { tutorialList as tutorialCodeList } from './tutorials'
 
 const { $sizes, setSizes } = createPanelSizeController(200)
 
@@ -16,7 +16,7 @@ export const ControllerEditorPage = () => {
 	})
 
 	useEffect(() => {
-		tutorialList.start()
+		tutorialCodeList.start()
 	}, [])
 
 	const handlerDragEnd = (sizesPanel: number[]) => {

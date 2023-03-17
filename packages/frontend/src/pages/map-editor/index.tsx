@@ -5,6 +5,8 @@ import { $selectMap, savedMap, selectedMap } from './model'
 import { EditorMap } from 'features/map-editor'
 import './styles.scss'
 import { createPanelSizeController } from 'libs'
+import { useEffect } from 'react'
+import { tutorialMapList } from './tutorials'
 
 const { $sizes, setSizes } = createPanelSizeController(200)
 
@@ -14,6 +16,10 @@ export const MapEditorPage = () => {
 		setSizes([...sizesPanel])
 		window.dispatchEvent(new Event('resize'))
 	}
+
+	useEffect(() => {
+		tutorialMapList.start()
+	}, [])
 
 	return (
 		<div class={'maps-editor-page'}>

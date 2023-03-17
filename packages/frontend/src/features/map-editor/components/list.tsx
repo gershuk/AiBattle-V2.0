@@ -104,10 +104,10 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 			<div className={'header'}>
 				<div className={'title'}>{t('fileList')}</div>
 				<div className={'toolbar'}>
-					<div onClick={createMapFile}>
+					<div class={'add-map'} onClick={createMapFile}>
 						<AddIcon />
 					</div>
-					<div onClick={() => uploadedFile()}>
+					<div class={'upload-map'} onClick={() => uploadedFile()}>
 						<UploadIcon />
 					</div>
 				</div>
