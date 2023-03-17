@@ -52,8 +52,8 @@ sample({ clock: $tutorialsStatus, target: saveTutorialsStatusFx })
 
 interface TutorialStep {
 	element?: null | HTMLElement | (() => HTMLElement | null)
-	title?: string
-	message: string // html like content
+	title?: string | (() => string) // html like content
+	message: string | (() => string) // html like content
 	viewPosition?:
 		| 'top'
 		| 'down'
@@ -64,7 +64,10 @@ interface TutorialStep {
 }
 
 export interface ViewParams {
-	data: TutorialStep
+	data: {
+		message: string
+		title?: string
+	}
 	stepIndex: number
 	lastIndex: number
 	canBack: boolean
@@ -114,6 +117,7 @@ export const createTutorial = ({
 
 	const close = createEvent()
 	const show = createEffect(() => delay(delayStart))
+	const resetStatus = createEvent()
 
 	const createViewFx = attach({
 		source: [$view, $currentStep, $activeIndexStep, $steps],
@@ -161,7 +165,6 @@ export const createTutorial = ({
 				selectedContainer.style.left = `${boundary.left}px`
 				selectedContainer.style.width = `${boundary.width}px`
 				selectedContainer.style.height = `${boundary.height}px`
-				document.body.appendChild(selectedContainer)
 
 				styleView = ((): Partial<CSSStyleDeclaration> => {
 					if (viewPosition === 'right')
@@ -211,6 +214,8 @@ export const createTutorial = ({
 			} else {
 				selectedContainer.style.top = '50%'
 				selectedContainer.style.left = '50%'
+				selectedContainer.style.width = '0'
+				selectedContainer.style.height = '0'
 
 				styleView = {
 					...styleView,
@@ -223,7 +228,16 @@ export const createTutorial = ({
 			const canBack = activeIndexStep !== 0
 			const canNext = activeIndexStep !== steps.length - 1
 			const newView = viewCreator({
-				data: currentStep,
+				data: {
+					title:
+						typeof currentStep.title === 'function'
+							? currentStep.title()
+							: currentStep.title,
+					message:
+						typeof currentStep.message === 'function'
+							? currentStep.message()
+							: currentStep.message,
+				},
 				stepIndex: activeIndexStep,
 				lastIndex: steps.length - 1,
 				canBack: canBack,
@@ -305,7 +319,13 @@ export const createTutorial = ({
 		target: $view,
 	})
 
+	sample({
+		clock: resetStatus,
+		fn: () => ({ status: 'not-started' as const, id }),
+		setTutorialStatus,
+	})
+
 	createViewFx.fail.watch(console.error)
 
-	return { $status, show, close, setActiveIndexStep }
+	return { $status, show, close, resetStatus, setActiveIndexStep }
 }

@@ -4,11 +4,11 @@ import './styles.scss'
 
 const { useTranslation } = createTranslation({
 	ru: {
-		title: 'Присылай обратную связь, ишью и пр-ы',
+		title: 'Присылай обратную связь, ишью и пр-ы.',
 		project: 'Наш проект на github.com',
 	},
 	en: {
-		title: 'Send feedback, issue and pull requests',
+		title: 'Send feedback, issue and pull requests.',
 		project: 'Our project on github.com',
 	},
 })

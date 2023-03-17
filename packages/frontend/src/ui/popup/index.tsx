@@ -122,7 +122,9 @@ export const showConfirm = ({
 							<Button color="danger" onClick={cancelButtonClickHandler}>
 								{cancelButtonText}
 							</Button>
-							<Button onClick={okButtonClickHandler}>{okButtonText}</Button>
+							<Button color="primary" onClick={okButtonClickHandler}>
+								{okButtonText}
+							</Button>
 						</>
 					}
 				>
@@ -163,7 +165,9 @@ export const showMessage = ({
 					htmlRef={ref}
 					title={title}
 					footerContent={
-						<Button onClick={okButtonClickHandler}>{okButtonText}</Button>
+						<Button color="primary" onClick={okButtonClickHandler}>
+							{okButtonText}
+						</Button>
 					}
 				>
 					<>{content}</>

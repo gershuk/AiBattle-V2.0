@@ -11,6 +11,14 @@ import {
 } from 'libs'
 import './styles.scss'
 import { Button, DropDown, showPopup } from 'ui'
+import { useEffect } from 'preact/hooks'
+import { RefObject } from 'preact'
+import {
+	sideBarAppSettingRef,
+	sideBarItemRef,
+	sideBarRef,
+	tutorial,
+} from './tutorial'
 
 const { useTranslation } = createTranslation({
 	ru: {
@@ -33,9 +41,19 @@ const { useTranslation } = createTranslation({
 
 export const SideBar = () => {
 	const t = useTranslation()
+	const tutorialStatus = useUnit(tutorial.$status)
+
+	useEffect(() => {
+		if (tutorialStatus !== 'completed') tutorial.show()
+	}, [])
+
 	return (
-		<div className={'side-bar'}>
-			<Icon routePath={'controller-editor'} title={t('botCod')}>
+		<div className={'side-bar'} ref={sideBarRef}>
+			<Icon
+				routePath={'controller-editor'}
+				title={t('botCod')}
+				htmlRef={sideBarItemRef}
+			>
 				<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 					<path d="M9.4 16.6L4.8 12l4.6-4.6L8 6l-6 6 6 6 1.4-1.4zm5.2 0l4.6-4.6-4.6-4.6L16 6l6 6-6 6-1.4-1.4z" />
 				</svg>
@@ -61,6 +79,7 @@ export const SideBar = () => {
 				}
 				className={clsx('side-bar-item', 'app-settings')}
 				title={t('appSettings')}
+				ref={sideBarAppSettingRef}
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -84,9 +103,11 @@ interface IconProps {
 	routePath: RoutesPath
 	title: string
 	children: JSXInternal.Element
+	htmlRef?: RefObject<HTMLDivElement>
+	[k: string]: any
 }
 
-const Icon = ({ children, routePath, title }: IconProps) => {
+const Icon = ({ children, routePath, title, htmlRef, ...props }: IconProps) => {
 	const { page: currentPath = '' } = useUnit($locationSearch)
 	const active = pathIsActive(routePath, currentPath)
 	return (
@@ -96,6 +117,8 @@ const Icon = ({ children, routePath, title }: IconProps) => {
 			}
 			className={clsx('side-bar-item', active ? 'active' : null)}
 			title={title}
+			ref={htmlRef}
+			{...props}
 		>
 			<div className={'side-bar-item-icon'}>{children}</div>
 			{title ? <div className={'side-bar-item-title'}>{title}</div> : null}
@@ -121,7 +144,9 @@ const SettingsApp = ({ close }: { close: () => void }) => {
 				</div>
 			</div>
 			<div className={'popup-footer'}>
-				<Button onClick={close}>{t('ok')}</Button>
+				<Button color="primary" onClick={close}>
+					{t('ok')}
+				</Button>
 			</div>
 		</div>
 	)

@@ -4,6 +4,10 @@ import {
 	removedFileCode,
 	createdFileCode,
 	$codesModified,
+	codeListRef,
+	addCodeRef,
+	tutorialList,
+	loadCodeRef,
 } from '../model'
 import { UploadedCode } from 'model'
 import './styles.scss'
@@ -19,6 +23,7 @@ import {
 	UploadIcon,
 } from 'ui'
 import { createTranslation, htmlFormToJson, createAndDownloadFile } from 'libs'
+import { useEffect } from 'react'
 
 export interface LoaderScriptProps {
 	active?: string | null
@@ -54,6 +59,10 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 	const codes = useUnit($codesModified)
 	const t = useTranslation()
 
+	useEffect(() => {
+		tutorialList.show()
+	}, [])
+
 	const createCodeFile = async () => {
 		const { status, htmlElement } = await showPopup({
 			content: props => (
@@ -86,14 +95,14 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 	}
 
 	return (
-		<div className={'code-loader'}>
+		<div className={'code-loader'} ref={codeListRef}>
 			<div className={'header'}>
 				<div className={'title'}>{t('fileList')}</div>
 				<div className={'toolbar'}>
-					<div onClick={createCodeFile}>
+					<div onClick={createCodeFile} ref={addCodeRef}>
 						<AddIcon />
 					</div>
-					<div onClick={() => uploadedFileCode()}>
+					<div ref={loadCodeRef} onClick={() => uploadedFileCode()}>
 						<UploadIcon />
 					</div>
 				</div>
