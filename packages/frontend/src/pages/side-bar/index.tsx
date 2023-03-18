@@ -10,7 +10,7 @@ import {
 	Languages,
 } from 'libs'
 import './styles.scss'
-import { Button, DropDown, showPopup } from 'ui'
+import { Button, DropDown, showPopup, usePopup } from 'ui'
 import { useEffect } from 'preact/hooks'
 import { RefObject } from 'preact'
 import {
@@ -19,6 +19,7 @@ import {
 	sideBarRef,
 	tutorial,
 } from './tutorial'
+import { SettingsApp } from 'features/settings-app'
 
 const { useTranslation } = createTranslation({
 	ru: {
@@ -26,21 +27,18 @@ const { useTranslation } = createTranslation({
 		maps: 'Карты',
 		game: 'Игра',
 		appSettings: 'Настройки приложения',
-		language: 'Язык',
-		ok: 'Ок',
 	},
 	en: {
 		botCod: 'Bot codes',
 		maps: 'Maps',
 		game: 'Game',
 		appSettings: 'App settings',
-		language: 'Language',
-		ok: 'Ok',
 	},
 })
 
 export const SideBar = () => {
 	const t = useTranslation()
+	const settingPopup = usePopup()
 
 	useEffect(() => {
 		tutorial.start()
@@ -73,9 +71,7 @@ export const SideBar = () => {
 					</svg>
 				</Icon> */}
 			<div
-				onClick={() =>
-					showPopup({ content: props => <SettingsApp {...props} /> })
-				}
+				onClick={() => settingPopup.onOpen()}
 				className={clsx('side-bar-item', 'app-settings')}
 				title={t('appSettings')}
 				ref={sideBarAppSettingRef}
@@ -94,6 +90,9 @@ export const SideBar = () => {
 					</g>
 				</svg>
 			</div>
+			{settingPopup.open ? (
+				<SettingsApp onClose={settingPopup.onClose} />
+			) : null}
 		</div>
 	)
 }
@@ -121,32 +120,6 @@ const Icon = ({ children, routePath, title, htmlRef, ...props }: IconProps) => {
 		>
 			<div className={'side-bar-item-icon'}>{children}</div>
 			{title ? <div className={'side-bar-item-title'}>{title}</div> : null}
-		</div>
-	)
-}
-
-const SettingsApp = ({ close }: { close: () => void }) => {
-	const t = useTranslation()
-	const activeLanguage = useUnit($activeLanguage)
-	const options = Object.values(Languages).map(l => ({ id: l, text: l }))
-	return (
-		<div className={'app-setting-wrapper'}>
-			<div className={'popup-header'}>{t('appSettings')}</div>
-			<div className={'popup-content app-setting-content'}>
-				<div className={'app-setting-item'}>
-					<div>{t('language')}</div>
-					<DropDown
-						initValue={activeLanguage}
-						options={options}
-						onChange={id => changeLanguage(id as Languages)}
-					/>
-				</div>
-			</div>
-			<div className={'popup-footer'}>
-				<Button color="primary" onClick={close}>
-					{t('ok')}
-				</Button>
-			</div>
 		</div>
 	)
 }
