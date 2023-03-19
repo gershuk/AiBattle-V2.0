@@ -1,4 +1,5 @@
-import { createTutorial } from 'libs/tutorial'
+import { createEvent, sample } from 'effector'
+import { createTutorial, resetAllTutorials } from 'libs/tutorial'
 import { createRef } from 'preact'
 import { createTutorialPanel } from 'ui'
 
@@ -39,4 +40,11 @@ const tutorial = createTutorial({
 	id: 'side-bar-tutorial',
 })
 
-export { sideBarRef, sideBarItemRef, sideBarAppSettingRef, tutorial }
+const playTutorial = createEvent()
+
+sample({
+	clock: [playTutorial, resetAllTutorials],
+	target: tutorial.start,
+})
+
+export { sideBarRef, sideBarItemRef, sideBarAppSettingRef, playTutorial }

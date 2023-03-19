@@ -178,7 +178,7 @@ export const showMessage = ({
 }
 
 export interface Popup {
-	children: JSXInternal.Element
+	children: ComponentChild
 	htmlRef?: RefObject<HTMLDivElement>
 	title?: string
 	footerContent?: JSXInternal.Element

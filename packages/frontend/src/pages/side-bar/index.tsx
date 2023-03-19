@@ -2,22 +2,16 @@ import { useUnit } from 'effector-react'
 import { JSXInternal } from 'preact/src/jsx'
 import { pathIsActive, RoutesPath } from '../routing'
 import { $locationSearch, historyMethods } from 'model'
-import {
-	$activeLanguage,
-	changeLanguage,
-	clsx,
-	createTranslation,
-	Languages,
-} from 'libs'
+import { clsx, createTranslation } from 'libs'
 import './styles.scss'
-import { Button, DropDown, showPopup, usePopup } from 'ui'
+import { usePopup } from 'ui'
 import { useEffect } from 'preact/hooks'
 import { RefObject } from 'preact'
 import {
+	playTutorial,
 	sideBarAppSettingRef,
 	sideBarItemRef,
 	sideBarRef,
-	tutorial,
 } from './tutorial'
 import { SettingsApp } from 'features/settings-app'
 
@@ -41,7 +35,7 @@ export const SideBar = () => {
 	const settingPopup = usePopup()
 
 	useEffect(() => {
-		tutorial.start()
+		playTutorial()
 	}, [])
 
 	return (

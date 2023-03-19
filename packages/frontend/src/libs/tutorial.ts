@@ -22,11 +22,27 @@ const initTutorialsStatus = ((): { [id: string]: TutorialsStatus } => {
 	}
 })()
 
+const initEnableTutorials = ((): boolean => {
+	try {
+		const status =
+			(localStorage.getItem('tutorials-enable') ?? 'true') === 'true'
+		return status
+	} catch (error) {
+		return true
+	}
+})()
+
 const $tutorialsStatus = createStore<{ [id: string]: TutorialsStatus }>(
 	initTutorialsStatus
 )
 
+const $enableTutorials = createStore(initEnableTutorials)
+
 const setTutorialStatus = createEvent<{ id: string; status: TutorialsStatus }>()
+
+const resetAllTutorials = createEvent()
+
+const setEnableTutorials = createEvent<boolean>()
 
 //инициализирует статус туторила, если его нет или он не 'completed' то создает запись со статусом 'not-started'
 const initTutorial = createEvent<{ id: string }>()
@@ -35,6 +51,13 @@ const saveTutorialsStatusFx = attach({
 	source: $tutorialsStatus,
 	effect: tutorials => {
 		localStorage.setItem('tutorials-statuses', JSON.stringify(tutorials))
+	},
+})
+
+const saveTutorialsEnableFx = attach({
+	source: $enableTutorials,
+	effect: enable => {
+		localStorage.setItem('tutorials-enable', String(enable))
 	},
 })
 
@@ -48,7 +71,13 @@ $tutorialsStatus.on(initTutorial, (tutorials, { id }) => ({
 	[id]: tutorials?.[id] === 'completed' ? 'completed' : 'not-started',
 }))
 
+$tutorialsStatus.on(resetAllTutorials, () => ({}))
+
+$enableTutorials.on(setEnableTutorials, (_, enable) => enable)
+
 sample({ clock: $tutorialsStatus, target: saveTutorialsStatusFx })
+
+sample({ clock: $enableTutorials, target: saveTutorialsEnableFx })
 
 interface TutorialStep {
 	element?: null | HTMLElement | (() => HTMLElement | null)
@@ -88,7 +117,7 @@ interface Tutorial {
 	id: string
 }
 
-export const createTutorial = ({
+const createTutorial = ({
 	steps,
 	delayStart = 0,
 	view: viewCreator,
@@ -102,7 +131,9 @@ export const createTutorial = ({
 		selectedContainer: HTMLDivElement | null
 		overlay: HTMLDivElement | null
 	}>({ view: null, selectedContainer: null, overlay: null })
-	const $status = $tutorialsStatus.map(tutorials => tutorials[id])
+	const $status = $tutorialsStatus.map(
+		tutorials => tutorials[id] ?? 'not-started'
+	)
 
 	const $steps = createStore(steps)
 	const $activeIndexStep = createStore<number | null>(null)
@@ -351,12 +382,20 @@ export const createTutorial = ({
 	})
 
 	sample({
+		source: [$enableTutorials, $status.map(status => status === 'not-started')],
 		clock: start,
-		filter: $status.map(status => status === 'not-started'),
+		filter: ([enable, notStarted]) => enable && notStarted,
 		target: show,
 	})
 
 	createViewFx.fail.watch(console.error)
 
 	return { $status, start, show, close, resetStatus, setActiveIndexStep }
+}
+
+export {
+	createTutorial,
+	$enableTutorials,
+	setEnableTutorials,
+	resetAllTutorials,
 }
