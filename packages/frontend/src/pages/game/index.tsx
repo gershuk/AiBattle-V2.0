@@ -1,8 +1,10 @@
 import { useUnit } from 'effector-react'
 import { GameController, ViewportGame } from 'features/game-controller'
 import { createPanelSizeController } from 'libs'
+import { useEffect } from 'react'
 import { SplitPanel } from 'ui'
 import './styles.scss'
+import { tutorialGameSetting } from './tutorials'
 
 const { $sizes, setSizes } = createPanelSizeController(400)
 
@@ -12,6 +14,10 @@ export const GamePage = () => {
 		setSizes([...sizesPanel])
 		window.dispatchEvent(new Event('resize'))
 	}
+
+	useEffect(() => {
+		tutorialGameSetting.start()
+	}, [])
 
 	return (
 		<div class={'controller-editor'}>

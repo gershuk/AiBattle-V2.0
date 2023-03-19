@@ -42,7 +42,6 @@ export const tutorialMapEditor = createTutorial({
 		},
 		{
 			element: () => document.querySelector('.json-map-editor .tile-map'),
-			// TODO добавить видео
 			message:
 				'Ты можешь уменьшать/увеличивать масштаб карты колёсиком мышки при нажатом ctrl. А также перемещать карту захватом мышки.',
 			viewPosition: 'top-left',
