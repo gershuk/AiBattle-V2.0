@@ -1,6 +1,6 @@
 import { GAME_ENGINE_TRANSLATION, SceneParams } from 'api/engine'
 import { useUnit } from 'effector-react'
-import { createTranslation, htmlFormToJson } from 'libs'
+import { combineTranslation, createTranslation, htmlFormToJson } from 'libs'
 import { $codesData, $dataMaps } from 'model'
 import { useMemo } from 'preact/hooks'
 import { Button, FormGenerator, AllFields, StartIcon, StopIcon } from 'ui'
@@ -51,7 +51,7 @@ const _formFields = [
 ] as const
 
 const { useTranslation } = createTranslation(
-	GAME_ENGINE_TRANSLATION.merge({
+	combineTranslation(GAME_ENGINE_TRANSLATION, {
 		ru: {
 			map: 'Карта',
 		},

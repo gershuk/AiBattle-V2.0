@@ -93,12 +93,17 @@ const createTranslation = <L extends TranslationItem>(
 const createSourceTranslation = <L extends TranslationItem>(
 	scheme: Translation<L>
 ) => {
-	const merge = <T extends TranslationItem>(
-		otherScheme: Translation<T>
-	): Translation<T & L> => {
-		return mergeDeep({}, scheme, otherScheme)
-	}
-	return { scheme, merge }
+	return scheme
+}
+
+export const combineTranslation = <
+	A extends TranslationItem,
+	B extends TranslationItem
+>(
+	a: Translation<A>,
+	b: Translation<B>
+): Translation<A & B> => {
+	return mergeDeep({}, a, b)
 }
 
 export {

@@ -1,6 +1,6 @@
 import { GAME_ENGINE_TRANSLATION } from 'api'
 import { useUnit } from 'effector-react'
-import { createTranslation } from 'libs'
+import { combineTranslation, createTranslation } from 'libs'
 import { ComponentChild } from 'preact'
 import { useMemo } from 'preact/hooks'
 import { FormGenerator, AllFields } from 'ui'
@@ -52,7 +52,7 @@ const _formFields = [
 ] as const
 
 const { useTranslation } = createTranslation(
-	GAME_ENGINE_TRANSLATION.merge({
+	combineTranslation(GAME_ENGINE_TRANSLATION, {
 		ru: {
 			configGame: 'Конфигурация игры',
 		},
