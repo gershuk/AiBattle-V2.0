@@ -5,12 +5,11 @@ import { ImageLoader } from './ResourceStorage/ImageLoader'
 import { IScene, PlayModeParameters, SceneParameters } from './Scene/IScene'
 import { Scene } from './Scene/Scene'
 import {
-	AbstractController,
 	AbstractControllerCommand,
 	AbstractControllerData,
-	RemoteController,
 } from './UserAIRuner/AbstractController'
-import { LoadControllerFromString } from './UserAIRuner/SafeEval'
+import { IAsyncControllerBridge } from './UserAIRuner/AsyncControllerBridge'
+import { WorkerBridge } from './UserAIRuner/WorkerBridge'
 
 export interface IGameEngine {
 	get renderOffset(): Vector2
@@ -43,14 +42,13 @@ export interface IGameEngine {
 
 	GetMessage(component: GameObjectComponent): [number, Message?]
 
-	CreateController<
+	CreateControllerBridge<
 		TInitData extends AbstractControllerData,
 		TTurnData extends AbstractControllerData,
-		TCommand extends AbstractControllerCommand,
-		TController extends AbstractController<TInitData, TTurnData, TCommand>
+		TCommand extends AbstractControllerCommand
 	>(
 		controllerData: ControllerCreationData
-	): TController | RemoteController<TInitData, TTurnData, TCommand>
+	): IAsyncControllerBridge<TInitData, TTurnData, TCommand>
 }
 
 export class GameEngine implements IGameEngine {
@@ -138,19 +136,17 @@ export class GameEngine implements IGameEngine {
 		return this.scene.messageBroker.GetMessage(component)
 	}
 
-	CreateController<
+	CreateControllerBridge<
 		TInitData extends AbstractControllerData,
 		TTurnData extends AbstractControllerData,
-		TCommand extends AbstractControllerCommand,
-		TController extends AbstractController<TInitData, TTurnData, TCommand>
+		TCommand extends AbstractControllerCommand
 	>(
 		controllerData: ControllerCreationData
-	): TController | RemoteController<TInitData, TTurnData, TCommand> {
-		return controllerData.isRemote
-			? new RemoteController<TInitData, TTurnData, TCommand>()
-			: LoadControllerFromString<TInitData, TTurnData, TCommand, TController>(
-					controllerData.text
-			  )
+	): IAsyncControllerBridge<TInitData, TTurnData, TCommand> {
+		return new WorkerBridge<TInitData, TTurnData, TCommand>(
+			controllerData.text,
+			controllerData.uuid
+		)
 	}
 }
 

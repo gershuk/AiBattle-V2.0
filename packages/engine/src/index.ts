@@ -24,11 +24,13 @@ import {
 } from 'Bomberman/Scripts/MapData'
 import {
 	AbstractController,
-	ControllerBodyParameters,
-	ControllerBody,
 	AbstractControllerData,
 	AbstractControllerCommand,
 } from 'GameEngine/UserAIRuner/AbstractController'
+import {
+	ControllerBody,
+	ControllerBodyParameters,
+} from 'GameEngine/UserAIRuner/ControllerBody'
 
 export {
 	type IGameEngine,

@@ -84,7 +84,7 @@ export class BombermanGame extends GameEngine {
 		let i = 0
 		for (let controllerData of parameters.controllers) {
 			const manBodyParameters = new ManBodyParameters(
-				this.CreateController(controllerData),
+				this.CreateControllerBridge(controllerData),
 				colliderSystem,
 				(position: Vector2, damage: number, range: number, ticksToExplosion) =>
 					this.CreateBomb(

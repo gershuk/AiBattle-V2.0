@@ -44,6 +44,7 @@ engine
 					GetRandomInt(min, max) {\
 						min = Math.ceil(min);\
 						max = Math.floor(max);\
+						while(true){}\
 						return Math.floor(Math.random() * (max - min)) + min;\
 					}\
 					\
@@ -51,8 +52,7 @@ engine
 						return {bombermanAction:this.GetRandomInt(0, 6)};\
 					}\
 					\
-				} \
-				new Controller()'
+				}'
 				),
 				new ControllerCreationData(
 					'class Controller { \
@@ -68,8 +68,7 @@ engine
 						return {bombermanAction:this.GetRandomInt(0, 6)};\
 					}\
 					\
-				} \
-				new Controller()'
+				}'
 				),
 			]
 		)

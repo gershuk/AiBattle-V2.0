@@ -16,11 +16,10 @@ import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
 import { UpdatableObjectArrayContainer } from 'GameEngine/ObjectBaseType/UpdatableObjectArrayContainer'
 import {
-	AbstractController,
 	AbstractControllerCommand,
 	AbstractControllerData,
-	ControllerBody,
 } from 'GameEngine/UserAIRuner/AbstractController'
+import { ControllerBody } from 'GameEngine/UserAIRuner/ControllerBody'
 
 enum SceneState {
 	Init,
@@ -322,12 +321,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 				ControllerBody<
 					AbstractControllerData,
 					AbstractControllerData,
-					AbstractControllerCommand,
-					AbstractController<
-						AbstractControllerData,
-						AbstractControllerData,
-						AbstractControllerCommand
-					>
+					AbstractControllerCommand
 				>
 			>[]
 
@@ -340,7 +334,6 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	protected async CalcCommands(turnIndex: number) {
-		const promises: Promise<unknown>[] = []
 		for (let gameObject of this.gameObjectRefs) {
 			const bodiesRefs = gameObject.object.GetComponents(
 				ControllerBody
@@ -348,21 +341,14 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 				ControllerBody<
 					AbstractControllerData,
 					AbstractControllerData,
-					AbstractControllerCommand,
-					AbstractController<
-						AbstractControllerData,
-						AbstractControllerData,
-						AbstractControllerCommand
-					>
+					AbstractControllerCommand
 				>
 			>[]
 
 			for (let body of bodiesRefs) {
-				promises.push(body.object.CalcAndExecuteCommand(turnIndex))
+				await body.object.CalcAndExecuteCommand(turnIndex)
 			}
 		}
-
-		return Promise.all(promises)
 	}
 
 	public async DoNextTurn(): Promise<unknown> {

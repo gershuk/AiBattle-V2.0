@@ -1,15 +1,7 @@
-import {
-	GameObjectComponent,
-	ComponentParameters,
-} from 'GameEngine/BaseComponents/GameObjectComponent'
 import { DiscreteMovementComponent } from 'GameEngine/BaseComponents/DiscreteColliderSystem/DiscreteMovementComponent'
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
-import {
-	ControllerBody,
-	ControllerBodyParameters,
-} from 'GameEngine/UserAIRuner/AbstractController'
 import { HealthComponent } from './Health'
 import {
 	BodyPublicData,
@@ -26,16 +18,19 @@ import { DiscreteColliderSystem } from 'GameEngine/BaseComponents/DiscreteCollid
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 import {
 	BombermanActions,
-	BombermanController,
 	BombermanControllerCommand,
 	BombermanControllerData,
 } from './BombermanController'
+import {
+	ControllerBody,
+	ControllerBodyParameters,
+} from 'GameEngine/UserAIRuner/ControllerBody'
+import { IAsyncControllerBridge } from 'GameEngine/UserAIRuner/AsyncControllerBridge'
 
 export class ManBody extends ControllerBody<
 	BombermanControllerData,
 	BombermanControllerData,
-	BombermanControllerCommand,
-	BombermanController
+	BombermanControllerCommand
 > {
 	private _bombSpawnFunction: (
 		position: Vector2,
@@ -58,8 +53,6 @@ export class ManBody extends ControllerBody<
 	private _healthComponent: SafeReference<HealthComponent>
 	private _discreteColliderSystem: DiscreteColliderSystem
 
-	private _controller: BombermanController
-
 	Init(gameObject: IGameObject, parameters?: ManBodyParameters): void {
 		super.Init(gameObject, parameters)
 		if (parameters) {
@@ -76,8 +69,6 @@ export class ManBody extends ControllerBody<
 			this._lastRestoreTurn = this.gameObject.scene.turnIndex
 
 			this._discreteColliderSystem = parameters.discreteColliderSystem
-
-			this._controller = parameters.controller
 		}
 	}
 
@@ -154,9 +145,17 @@ export class ManBody extends ControllerBody<
 		)
 	}
 
+	public async InitStartData(): Promise<unknown> {
+		await this.InitStartDataWithTimeout(
+			new BombermanControllerData(this.GetMapData())
+		).catch(reason => console.warn(reason))
+		return Promise.resolve()
+	}
+
 	public async CalcAndExecuteCommand(turnIndex: number): Promise<unknown> {
 		const command = await this.GetCommandWithTimeout(
-			new BombermanControllerData(this.GetMapData())
+			new BombermanControllerData(this.GetMapData()),
+			turnIndex
 		).catch(reason => {
 			console.warn(reason)
 			return BombermanControllerCommand.GetIdleCommand()
@@ -225,8 +224,7 @@ export class ManBody extends ControllerBody<
 export class ManBodyParameters extends ControllerBodyParameters<
 	BombermanControllerData,
 	BombermanControllerData,
-	BombermanControllerCommand,
-	BombermanController
+	BombermanControllerCommand
 > {
 	bombDamage: number
 	blastRange: number
@@ -246,7 +244,11 @@ export class ManBodyParameters extends ControllerBodyParameters<
 	) => GameObject
 
 	constructor(
-		controller: BombermanController,
+		controllerBridge: IAsyncControllerBridge<
+			BombermanControllerData,
+			BombermanControllerData,
+			BombermanControllerCommand
+		>,
 		discreteColliderSystem: DiscreteColliderSystem,
 		bombSpawnFunction: (
 			position: Vector2,
@@ -265,7 +267,13 @@ export class ManBodyParameters extends ControllerBodyParameters<
 		executionPriority: number = 0,
 		uuid?: string
 	) {
-		super(controller, initTimeout, commandCalcTimeout, executionPriority, uuid)
+		super(
+			controllerBridge,
+			initTimeout,
+			commandCalcTimeout,
+			executionPriority,
+			uuid
+		)
 		this.discreteColliderSystem = discreteColliderSystem
 		this.bombDamage = bombDamage
 		this.blastRange = blastRange
