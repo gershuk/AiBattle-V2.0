@@ -45,7 +45,7 @@ interface TranslationItem {
 }
 
 type Translation<T extends TranslationItem> = {
-	[key in Languages]?: T
+	[key in Languages]: T
 }
 
 type GetterTranslation<T> = {
@@ -103,7 +103,7 @@ export const combineTranslation = <
 	a: Translation<A>,
 	b: Translation<B>
 ): Translation<A & B> => {
-	return mergeDeep({}, a, b)
+	return mergeDeep({}, a, b) as Translation<A & B>
 }
 
 export {

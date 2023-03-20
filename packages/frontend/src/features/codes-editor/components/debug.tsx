@@ -65,11 +65,11 @@ const { useTranslation } = createTranslation(
 	combineTranslation(GAME_ENGINE_TRANSLATION, {
 		ru: {
 			map: 'Карта',
-			emptyMaps: 'Карты отсутствуют создать новую?',
+			emptyMaps: 'Карты отсутствуют, создать новую?',
 		},
 		en: {
 			map: 'Map',
-			emptyMaps: 'Are the cards missing?',
+			emptyMaps: 'Cards are missing, create a new one?',
 		},
 	})
 )

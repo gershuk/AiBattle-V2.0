@@ -1,8 +1,8 @@
 import { useUnit } from 'effector-react'
 import { createTranslation } from 'libs'
-import { $dataMaps } from 'model'
+import { $dataMaps, changeRoute, RoutePath } from 'model'
 import { useMemo } from 'preact/hooks'
-import { DropDown } from 'ui'
+import { DropDown, showConfirm } from 'ui'
 import { $activeGame } from '../../model'
 import { $selectedMap, selected } from '../../model/select-map'
 import './styles.scss'
@@ -10,9 +10,11 @@ import './styles.scss'
 const { useTranslation } = createTranslation({
 	ru: {
 		map: 'Карта',
+		emptyMaps: 'Карты отсутствуют, создать новую?',
 	},
 	en: {
 		map: 'Map',
+		emptyMaps: 'Cards are missing, create a new one?',
 	},
 })
 
@@ -35,6 +37,12 @@ export const MapSelection = () => {
 					initValue={activeMap?.name}
 					options={maps.map(({ name }) => ({ id: name, text: name }))}
 					onChange={x => selected(x)}
+					onClick={async () => {
+						if (!maps.length) {
+							const res = await showConfirm({ content: t('emptyMaps') })
+							if (res) changeRoute(RoutePath.mapEditor)
+						}
+					}}
 				/>
 			</div>
 		</div>

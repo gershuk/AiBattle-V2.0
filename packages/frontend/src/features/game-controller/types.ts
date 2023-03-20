@@ -7,6 +7,5 @@ export interface Bot {
 
 export interface SubmitForm {
 	bot: Bot[]
-	'replay-name': string
 	sceneParams: SceneParams
 }

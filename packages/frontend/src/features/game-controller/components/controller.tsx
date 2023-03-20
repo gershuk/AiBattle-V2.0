@@ -43,6 +43,7 @@ export const GameController = () => {
 					e.preventDefault()
 					if (!startedGameFlag) {
 						const jsonForm = htmlFormToJson<SubmitForm>(e.currentTarget)
+						if (!jsonForm?.bot) jsonForm.bot = []
 						startedGame(jsonForm)
 					} else {
 						stoppedGame()

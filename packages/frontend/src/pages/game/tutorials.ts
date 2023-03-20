@@ -39,7 +39,7 @@ export const tutorialGameStart = createTutorial({
 				'Ты можешь уменьшать/увеличивать масштаб игры колёсиком мышки при нажатом ctrl. А также перемещать карту захватом мышки.',
 			title: 'Удобства',
 			element: () => document.querySelector('.awesome-canvas-game canvas'),
-			viewPosition: 'top-right',
+			viewPosition: 'left',
 		},
 	],
 	delayStart: 100,
