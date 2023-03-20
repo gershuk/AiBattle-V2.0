@@ -1,13 +1,36 @@
 import { sample } from 'effector'
-import { createTutorial } from 'libs/tutorial'
+import { createTranslation, createTutorial } from 'libs'
 import { createTutorialPanel } from 'ui'
 import { $selectMap } from './model'
+
+const { getTranslationItem } = createTranslation({
+	ru: {
+		maps: 'Твои карты',
+		mapsMsg: 'Чтобы создать карту, воспользуйся мастером создания карты',
+		mapEditor: 'Редактор карты',
+		jsonEditor: 'JSON редактор карты, структура простая, ты разберешься',
+		tileEditor: 'Тайловый редактор карты. Рисуй! Твори!',
+		draw: 'Для рисования надо тыкнуть на нужный блок, невестись на карту справа нажать/зажать левую кнопку мышки',
+		zoom: 'Ты можешь уменьшать/увеличивать масштаб карты колёсиком мышки при нажатом ctrl. А также перемещать карту захватом мышки.',
+		spawn: 'И не забудь добавить места появления ботов. Это очень важно!',
+	},
+	en: {
+		maps: 'Your maps',
+		mapsMsg: 'Use the map wizard to create a map',
+		mapEditor: 'Map Editor',
+		jsonEditor: `JSON map editor, structure is simple, you'll understand`,
+		tileEditor: 'Map tile editor. Draw! Create!',
+		draw: 'To draw, you need to click on the desired block, move to the map on the right press/hold the left mouse button',
+		zoom: 'You can zoom in/zoom out the map with the mouse wheel while pressing ctrl. You can also move the map with the mouse.',
+		spawn: `And don't forget to add the spawn locations for the bots. It is very important!`,
+	},
+})
 
 export const tutorialMapList = createTutorial({
 	steps: [
 		{
-			message: 'Чтобы создать карту воспользуйся мастером создания карты',
-			title: 'Твои карты',
+			message: () => getTranslationItem('mapsMsg'),
+			title: () => getTranslationItem('mapEditor'),
 			element: () => document.querySelector('.maps-list .add-map'),
 			viewPosition: 'bottom-right',
 		},
@@ -21,38 +44,35 @@ export const tutorialMapEditor = createTutorial({
 	steps: [
 		{
 			element: () => document.querySelector('.json-map-editor .code-editor'),
-			// TODO добавить описание кодов блоков
-			message: 'JSON редактор карты, структура простая ты разберешься',
+			message: () => getTranslationItem('jsonEditor'),
 			viewPosition: 'bottom',
-			title: 'Редактор карты',
+			title: () => getTranslationItem('mapEditor'),
 		},
 		{
 			element: () => document.querySelector('.json-map-editor .preview-map'),
-			message: 'Тайловый радактор карты. Рисуй! Твори!',
+			message: () => getTranslationItem('tileEditor'),
 			viewPosition: 'top',
-			title: 'Редактор карты',
+			title: () => getTranslationItem('mapEditor'),
 		},
 		{
 			element: () =>
 				document.querySelector('.json-map-editor .type-cell-wrapper'),
-			message:
-				'Для рисования надо тыкнуть на нужный блок, невестись на карту справа нажать/зажать левую кнопку мышки',
+			message: () => getTranslationItem('draw'),
 			viewPosition: 'top-right',
-			title: 'Редактор карты',
+			title: () => getTranslationItem('mapEditor'),
 		},
 		{
 			element: () => document.querySelector('.json-map-editor .tile-map'),
-			message:
-				'Ты можешь уменьшать/увеличивать масштаб карты колёсиком мышки при нажатом ctrl. А также перемещать карту захватом мышки.',
+			message: () => getTranslationItem('zoom'),
 			viewPosition: 'top-left',
-			title: 'Редактор карты',
+			title: () => getTranslationItem('mapEditor'),
 		},
 		{
 			element: () =>
 				document.querySelector('.json-map-editor .list-spawner-wrapper'),
-			message: 'И не забудь добавить места появления юнитов. Это очень важно!',
+			message: () => getTranslationItem('spawn'),
 			viewPosition: 'top-right',
-			title: 'Редактор карты',
+			title: () => getTranslationItem('mapEditor'),
 		},
 	],
 	delayStart: 500,
