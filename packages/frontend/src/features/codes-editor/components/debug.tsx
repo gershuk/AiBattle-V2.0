@@ -1,9 +1,20 @@
 import { GAME_ENGINE_TRANSLATION, SceneParams } from 'api/engine'
 import { useUnit } from 'effector-react'
-import { combineTranslation, createTranslation, htmlFormToJson } from 'libs'
-import { $codesData, $dataMaps } from 'model'
+import {
+	combineTranslation,
+	createTranslation,
+	htmlFormToJson,
+} from 'libs'
+import { $codesData, $dataMaps, changeRoute, RoutePath } from 'model'
 import { useMemo } from 'preact/hooks'
-import { Button, FormGenerator, AllFields, StartIcon, StopIcon } from 'ui'
+import {
+	Button,
+	FormGenerator,
+	AllFields,
+	StartIcon,
+	StopIcon,
+	showConfirm,
+} from 'ui'
 import {
 	$formValues,
 	$startedAutoTurn,
@@ -54,27 +65,29 @@ const { useTranslation } = createTranslation(
 	combineTranslation(GAME_ENGINE_TRANSLATION, {
 		ru: {
 			map: 'Карта',
+			emptyMaps: 'Карты отсутствуют создать новую?',
 		},
 		en: {
 			map: 'Map',
+			emptyMaps: 'Are the cards missing?',
 		},
 	})
 )
 
 export const Debug = ({ selectedCodeName }: DebugProps) => {
 	const t = useTranslation()
-	const { startedAutoTurn, mapsHashMap, codesHashMap, formValues } = useUnit({
+	const { startedAutoTurn, mapsKV, codesHashMap, formValues } = useUnit({
 		startedAutoTurn: $startedAutoTurn,
-		mapsHashMap: $dataMaps,
+		mapsKV: $dataMaps,
 		codesHashMap: $codesData,
 		formValues: $formValues,
 	})
 
 	const maps = useMemo(() => {
-		return Object.values(mapsHashMap)
+		return Object.values(mapsKV)
 			.filter(x => x.valid)
 			.map(({ name }) => ({ id: name, text: name }))
-	}, [mapsHashMap])
+	}, [mapsKV])
 
 	const formFields = useMemo(
 		() =>
@@ -89,6 +102,12 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 					title: t('map'),
 					disabled: startedAutoTurn,
 					initValue: formValues['mapName'],
+					onClick: async () => {
+						if (!maps.length) {
+							const res = await showConfirm({ content: t('emptyMaps') })
+							if (res) changeRoute(RoutePath.mapEditor)
+						}
+					},
 				},
 				..._formFields.map(field => ({
 					...field,
@@ -113,7 +132,7 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 								sceneParams: SceneParams
 								mapName: string
 							}>(e.currentTarget)
-							const mapData = mapsHashMap[mapName].data!
+							const mapData = mapsKV[mapName].data!
 							const botCode = codesHashMap[selectedCodeName].content
 							engineMethods.init({
 								sceneParams,

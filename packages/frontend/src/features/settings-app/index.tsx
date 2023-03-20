@@ -4,13 +4,11 @@ import {
 	changeLanguage,
 	createTranslation,
 	Languages,
-} from 'libs'
-import {
 	$enableTutorials,
 	resetAllTutorials,
 	setEnableTutorials,
-} from 'libs/tutorial'
-import { historyMethods } from 'model'
+} from 'libs'
+import { changeRoute } from 'model'
 import { Button, DropDown, Popup } from 'ui'
 import './styles.scss'
 
@@ -77,7 +75,7 @@ export const SettingsApp = ({ onClose }: { onClose: () => void }) => {
 
 					<Button
 						onClick={() => {
-							historyMethods.appendParams({ page: '' })
+							changeRoute(null)
 							setEnableTutorials(true)
 							resetAllTutorials()
 						}}

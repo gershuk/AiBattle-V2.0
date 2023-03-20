@@ -3,7 +3,7 @@ import { createTutorial } from 'libs/tutorial'
 import { createTutorialPanel } from 'ui'
 import { $selectCode } from './model'
 
-export const tutorialList = createTutorial({
+export const tutorialCodeList = createTutorial({
 	steps: [
 		{
 			message:

@@ -5,7 +5,7 @@ import { $selectCode, selectedCode, changedCode } from './model'
 import './styles.scss'
 import { createPanelSizeController } from 'libs'
 import { useEffect } from 'react'
-import { tutorialList as tutorialCodeList } from './tutorials'
+import { tutorialCodeList as tutorialCodeList } from './tutorials'
 
 const { $sizes, setSizes } = createPanelSizeController(200)
 

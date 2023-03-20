@@ -1,29 +1,27 @@
 import { useUnit } from 'effector-react'
-import { $locationSearch } from 'model'
 import { ControllerEditorPage } from './controller-editor'
 import { GamePage } from './game'
 import { MapEditorPage } from './map-editor'
-import { ReplaysPage } from './replays'
 import { useMemo } from 'react'
 import { OtherwisePage } from './otherwise'
+import { $locationSearch } from 'libs'
+import { RoutePath } from 'model'
 
 export const routesView = Object.freeze({
 	routes: [
-		{ view: ControllerEditorPage, path: 'controller-editor' },
-		{ view: GamePage, path: 'game' },
-		{ view: MapEditorPage, path: 'map-editor' },
-		{ view: ReplaysPage, path: 'replay' },
+		{ view: ControllerEditorPage, path: RoutePath.controllerEditor },
+		{ view: GamePage, path: RoutePath.game },
+		{ view: MapEditorPage, path: RoutePath.mapEditor },
 	],
 	otherwise: OtherwisePage,
 } as const)
 
-export type RoutesPath = typeof routesView['routes'][number]['path']
 
 export const pathExists = (path: string) => {
 	return !!Object.values(routesView.routes).find(route => route.path === path)
 }
 
-export const pathIsActive = (targetPath: RoutesPath, currentPath: string) => {
+export const pathIsActive = (targetPath: RoutePath, currentPath: string) => {
 	return pathExists(currentPath) && targetPath === currentPath
 }
 
