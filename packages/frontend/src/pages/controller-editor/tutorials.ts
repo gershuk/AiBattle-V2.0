@@ -53,10 +53,10 @@ const { getTranslationItem } = createTranslation({
 		</div>
 		<div style="padding-left: 8px;">
 			<div>0 - nothing</div>
-			<div>1 - walk down</div>
-			<div>2 - be like right</div>
-			<div>3 - look like top</div>
-			<div>4 - walk left</div>
+			<div>1 - down</div>
+			<div>2 - right</div>
+			<div>3 - top</div>
+			<div>4 - left</div>
 			<div>5 - plant the bomb</div>
 		</div>
 		`,

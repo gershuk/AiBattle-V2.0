@@ -38,7 +38,18 @@ const { getTranslationItem } = createTranslation({
 	},
 })
 
-const _codeExample = `// example random bot
+const _codeExample = `/*
+Example random bot
+
+Purpose of codes:
+0 - nothing
+1 - down
+2 - right
+3 - top
+4 - left
+5 - plant the bomb
+*/
+
 class Controller { 
     Init(info) {}
     
@@ -50,12 +61,13 @@ class Controller {
     
     GetCommand(info) { 
         console.log(info);
-        return this.GetRandomInt(0, 6);
+        return { bombermanAction: this.GetRandomInt(0, 6) }
     }
     
 } 
 
 new Controller()`
+
 
 const errorReadStringFile = new Error('error read string from file')
 const errorAbortLoadFileUser = new Error('user abort upload file')
