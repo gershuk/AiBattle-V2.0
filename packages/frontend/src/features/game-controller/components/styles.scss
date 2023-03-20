@@ -1,0 +1,41 @@
+.game-controller {
+	padding: 8px;
+	background: var(--color-medium-bg);
+	height: 100%;
+	display: flex;
+	flex-flow: column;
+	color: var(--color-text);
+	.game-controller-metrics {
+		height: 100%;
+		overflow: auto;
+		margin-bottom: 8px;
+		& > * + * {
+			margin-top: 24px;
+		}
+	}
+	.game-controller-footer {
+		display: flex;
+		justify-content: flex-end;
+		gap: 8px;
+		.btn-toggle-game {
+			padding: 0;
+			width: 30px;
+			height: 30px;
+			svg {
+				fill: var(--color-text-light);
+				stroke: var(--color-text-light);
+			}
+		}
+	}
+	.game-controller-start-form {
+		height: 100%;
+		display: flex;
+		flex-flow: column;
+	}
+}
+
+.viewport-game {
+	overflow: auto;
+	padding: 8px;
+	height: 100%;
+}

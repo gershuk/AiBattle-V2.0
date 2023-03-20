@@ -1,2 +1,2 @@
-export * from './list'
-export * from './editor'
+export * from './components/list'
+export * from './components/editor'

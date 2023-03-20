@@ -1,0 +1,50 @@
+.tutorial-panel {
+	background: var(--color-light-bg);
+	color: var(--color-text);
+	font-size: 14px;
+	min-width: 300px;
+	max-width: 450px;
+	box-shadow: 0px 4px 8px 0px var(--color-box-shadow);
+	border-radius: 3px;
+	.header {
+		display: flex;
+		padding: 16px 16px 0 16px;
+		.title {
+			font-weight: bold;
+		}
+		.close {
+			margin-left: auto;
+			width: 20px;
+			height: 20px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			cursor: pointer;
+
+			&:before,
+			&:after {
+				content: '';
+				position: absolute;
+				width: 12px;
+				height: 1px;
+				background: var(--color-input-text);
+			}
+			&:before {
+				transform: rotate(45deg);
+			}
+			&:after {
+				transform: rotate(-45deg);
+			}
+		}
+	}
+	.body {
+		padding: 16px;
+	}
+	.footer {
+		display: flex;
+		justify-content: space-between;
+		padding: 8px 16px 16px 16px;
+		border-top: 1px solid var(--color-border);
+	}
+}

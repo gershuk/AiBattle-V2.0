@@ -1,7 +1,7 @@
 import { useUnit } from 'effector-react'
 import { ReplayController } from 'features/replay-contoller'
-import { ReplayList } from 'features/replays-list/list'
-import { useMemo } from 'preact/hooks'
+import { ReplayList } from 'features/replays-list/components/list'
+import { createPanelSizeController } from 'libs'
 import { Button, SplitPanel } from 'ui'
 import {
 	$selectReplay,
@@ -11,17 +11,17 @@ import {
 } from './model'
 import './styles.scss'
 
-export const Replays = () => {
-	const { selectReplay, startGame } = useUnit({
+const { $sizes, setSizes } = createPanelSizeController(200)
+
+export const ReplaysPage = () => {
+	const { selectReplay, startGame, sizes } = useUnit({
 		selectReplay: $selectReplay,
 		startGame: $startGame,
+		sizes: $sizes,
 	})
-	const sizes = useMemo(() => {
-		const width = window.innerWidth
-		const r = (300 / width) * 100
-		return [r, 100 - r]
-	}, [])
-	const handlerDragEnd = () => {
+
+	const handlerDragEnd = (sizesPanel: number[]) => {
+		setSizes([...sizesPanel])
 		window.dispatchEvent(new Event('resize'))
 	}
 

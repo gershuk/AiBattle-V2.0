@@ -1,0 +1,26 @@
+.replays-list {
+	display: flex;
+	flex-flow: column;
+	.header {
+		padding: 8px 8px 0 8px;
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 5px;
+		.title {
+			font-size: 14px;
+			white-space: nowrap;
+			color: var(--color-text);
+		}
+		.toolbar {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			& > * + * {
+				margin-left: 4px;
+			}
+			svg {
+				cursor: pointer;
+			}
+		}
+	}
+}

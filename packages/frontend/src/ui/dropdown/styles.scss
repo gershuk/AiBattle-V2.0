@@ -1,7 +1,8 @@
 .dropdown {
 	display: inline-flex;
 	.dropdown-select {
-		background-color: rgb(255, 255, 255);
+		color: var(--color-input-text);
+		background-color: var(--color-input-bg);
 		padding: 2px 6px 2px 8px;
 		border: none;
 		cursor: pointer;
@@ -11,19 +12,19 @@
 			outline: none;
 		}
 		&:hover {
-			background-color: #e8e8e8;
+			background-color: var(--color-hover-item);
 		}
 	}
 	.clear-dropdown {
 		cursor: pointer;
 		width: 25px;
-		background-color: rgb(255, 255, 255);
+		background-color: var(--color-input-bg);
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		position: relative;
 		&:hover {
-			background-color: #e8e8e8;
+			background-color: var(--color-hover-item);
 		}
 		&:before,
 		&:after {
@@ -31,7 +32,7 @@
 			position: absolute;
 			width: 12px;
 			height: 1px;
-			background: black;
+			background: var(--color-input-text);
 		}
 		&:before {
 			transform: rotate(45deg);
@@ -43,7 +44,7 @@
 	&.disabled {
 		.dropdown-select,
 		.clear-dropdown {
-			background: rgb(202, 202, 202);
+			background: var(--color-input-disable);
 			opacity: 1;
 		}
 	}

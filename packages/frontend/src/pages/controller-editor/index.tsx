@@ -1,18 +1,26 @@
 import { useUnit } from 'effector-react'
-import { useMemo } from 'preact/hooks'
 import { CodesList, EditorCode } from 'features/codes-editor'
 import { SplitPanel } from 'ui'
 import { $selectCode, selectedCode, changedCode } from './model'
 import './styles.scss'
+import { createPanelSizeController } from 'libs'
+import { useEffect } from 'react'
+import { tutorialCodeList as tutorialCodeList } from './tutorials'
 
-export const ControllerEditor = () => {
-	const selectCode = useUnit($selectCode)
-	const sizes = useMemo(() => {
-		const width = window.innerWidth
-		const r = (300 / width) * 100
-		return [r, 100 - r]
+const { $sizes, setSizes } = createPanelSizeController(200)
+
+export const ControllerEditorPage = () => {
+	const { selectCode, sizes } = useUnit({
+		selectCode: $selectCode,
+		sizes: $sizes,
+	})
+
+	useEffect(() => {
+		tutorialCodeList.start()
 	}, [])
-	const handlerDragEnd = () => {
+
+	const handlerDragEnd = (sizesPanel: number[]) => {
+		setSizes([...sizesPanel])
 		window.dispatchEvent(new Event('resize'))
 	}
 

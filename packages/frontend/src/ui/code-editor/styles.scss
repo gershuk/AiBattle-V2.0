@@ -7,21 +7,22 @@
 			monospace;
 	}
 	.ace-tomorrow .ace_gutter {
-		background: white;
+		background: var(--color-light-bg);
 	}
 	.toolbar {
 		padding: 8px 8px 8px 16px;
 		display: flex;
 		align-items: center;
-		background: #f3f3f3;
+		background: var(--color-medium-bg);
 		.toolbar-item {
+			color: var(--color-text);
 			font-size: 12px;
 			line-height: 22px;
 			padding: 0 8px;
 			border-radius: 5px;
 			cursor: pointer;
 			&:hover {
-				background: #e8e8e8;
+				background: var(--color-hover-item);
 			}
 		}
 	}

@@ -1,11 +1,11 @@
-import { openFileExplorer, readFile } from 'api'
+import { openFileExplorer, readFile } from 'libs'
 import { attach, createEvent, sample } from 'effector'
 import { $replays, addReplay, removeReplay } from 'model/replays/model'
 
 const uploadedReplay = createEvent()
 const removedReplay = createEvent<string>()
 
-const loadedReplayFx = attach({
+const loadReplayFx = attach({
 	source: $replays,
 	effect: async replays => {
 		const file = await openFileExplorer({ accept: '*' })
@@ -30,11 +30,11 @@ const loadedReplayFx = attach({
 
 sample({
 	clock: uploadedReplay,
-	target: loadedReplayFx,
+	target: loadReplayFx,
 })
 
 sample({
-	clock: loadedReplayFx.doneData,
+	clock: loadReplayFx.doneData,
 	target: addReplay,
 })
 

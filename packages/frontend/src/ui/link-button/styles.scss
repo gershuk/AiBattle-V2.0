@@ -7,24 +7,24 @@
 	border: none;
 	cursor: pointer;
 	background: transparent;
-	color: rgb(0, 122, 204);
+	color: var(--color-primary);
 	&:hover {
-		background: #e8e8e8;
+		background: var(--color-hover-item);
 	}
 
 	&:not(.disabled) {
 		&.primary {
-			color: rgb(0, 122, 204);
+			color: var(--color-primary);
 		}
 		&.warning {
-			color: rgb(204, 173, 0);
+			color: var(--color-warning);
 		}
 		&.danger {
-			color: rgb(204, 41, 0);
+			color: var(--color-danger);
 		}
 	}
 
 	&.disabled {
-		background: rgb(221 221 221);
+		background: var(--color-input-disable);
 	}
 }

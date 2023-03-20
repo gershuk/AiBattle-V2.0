@@ -6,7 +6,7 @@
 			height: calc(100% - 45px);
 		}
 		.controller-replays-wrapper {
-			background: #f3f3f3;
+			background: var(--color-medium-bg);
 			height: 100%;
 			display: flex;
 			flex-flow: column;

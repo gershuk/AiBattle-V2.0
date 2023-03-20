@@ -9,6 +9,7 @@ export interface InputProps {
 	value?: string
 	onChange?: (value: string) => void
 	required?: boolean
+	autoFocus?: boolean
 	[k: string]: any
 }
 
@@ -20,6 +21,7 @@ export const Input = ({
 	value: valueProps,
 	required,
 	onChange,
+	autoFocus,
 	...props
 }: InputProps) => {
 	const [value, setValue] = useState(valueProps ?? '')
@@ -38,6 +40,12 @@ export const Input = ({
 	useEffect(() => {
 		setValue(valueProps ?? '')
 	}, [valueProps])
+
+	useEffect(() => {
+		if (autoFocus && ref.current) {
+			ref.current.focus()
+		}
+	}, [])
 
 	const handlerChange = (_value: string) => {
 		if (disabled) return

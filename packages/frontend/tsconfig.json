@@ -13,7 +13,8 @@
 		"resolveJsonModule": true,
 		"jsx": "react-jsx",
 		"jsxImportSource": "preact",
-		"strictNullChecks": true
+		"strictNullChecks": true,
+		"sourceMap": true,
 	},
 	"include": ["src"],
 	"compileOnSave": true

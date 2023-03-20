@@ -4,7 +4,7 @@
 		flex-direction: row;
 	}
 	.gutter {
-		background-color: rgb(216, 222, 233);
+		background-color: var(--color-border);
 		cursor: col-resize;
 	}
 
@@ -14,7 +14,7 @@
 
 	&.drag-split {
 		.gutter {
-			background-color: rgb(136, 192, 208);
+			background-color: var(--color-border);
 		}
 	}
 	.column {

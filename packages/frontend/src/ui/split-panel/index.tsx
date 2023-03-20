@@ -1,6 +1,5 @@
+import { useMemo, useState } from 'preact/hooks'
 import { JSXInternal } from 'preact/src/jsx'
-import { useMemo } from 'react'
-import { useState } from 'react'
 import Split, { SplitProps } from 'react-split'
 import './styles.scss'
 

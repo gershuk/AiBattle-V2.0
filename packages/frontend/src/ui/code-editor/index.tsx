@@ -1,44 +1,45 @@
+import { Ace, createEditSession } from 'ace-builds'
 import AceEditor from 'react-ace'
 import './styles.scss'
-import 'ace-builds/src-noconflict/mode-javascript'
-import 'ace-builds/src-noconflict/mode-json'
 import 'ace-builds/src-noconflict/theme-tomorrow'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import { useCallback, useEffect, useRef } from 'preact/hooks'
-import { createAndDownloadFile } from 'api'
-import { Ace, createEditSession } from 'ace-builds'
+import { createTranslation, createAndDownloadFile } from 'libs'
+import { useMemo } from 'react'
 
 interface CodeEditorProps {
-	mode?: 'javascript' | 'json'
 	onChange?: (value: string) => void
 	onSave?: (value: string) => void
 	fileName: string
-	session?: Ace.EditSession
+	session: Ace.EditSession
 }
 
+const { useTranslation } = createTranslation({
+	ru: {
+		save: 'Сохранить',
+		saveToDevice: 'Сохранить на устройство',
+	},
+	en: {
+		save: 'Save',
+		saveToDevice: 'Save to device',
+	},
+})
+
 export const CodeEditor = ({
-	mode,
 	onChange,
 	onSave,
 	fileName,
 	session,
 }: CodeEditorProps) => {
+	const t = useTranslation()
 	const refEditor = useRef<Ace.Editor | null>(null)
+	const mode = useMemo(() => session.getMode(), [session])
 
 	useEffect(() => {
 		if (session && refEditor.current) {
 			refEditor.current.setSession(session)
 		}
 	}, [session])
-
-	// useEffect(() => {
-	// 	if (valueProps !== undefined && refEditor.current) {
-	// 		const activeValue = refEditor.current.getSession().getValue()
-	// 		if (activeValue !== valueProps) {
-	// 			refEditor.current.getSession().setValue(valueProps)
-	// 		}
-	// 	}
-	// }, [valueProps])
 
 	useEffect(() => {
 		return () => {
@@ -92,10 +93,10 @@ export const CodeEditor = ({
 		<div className={'code-editor'}>
 			<div className={'toolbar'}>
 				<div className={'toolbar-item'} onClick={handlerSave}>
-					Сохранить
+					{t('save')}
 				</div>
 				<div className={'toolbar-item'} onClick={handlerSaveDevise}>
-					Сохранить на устройство
+					{t('saveToDevice')}
 				</div>
 			</div>
 			<AceEditor
@@ -115,7 +116,7 @@ export const CodeEditor = ({
 				setOptions={{
 					enableBasicAutocompletion: true,
 					enableLiveAutocompletion: true,
-					enableSnippets: true,
+					enableSnippets: false,
 					showLineNumbers: true,
 					tabSize: 2,
 				}}

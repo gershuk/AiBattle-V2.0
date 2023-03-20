@@ -1,0 +1,16 @@
+.app-setting {
+	font-size: 14px;
+	display: flex;
+	flex-flow: column;
+	gap: 8px;
+
+	.app-setting-item {
+		& > * + * {
+			margin-top: 4px;
+		}
+	}
+
+    .app-setting-reset-tutorial {
+        margin-left: 8px;
+    }
+}

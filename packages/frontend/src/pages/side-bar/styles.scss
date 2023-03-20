@@ -1,0 +1,61 @@
+.side-bar {
+	height: 100%;
+	overflow: visible;
+	width: 50px;
+	width: 50px;
+	position: relative;
+	background: var(--color-medium-bg);
+	display: flex;
+	flex-flow: column;
+
+	.side-bar-item {
+		height: 50px;
+		width: 100%;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-flow: column;
+
+		cursor: pointer;
+		&.active {
+			background: var(--color-active-item);
+			svg,
+			g,
+			path {
+				color: var(--color-text);
+				fill: var(--color-text);
+			}
+		}
+		.side-bar-item-icon {
+			width: 50px;
+			min-width: 50px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			svg {
+				width: 30px;
+			}
+			svg,
+			g,
+			path {
+				color: var(--color-text);
+				fill: var(--color-text);
+			}
+		}
+		.side-bar-item-title {
+			font-size: 10px;
+		}
+
+		&.app-settings {
+			margin-top: auto;
+			&:hover {
+				svg {
+					transform: rotate(90deg);
+				}
+			}
+			svg {
+				transition: 1s transform;
+			}
+		}
+	}
+}

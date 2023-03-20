@@ -1,25 +1,18 @@
 import { combine, createEvent, createStore, sample } from 'effector'
-import { createEngine } from 'libs/engine'
+import { createEngine } from 'api'
 import { $codesData, MapData } from 'model'
-import { ISubmitForm } from '../types'
+import { SubmitForm } from '../types'
 import { $selectedMap } from './select-map'
 
 const engine = createEngine()
 
 const $activeGame = createStore(false)
 
-const $autoStep = createStore(false)
-
-const startedGame = createEvent<ISubmitForm>()
+const startedGame = createEvent<SubmitForm>()
 const stoppedGame = createEvent()
 
-const setAutoStep = createEvent<boolean>()
-
-$activeGame.on(startedGame, () => true)
+$activeGame.on(engine.methods.start.done, () => true)
 $activeGame.on(stoppedGame, () => false)
-
-$autoStep.on(setAutoStep, (_, x) => x)
-$autoStep.on([startedGame, stoppedGame], () => false)
 
 sample({
 	source: combine({
@@ -37,35 +30,14 @@ sample({
 		return {
 			sceneParams,
 			mapData,
-			codesBot
+			codesBot,
 		}
 	},
 	target: engine.methods.init,
 })
 
-sample({
-	clock: engine.methods.init.done,
-	target: engine.methods.start,
-})
+sample({ clock: engine.methods.init.done, target: engine.methods.start })
 
-sample({
-	clock: stoppedGame,
-	target: [
-		engine.methods.stopAutoTurn.prepend(() => {}),
-		setAutoStep.prepend(() => false),
-	],
-})
+sample({ clock: stoppedGame, target: engine.methods.stopAutoTurn })
 
-sample({
-	clock: setAutoStep,
-	filter: enable => enable,
-	target: engine.methods.startAutoTurn.prepend(() => {}),
-})
-
-sample({
-	clock: setAutoStep,
-	filter: enable => !enable,
-	target: engine.methods.stopAutoTurn.prepend(() => {}),
-})
-
-export { $activeGame, $autoStep, startedGame, stoppedGame, setAutoStep, engine }
+export { $activeGame, startedGame, stoppedGame, engine }

@@ -1,47 +1,53 @@
 import { useEffect, useRef, useState } from 'preact/hooks'
+import { JSXInternal } from 'preact/src/jsx'
 import './styles.scss'
 
 interface RangeInputProps {
+	initValue?: number
 	value?: number
 	min?: number
 	max?: number
 	onChange?: (value: number) => void
 	className?: string
+	disabled?: boolean
 	[k: string]: any
 }
 
 export const RangeInput = ({
+	initValue,
 	value: valueProps,
 	min,
 	max,
 	className,
 	onChange,
+	disabled,
 	...props
 }: RangeInputProps) => {
 	const ref = useRef<HTMLInputElement>(null)
-	const [value, setValue] = useState<null | number>(null)
+	const [value, setValue] = useState<null | number>(
+		valueProps ?? initValue ?? null
+	)
 
 	useEffect(() => {
 		if (ref.current) {
-			if (valueProps !== undefined) {
-				ref.current.value = String(valueProps)
-			} else {
-				ref.current.value = String(value ?? '')
-			}
+			ref.current.value = String(value ?? '')
 		}
 	}, [value])
 
 	useEffect(() => {
-		setValue(valueProps ?? null)
+		if (valueProps !== undefined) setValue(valueProps)
 	}, [valueProps])
 
 	useEffect(() => {
-		if (ref.current && valueProps === undefined) {
+		if (ref.current) {
 			setValue(Number(ref.current.value || ''))
 		}
 	}, [])
 
-	const handlerChange = (_value: number) => {
+	const handlerChange = (
+		e: JSXInternal.TargetedEvent<HTMLInputElement, Event>
+	) => {
+		const _value = Number(e.currentTarget.value)
 		setValue(_value)
 		onChange?.(_value)
 	}
@@ -49,12 +55,13 @@ export const RangeInput = ({
 	return (
 		<div className={`range-input ${className ?? ''}`}>
 			<input
-				value={valueProps ?? value ?? undefined}
+				value={value ?? undefined}
 				ref={ref}
 				type="range"
 				min={min}
 				max={max}
-				onChange={e => handlerChange(Number(e.currentTarget.value))}
+				onChange={e => handlerChange(e)}
+				disabled={disabled}
 				{...props}
 			/>
 			<span className={'label'}>{value}</span>

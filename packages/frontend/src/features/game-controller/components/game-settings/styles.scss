@@ -1,0 +1,19 @@
+.pre-game-settings {
+	.title {
+		font-size: 16px;
+		margin-bottom: 4px;
+		white-space: nowrap;
+	}
+	.setting-item {
+		font-size: 14px;
+	}
+	.setting-item + .setting-item {
+		margin-top: 8px;
+	}
+	.input-title {
+		margin-bottom: 4px;
+		.link-button {
+			padding: 0;
+		}
+	}
+}

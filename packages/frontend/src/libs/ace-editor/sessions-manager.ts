@@ -1,5 +1,11 @@
-import { Ace, createEditSession, UndoManager } from 'ace-builds'
-import { createEvent, createStore } from 'effector'
+import { Ace, createEditSession } from 'ace-builds'
+import {
+	attach,
+	createEffect,
+	createEvent,
+	createStore,
+	sample,
+} from 'effector'
 
 interface SessionItem {
 	name: string
@@ -12,39 +18,116 @@ export const createSessionsManager = ({
 	mode: 'ace/mode/javascript' | 'ace/mode/json'
 }) => {
 	const $sessions = createStore<{ [name: string]: Ace.EditSession }>({})
+	const $sessionsValue = createStore<{ [name: string]: string }>({})
 
 	const addSession = createEvent<SessionItem | SessionItem[]>()
 	const removeSession = createEvent<string | string[]>()
+	const resetUndoManager = createEvent<string | string[]>()
+	const resetSession = createEvent<{
+		name: string
+		content?: string
+	}>()
 
-	$sessions.on(addSession, (sessions, undoName) => {
-		const array = Array.isArray(undoName) ? undoName : [undoName]
-		const newSessions = array.reduce((acc, { name, value }) => {
-			//@ts-expect-error
-			const session = createEditSession(value || '', mode)
-			session.getUndoManager().reset()
-			return {
-				...acc,
-				[name]: session,
-			}
-		}, {} as { [name: string]: Ace.EditSession })
+	const setSessionValue = createEvent<SessionItem | SessionItem[]>()
 
-		return { ...sessions, ...newSessions }
+	const addSessionFx = createEffect(
+		(newSession: SessionItem | SessionItem[]) => {
+			const array = Array.isArray(newSession) ? newSession : [newSession]
+			const newSessions = array.reduce((acc, { name, value }) => {
+				//@ts-expect-error
+				const session = createEditSession(value || '', mode)
+				session.getUndoManager().reset()
+				setSessionValue({ name, value })
+				session.on('change', () => {
+					setSessionValue({ name, value: session.doc.getValue() })
+				})
+				return {
+					...acc,
+					[name]: session,
+				}
+			}, {} as { [name: string]: Ace.EditSession })
+			return newSessions
+		}
+	)
+
+	const removeSessionFx = attach({
+		source: $sessions,
+		effect: (sessions, nameSession: string | string[]) => {
+			const names = Array.isArray(nameSession) ? nameSession : [nameSession]
+			const newSessions = { ...sessions }
+			names.forEach(nameSession => {
+				if (nameSession in newSessions) {
+					const targetSession = newSessions[nameSession]
+					delete newSessions[nameSession]
+					targetSession.destroy()
+				}
+			})
+			return newSessions
+		},
 	})
 
-	$sessions.on(removeSession, (sessions, undoName) => {
-		const array = Array.isArray(undoName) ? undoName : [undoName]
-		const newSessions = { ...sessions }
+	const resetUndoManagerFx = attach({
+		source: $sessions,
+		effect: (sessions, nameSession: string | string[]) => {
+			const names = Array.isArray(nameSession) ? nameSession : [nameSession]
+			names.forEach(nameSession => {
+				sessions[nameSession].getUndoManager().reset()
+			})
+		},
+	})
+
+	const resetSessionFx = attach({
+		source: $sessions,
+		effect: (
+			sessions,
+			{ name, content }: { name: string; content?: string }
+		) => {
+			sessions[name].setValue(content ?? '')
+		},
+	})
+
+	$sessions.on(addSessionFx.doneData, (sessions, newSessions) => ({
+		...sessions,
+		...newSessions,
+	}))
+
+	$sessions.on(removeSessionFx.doneData, (_, newSessions) => newSessions)
+
+	$sessionsValue.on(removeSession, (value, removeSession) => {
+		const array = Array.isArray(removeSession) ? removeSession : [removeSession]
+		const newValue = { ...value }
 		array.forEach(undoName => {
-			if (undoName in newSessions) {
-				delete newSessions[undoName]
+			if (undoName in newValue) {
+				delete newValue[undoName]
 			}
 		})
-		return newSessions
+		return newValue
 	})
+
+	$sessionsValue.on(setSessionValue, (values, newSessionValues) => {
+		const newValues = (
+			Array.isArray(newSessionValues) ? newSessionValues : [newSessionValues]
+		).reduce((acc, { name, value = '' }) => ({ ...acc, [name]: value }), {})
+		return {
+			...values,
+			...newValues,
+		}
+	})
+
+	sample({ clock: resetUndoManager, target: resetUndoManagerFx })
+
+	sample({ clock: resetSession, target: resetSessionFx })
+
+	sample({ clock: addSession, target: addSessionFx })
+
+	sample({ clock: removeSession, target: removeSessionFx })
 
 	return {
 		$sessions,
+		$sessionsValue,
 		addSession,
 		removeSession,
+		resetUndoManager,
+		resetSession,
 	}
 }

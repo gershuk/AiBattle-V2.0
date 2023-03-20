@@ -1,10 +1,10 @@
 .input {
-	background-color: rgb(255, 255, 255);
-	color: rgb(97, 97, 97);
+	background-color: var(--color-input-bg);
+	color: var(--color-input-text);
 	display: inline-flex;
 
 	.input-field {
-		color: rgb(97, 97, 97);
+		color: var(--color-input-text);
 		border: none;
 		padding: 3px 0 3px 4px;
 		width: 100%;
@@ -12,5 +12,8 @@
 			outline: none;
 		}
 		font-size: 14px;
+		&:disabled {
+			background: var(--color-input-disable);
+		}
 	}
 }

@@ -1,3 +1,6 @@
+import { isObject } from './is'
+import { mergeDeep } from './merge-deep'
+
 type HtmlInputs = HTMLInputElement | HTMLSelectElement
 
 interface InputField {
@@ -26,40 +29,16 @@ export const dotToJson = (keys: string, value: any) => {
 	return tempObject
 }
 
-const isObject = (item: any): item is { [k: string]: any } => {
-	return item && typeof item === 'object' && !Array.isArray(item)
-}
-
-export const mergeDeep = (
-	target: { [k: string]: any },
-	...sources: { [k: string]: any }[]
-): { [k: string]: any } => {
-	if (!sources.length) return target
-	const source = sources.shift()
-
-	if (isObject(target) && isObject(source)) {
-		for (const key in source) {
-			if (isObject(source[key])) {
-				if (!target[key]) Object.assign(target, { [key]: {} })
-				mergeDeep(target[key], source[key])
-			} else {
-				Object.assign(target, { [key]: source[key] })
-			}
-		}
-	}
-	return mergeDeep(target, ...sources)
-}
-
 const regexpIsArray = /^(\w+)[[]\d+[\]]/
 const buildArray = (jsonData: { [k: string]: any }): { [k: string]: any } => {
 	return Object.entries(jsonData).reduce((acc, [key, value]) => {
 		regexpIsArray.lastIndex = 0
 		if (regexpIsArray.test(key)) {
-			const newName = regexpIsArray.exec(key)?.[1]!
-			const index = Number(key.replace(newName, '').replace(/[\[\]']+/g, ''))
-			const valueFields = [...(acc?.[newName] || [])]
+			const itemName = regexpIsArray.exec(key)?.[1]!
+			const index = Number(key.replace(itemName, '').replace(/[\[\]']+/g, ''))
+			const valueFields = [...(acc?.[itemName] || [])]
 			valueFields[index] = isObject(value) ? buildArray(value) : value
-			return { ...acc, [newName]: valueFields }
+			return { ...acc, [itemName]: valueFields }
 		}
 		const newValue = isObject(value) ? buildArray(value) : value
 		return {
@@ -109,7 +88,6 @@ export const htmlFormToJson = <T extends { [k: string]: any }>(
 			}
 		}
 	})
-	console.log('fields', elements)
 
 	const values = fields.reduce((acc, field) => {
 		let value: any = field.srtValue
@@ -125,7 +103,7 @@ export const htmlFormToJson = <T extends { [k: string]: any }>(
 
 		if (field.tagName === 'INPUT') {
 			if (field.type === 'text') value = field.srtValue
-			if (field.type === 'number')
+			if (field.type === 'number' || field.type === 'range')
 				value = field.srtValue.trim() === '' ? null : Number(field.srtValue)
 		}
 

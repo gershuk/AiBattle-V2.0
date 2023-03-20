@@ -1,21 +1,25 @@
-import { useMemo } from 'preact/hooks'
 import { SplitPanel } from 'ui'
 import { MapsList } from 'features/map-editor'
 import { useUnit } from 'effector-react'
 import { $selectMap, savedMap, selectedMap } from './model'
 import { EditorMap } from 'features/map-editor'
 import './styles.scss'
+import { createPanelSizeController } from 'libs'
+import { useEffect } from 'react'
+import { tutorialMapList } from './tutorials'
 
-export const MapEditor = () => {
-	const selectMap = useUnit($selectMap)
-	const sizes = useMemo(() => {
-		const width = window.innerWidth
-		const r = (300 / width) * 100
-		return [r, 100 - r]
-	}, [])
-	const handlerDragEnd = () => {
+const { $sizes, setSizes } = createPanelSizeController(200)
+
+export const MapEditorPage = () => {
+	const { selectMap, sizes } = useUnit({ selectMap: $selectMap, sizes: $sizes })
+	const handlerDragEnd = (sizesPanel: number[]) => {
+		setSizes([...sizesPanel])
 		window.dispatchEvent(new Event('resize'))
 	}
+
+	useEffect(() => {
+		tutorialMapList.start()
+	}, [])
 
 	return (
 		<div class={'maps-editor-page'}>
