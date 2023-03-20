@@ -14,5 +14,5 @@ export interface IAsyncControllerBridge<
 		turnNumber: number,
 		timeout: number
 	): Promise<TCommand>
-	get GetUUID(): string
+	get UUID(): string
 }

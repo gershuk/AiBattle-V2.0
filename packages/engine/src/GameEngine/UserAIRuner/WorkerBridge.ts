@@ -93,17 +93,17 @@ export class WorkerBridge<
 
 	private _uuid: string
 
-	public get GetUUID(): string {
+	public get UUID(): string {
 		return this._uuid
 	}
 
-	protected set GetUUID(v: string) {
+	protected set UUID(v: string) {
 		this._uuid = v
 	}
 
 	constructor(controllerText: string, uuid?: string) {
 		this.controllerText = controllerText
-		this.GetUUID == uuid ?? GenerateUUID()
+		this.UUID == uuid ?? GenerateUUID()
 	}
 
 	Init(info: TInitData, timeout: number): Promise<unknown> {
