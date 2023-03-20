@@ -1,7 +1,13 @@
 import { sample } from 'effector'
+import { createTranslation } from 'libs'
 import { createTutorial } from 'libs/tutorial'
 import { createTutorialPanel } from 'ui'
 import { $selectCode } from './model'
+
+const {} = createTranslation({
+	ru: {},
+	en: {},
+})
 
 export const tutorialCodeList = createTutorial({
 	steps: [

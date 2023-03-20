@@ -9,9 +9,9 @@ const { getTranslationItem } = createTranslation({
 		close: 'Закрыть',
 	},
 	en: {
-		back: 'Назад',
-		next: 'Вперёд',
-		close: 'Закрыть',
+		back: 'Back',
+		next: 'Forward',
+		close: 'Close',
 	},
 })
 
