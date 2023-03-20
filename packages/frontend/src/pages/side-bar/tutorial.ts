@@ -16,7 +16,7 @@ const { getTranslationItem } = createTranslation({
 		sideBar: 'Сайдбар',
 		sideBarMsg: 'Это сайдбар, тут вкладки прям как в vs code!',
 		codeWrite:
-			'Например, нажав на вкладку "Код ИИ" ты окажешься в святая святых этого приложения. Будешь писать код для ботов и посещать <a href="https://learn.javascript.ru/">learn.javascript</a>.',
+			'Например, нажав на вкладку "Код ИИ" ты окажешься в самом важном месте этого приложения. Будешь писать код для ботов и посещать <a href="https://learn.javascript.ru/">learn.javascript</a>.',
 		appSetting:
 			'Внизу ты найдешь настройки приложения. Там мало пунктов, но вдруг ты захочешь сменить язык или отключить помощника?',
 	},
@@ -26,7 +26,7 @@ const { getTranslationItem } = createTranslation({
 		sideBar: 'Sidebar',
 		sideBarMsg: 'This is a sidebar, it has tabs just like in vs code!',
 		codeWrite:
-			'For example, clicking on the "AI Code" tab will take you to the holy of holies of this application. You will write code for bots and visit <a href="https://learn.javascript.ru/">learn.javascript</a>.',
+			'For example, by clicking on the "AI Code" tab, you will write code for bots.',
 		appSetting:
 			'At the bottom you will find the application settings. There are few items, but what if you want to change the language or turn off the assistant?',
 	},

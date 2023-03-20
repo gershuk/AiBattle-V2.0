@@ -1,10 +1,6 @@
 import { GAME_ENGINE_TRANSLATION, SceneParams } from 'api/engine'
 import { useUnit } from 'effector-react'
-import {
-	combineTranslation,
-	createTranslation,
-	htmlFormToJson,
-} from 'libs'
+import { combineTranslation, createTranslation, htmlFormToJson } from 'libs'
 import { $codesData, $dataMaps, changeRoute, RoutePath } from 'model'
 import { useMemo } from 'preact/hooks'
 import {
@@ -104,8 +100,8 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 					initValue: formValues['mapName'],
 					onClick: async () => {
 						if (!maps.length) {
-							const res = await showConfirm({ content: t('emptyMaps') })
-							if (res) changeRoute(RoutePath.mapEditor)
+							const { status } = await showConfirm({ content: t('emptyMaps') })
+							if (status === 'ok') changeRoute(RoutePath.mapEditor)
 						}
 					},
 				},

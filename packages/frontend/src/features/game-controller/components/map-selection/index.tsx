@@ -39,8 +39,8 @@ export const MapSelection = () => {
 					onChange={x => selected(x)}
 					onClick={async () => {
 						if (!maps.length) {
-							const res = await showConfirm({ content: t('emptyMaps') })
-							if (res) changeRoute(RoutePath.mapEditor)
+							const { status } = await showConfirm({ content: t('emptyMaps') })
+							if (status === 'ok') changeRoute(RoutePath.mapEditor)
 						}
 					}}
 				/>
