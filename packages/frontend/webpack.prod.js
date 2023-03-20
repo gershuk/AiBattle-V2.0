@@ -9,12 +9,10 @@ module.exports = merge(common, {
 		new CopyWebpackPlugin({
 			patterns: [
 				{
-					from: path.resolve(__dirname, 'public/resources'),
-					to: path.resolve(common.output.path, 'resources'),
-				},
-				{
-					from: path.resolve(__dirname, 'public/ace-editor-resources'),
-					to: path.resolve(common.output.path, 'ace-editor-resources'),
+					from: path.resolve(__dirname, 'public'),
+					globOptions: {
+						ignore: ['**/index.html'],
+					},
 				},
 			],
 		}),
