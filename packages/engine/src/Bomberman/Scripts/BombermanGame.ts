@@ -61,7 +61,7 @@ export class BombermanGame extends GameEngine {
 
 		const shuffledSpawns = shuffle(this._map.spawns)
 
-		if (parameters.map.spawns.length < parameters.controllers.length) {
+		if (parameters.map.spawns.length < parameters.controllersData.length) {
 			throw Error('Spawn less then controllers')
 		}
 
@@ -82,7 +82,7 @@ export class BombermanGame extends GameEngine {
 		}
 
 		let i = 0
-		for (let controllerData of parameters.controllers) {
+		for (let controllerData of parameters.controllersData) {
 			const manBodyParameters = new ManBodyParameters(
 				this.CreateControllerBridge(controllerData),
 				colliderSystem,

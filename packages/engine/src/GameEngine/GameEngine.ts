@@ -166,7 +166,7 @@ export class GameEngineParameters {
 	scene: IScene | undefined
 	sceneParameters: SceneParameters
 	imageLoader?: ImageLoader
-	controllers: ControllerCreationData[]
+	controllersData: ControllerCreationData[]
 	constructor(
 		sceneParameters: SceneParameters,
 		controllers: ControllerCreationData[],
@@ -174,7 +174,7 @@ export class GameEngineParameters {
 		scene?: Scene
 	) {
 		this.sceneParameters = sceneParameters
-		this.controllers = controllers
+		this.controllersData = controllers
 		this.imageLoader = imageLoader ?? new ImageLoader()
 		this.scene = scene
 	}
