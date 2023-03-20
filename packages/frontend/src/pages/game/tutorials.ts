@@ -7,21 +7,21 @@ import { createTutorialPanel } from 'ui'
 const { getTranslationItem } = createTranslation({
 	ru: {
 		startGame: 'Запуск игры',
-		configGame: 'Здесь ты конфигурируешь игру',
+		configGame: 'Здесь ты конфигурируешь игру.',
 		activeStart:
-			'Как выберешь карту и настроишь ботов кнопка старта активируется',
+			'Как выберешь карту и настроишь ботов кнопка старта активируется.',
 		startInfo:
-			'Ты можешь запустить автоматическую игру ботов или же контролировать каждый их ход',
+			'Ты можешь запустить автоматическую игру ботов или же контролировать каждый их ход/',
 		zoom: 'Ты можешь уменьшать/увеличивать масштаб игры колёсиком мышки при нажатом ctrl. А также перемещать карту захватом мышки.',
 		facilities: 'Удобства',
 	},
 	en: {
 		startGame: 'Game start',
-		configGame: 'Here you configure the game',
+		configGame: 'Here you configure the game.',
 		activeStart:
-			'When you select a map and set up bots, the start button is activated',
+			'When you select a map and set up bots, the start button is activated.',
 		startInfo:
-			'You can start the bots to play automatically or control their every move',
+			'You can start the bots to play automatically or control their every move.',
 		zoom: 'You can zoom in/zoom out of the game with the mouse wheel while pressing ctrl. You can also move the map with the mouse.',
 		facilities: 'Facilities',
 	},

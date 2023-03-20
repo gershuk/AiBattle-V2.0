@@ -14,7 +14,7 @@ const { getTranslationItem } = createTranslation({
 		helloMsg:
 			'Начнем наше увлекательнейшее приключение по написанию самого лучшего в мире игрового ИИ!',
 		sideBar: 'Сайдбар',
-		sideBarMsg: 'Это сайдбар, тут вкладки прям как в vs code!',
+		sideBarMsg: 'Это сайдбар, тут табы прям как в vs code!',
 		codeWrite:
 			'Например, нажав на вкладку "Код ИИ" ты окажешься в самом важном месте этого приложения. Будешь писать код для ботов и посещать <a href="https://learn.javascript.ru/">learn.javascript</a>.',
 		appSetting:
