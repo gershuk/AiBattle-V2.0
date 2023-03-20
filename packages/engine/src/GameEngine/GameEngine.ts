@@ -153,12 +153,26 @@ export class GameEngine implements IGameEngine {
 export class ControllerCreationData {
 	text: string
 	uuid: string | undefined
-	isRemote: boolean
+	controllerBridgeInstance:
+		| IAsyncControllerBridge<
+				AbstractControllerData,
+				AbstractControllerData,
+				AbstractControllerCommand
+		  >
+		| undefined
 
-	constructor(text: string, uuid?: string, isRemote: boolean = false) {
+	constructor(
+		text: string,
+		uuid?: string,
+		controllerBridgeInstance?: IAsyncControllerBridge<
+			AbstractControllerData,
+			AbstractControllerData,
+			AbstractControllerCommand
+		>
+	) {
 		this.text = text
 		this.uuid = uuid
-		this.isRemote = isRemote
+		this.controllerBridgeInstance = controllerBridgeInstance
 	}
 }
 
