@@ -32,17 +32,6 @@ enum SceneState {
 
 export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	private _isGameEnd: (refs: SafeReference<GameObject>[]) => boolean | undefined
-
-	public set isGameEnd(
-		v: (refs: SafeReference<GameObject>[]) => boolean | undefined
-	) {
-		this._isGameEnd = v
-	}
-
-	get isGameEnd(): (refs: SafeReference<GameObject>[] | undefined) => boolean {
-		return this._isGameEnd
-	}
-
 	private _tileSizeScale: number
 	private _turnIndex: number
 	private _maxTurnIndex: number
@@ -52,13 +41,22 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	private _animTicksCount: number
 	private _animTicksTime: number
 	private _canvas: HTMLCanvasElement
-
 	private _playModeParameters: PlayModeParameters
 	private _messageBroker: IMessageBroker
 	private _mousePositionOnCanvas: Vector2
 	private _renderOffset: Vector2
 	private _initTimeout: number
 	private _turnCalcTimeout: number
+
+	get isGameEnd(): (refs: SafeReference<GameObject>[] | undefined) => boolean {
+		return this._isGameEnd
+	}
+	public set isGameEnd(
+		v: (refs: SafeReference<GameObject>[]) => boolean | undefined
+	) {
+		this._isGameEnd = v
+	}
+
 	public get playModeParameters(): PlayModeParameters {
 		return this._playModeParameters
 	}
