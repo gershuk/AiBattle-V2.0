@@ -21,6 +21,7 @@
 		"dependency-tree": "^9.0.0",
 		"eslint": "^8.36.0",
 		"eslint-config-prettier": "^8.8.0",
+		"eslint-plugin-import": "^2.27.5",
 		"eslint-plugin-sort-class-members": "^1.16.0",
 		"gulp": "^4.0.2",
 		"gulp-concat": "^2.6.1",

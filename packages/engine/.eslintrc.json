@@ -15,7 +15,7 @@
 		"ecmaVersion": "latest",
 		"sourceType": "module"
 	},
-	"plugins": ["@typescript-eslint", "sort-class-members"],
+	"plugins": ["@typescript-eslint", "sort-class-members", "import"],
 	"rules": {
 		"prefer-const": "off",
 		"no-empty-function": "off",
@@ -43,7 +43,8 @@
 				],
 				"accessorPairPositioning": "getThenSet"
 			}
-		]
+		],
+		"import/no-namespace": 2
 	},
 	"ignorePatterns": ["build/", "build-js/", "node_modules/", "public/", "*.js"]
 }
