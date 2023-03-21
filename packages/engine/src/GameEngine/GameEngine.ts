@@ -61,12 +61,24 @@ export interface IGameEngine {
 		AbstractControllerData,
 		AbstractControllerCommand
 	>
+
+	LoadAllImages(imagesPath: string[]): Promise<HTMLImageElement[]>
+
+	get shouldLoadImage(): boolean
 }
 
 export class GameEngine implements IGameEngine {
+	private _shouldLoadImage: boolean
 	private _scene: IScene
-
 	private _imageLoader: ImageLoader
+
+	public get shouldLoadImage(): boolean {
+		return this._shouldLoadImage
+	}
+	protected set shouldLoadImage(v: boolean) {
+		this._shouldLoadImage = v
+	}
+
 	protected get scene(): IScene {
 		return this._scene
 	}
@@ -103,10 +115,15 @@ export class GameEngine implements IGameEngine {
 		return structuredClone(this.scene.playModeParameters)
 	}
 
+	public LoadAllImages(imagesPath: string[]): Promise<HTMLImageElement[]> {
+		if (this.shouldLoadImage) return this.imageLoader.LoadPngs(imagesPath)
+	}
+
 	public async Init(parameters: GameEngineParameters): Promise<unknown> {
 		this.scene = parameters.scene ?? new Scene()
 		this.scene.Init(parameters.sceneParameters)
 		this.imageLoader = parameters.imageLoader
+		this.shouldLoadImage = parameters.shouldLoadImages
 		return Promise.resolve()
 	}
 
@@ -210,15 +227,18 @@ export class GameEngineParameters {
 	sceneParameters: SceneParameters
 	imageLoader?: ImageLoader
 	controllersData: ControllerCreationData[]
+	shouldLoadImages: boolean
 	constructor(
-		sceneParameters: SceneParameters,
 		controllers: ControllerCreationData[],
-		imageLoader?: ImageLoader,
-		scene?: Scene
+		sceneParameters: SceneParameters,
+		scene?: Scene,
+		shouldLoadImages: boolean = true,
+		imageLoader?: ImageLoader
 	) {
 		this.sceneParameters = sceneParameters
 		this.controllersData = controllers
 		this.imageLoader = imageLoader ?? new ImageLoader()
 		this.scene = scene
+		this.shouldLoadImages = shouldLoadImages
 	}
 }

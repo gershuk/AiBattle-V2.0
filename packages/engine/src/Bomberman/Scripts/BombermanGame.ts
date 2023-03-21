@@ -37,6 +37,7 @@ import {
 	BombermanControllerData,
 } from './BombermanController'
 import { IAsyncControllerBridge } from 'GameEngine/UserAIRuner/AsyncControllerBridge'
+import { Scene } from 'GameEngine/Scene/Scene'
 
 export class BombermanGame extends GameEngine {
 	private _map: BombermanMap
@@ -52,7 +53,7 @@ export class BombermanGame extends GameEngine {
 
 		super.Init(parameters)
 
-		await this.imageLoader.LoadPngs([
+		await this.LoadAllImages([
 			'./Resources/Grass.png',
 			'./Resources/Wall.png',
 			'./Resources/Blast.png',
@@ -295,12 +296,14 @@ export class BombermanMap {
 export class BombermanGameParameters extends GameEngineParameters {
 	map: BombermanMap
 	constructor(
-		sceneParameters: SceneParameters,
 		map: BombermanMap,
 		controllers: ControllerCreationData[],
+		sceneParameters: SceneParameters,
+		scene?: Scene,
+		shouldLoadImage: boolean = true,
 		imageLoader?: ImageLoader
 	) {
-		super(sceneParameters, controllers, imageLoader)
+		super(controllers, sceneParameters, scene, shouldLoadImage, imageLoader)
 		this.map = map
 	}
 }

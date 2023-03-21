@@ -11,16 +11,6 @@ const engine = new BombermanGame()
 engine
 	.Init(
 		new BombermanGameParameters(
-			new SceneParameters(
-				1000000,
-				60,
-				12,
-				1100,
-				document.getElementById('canvas') as HTMLCanvasElement,
-				50,
-				80,
-				80
-			),
 			new BombermanMap(
 				[
 					[2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
@@ -39,38 +29,48 @@ engine
 			[
 				new ControllerCreationData(
 					'class Controller { \
-					Init(info) {\
-					}\
-					\
-					GetRandomInt(min, max) {\
-						min = Math.ceil(min);\
-						max = Math.floor(max);\
-						return Math.floor(Math.random() * (max - min)) + min;\
-					}\
-					\
-					GetCommand(info) { \
-						return {bombermanAction:this.GetRandomInt(0, 6)};\
-					}\
-					\
-				}'
+				Init(info) {\
+				}\
+				\
+				GetRandomInt(min, max) {\
+					min = Math.ceil(min);\
+					max = Math.floor(max);\
+					return Math.floor(Math.random() * (max - min)) + min;\
+				}\
+				\
+				GetCommand(info) { \
+					return {bombermanAction:this.GetRandomInt(0, 6)};\
+				}\
+				\
+			}'
 				),
 				new ControllerCreationData(
 					'class Controller { \
-					Init(info) {}\
-					\
-					GetRandomInt(min, max) {\
-						min = Math.ceil(min);\
-						max = Math.floor(max);\
-						return Math.floor(Math.random() * (max - min)) + min;\
-					}\
-					\
-					GetCommand(info) { \
-						return {bombermanAction:this.GetRandomInt(0, 6)};\
-					}\
-					\
-				}'
+				Init(info) {}\
+				\
+				GetRandomInt(min, max) {\
+					min = Math.ceil(min);\
+					max = Math.floor(max);\
+					return Math.floor(Math.random() * (max - min)) + min;\
+				}\
+				\
+				GetCommand(info) { \
+					return {bombermanAction:this.GetRandomInt(0, 6)};\
+				}\
+				\
+			}'
 				),
-			]
+			],
+			new SceneParameters(
+				1000000,
+				60,
+				12,
+				1100,
+				document.getElementById('canvas') as HTMLCanvasElement,
+				50,
+				80,
+				80
+			)
 		)
 	)
 	.then(() => {
