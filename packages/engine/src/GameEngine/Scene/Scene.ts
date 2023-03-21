@@ -304,7 +304,6 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 
 	private async AnimationStep() {
 		if (this.playModeParameters.disableAnimation) {
-			this.RenderFrame()
 			return
 		}
 
@@ -356,8 +355,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	public async DoNextTurn(): Promise<unknown> {
-		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
-			console.log('Game ended!')
+		if (this.TryStopIfGameEnd()) {
 			return Promise.resolve()
 		}
 
@@ -389,10 +387,8 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this.OnFixedUpdateEnded(this.turnIndex)
 		this.state = SceneState.ReadyToNextTurn
 
-		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
-			console.log('Game ended!')
-			return Promise.resolve()
-		}
+		this.TryStopIfGameEnd()
+		this.RenderFrame()
 		return Promise.resolve()
 	}
 
@@ -404,11 +400,17 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this.autoTurnTimerId = undefined
 	}
 
-	public StartAutoTurn(): void {
+	private TryStopIfGameEnd() {
 		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
 			console.log('Game ended!')
-			return
+			if (this.IsAutoTurn) this.StopAutoTurn()
+			return true
 		}
+		return false
+	}
+
+	public StartAutoTurn(): void {
+		if (this.TryStopIfGameEnd()) return
 
 		if (this.state != SceneState.ReadyToNextTurn) {
 			throw new Error(

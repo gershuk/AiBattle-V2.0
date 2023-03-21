@@ -104,6 +104,14 @@ export interface IScene extends UpdatableGroup<GameObject> {
 export class PlayModeParameters {
 	disableAnimation: boolean = false
 	disableRender: boolean = false
+
+	constructor(
+		disableAnimation: boolean = false,
+		disableRender: boolean = false
+	) {
+		this.disableAnimation = disableAnimation
+		this.disableRender = disableRender
+	}
 }
 
 export class SceneParameters {
@@ -128,7 +136,7 @@ export class SceneParameters {
 		initTimeout: number = -1,
 		commandCalcTimeout: number = -1,
 		playModeParameters: PlayModeParameters = new PlayModeParameters(),
-		isGameEnd: (refs: SafeReference<GameObject>[]) => boolean | undefined
+		isGameEnd?: (refs: SafeReference<GameObject>[]) => boolean
 	) {
 		this.maxTurnIndex = maxTurnIndex
 		this.animTicksCount = animTicksCount
