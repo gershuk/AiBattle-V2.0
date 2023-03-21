@@ -31,6 +31,18 @@ enum SceneState {
 }
 
 export class Scene extends UpdatableGroup<GameObject> implements IScene {
+	private _isGameEnd: (refs: SafeReference<GameObject>[]) => boolean | undefined
+
+	public set isGameEnd(
+		v: (refs: SafeReference<GameObject>[]) => boolean | undefined
+	) {
+		this._isGameEnd = v
+	}
+
+	get isGameEnd(): (refs: SafeReference<GameObject>[] | undefined) => boolean {
+		return this._isGameEnd
+	}
+
 	private _tileSizeScale: number
 	private _turnIndex: number
 	private _maxTurnIndex: number
@@ -196,6 +208,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		})
 
 		this.playModeParameters = parameters.playModeParameters
+		this.isGameEnd = parameters.isGameEnd
 	}
 
 	CreateDefaultGameObject(
@@ -343,6 +356,11 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	public async DoNextTurn(): Promise<unknown> {
+		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
+			console.log('Game ended!')
+			return Promise.resolve()
+		}
+
 		if (this.state != SceneState.ReadyToNextTurn) {
 			throw new Error(
 				`Expected state==${SceneState.ReadyToNextTurn}, but got ${this.state}`
@@ -371,6 +389,10 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this.OnFixedUpdateEnded(this.turnIndex)
 		this.state = SceneState.ReadyToNextTurn
 
+		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
+			console.log('Game ended!')
+			return Promise.resolve()
+		}
 		return Promise.resolve()
 	}
 
@@ -383,6 +405,11 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	public StartAutoTurn(): void {
+		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
+			console.log('Game ended!')
+			return
+		}
+
 		if (this.state != SceneState.ReadyToNextTurn) {
 			throw new Error(
 				`Expected state==${SceneState.ReadyToNextTurn}, but got ${this.state}`

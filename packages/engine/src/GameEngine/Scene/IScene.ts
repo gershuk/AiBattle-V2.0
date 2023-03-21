@@ -9,6 +9,8 @@ import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
 export interface IScene extends UpdatableGroup<GameObject> {
+	get isGameEnd(): (refs: SafeReference<GameObject>[]) => boolean | undefined
+
 	get playModeParameters(): PlayModeParameters
 
 	get tileSizeScale(): Number
@@ -114,6 +116,7 @@ export class SceneParameters {
 	canvas: HTMLCanvasElement
 	tileSizeScale: number
 	playModeParameters: PlayModeParameters
+	isGameEnd: (refs: SafeReference<GameObject>[]) => boolean | undefined
 
 	constructor(
 		maxTurnIndex: number,
@@ -124,7 +127,8 @@ export class SceneParameters {
 		tileSizeScale: number = 1,
 		initTimeout: number = -1,
 		commandCalcTimeout: number = -1,
-		playModeParameters: PlayModeParameters = new PlayModeParameters()
+		playModeParameters: PlayModeParameters = new PlayModeParameters(),
+		isGameEnd: (refs: SafeReference<GameObject>[]) => boolean | undefined
 	) {
 		this.maxTurnIndex = maxTurnIndex
 		this.animTicksCount = animTicksCount
@@ -135,5 +139,6 @@ export class SceneParameters {
 		this.canvas = canvas
 		this.tileSizeScale = tileSizeScale
 		this.playModeParameters = playModeParameters
+		this.isGameEnd = isGameEnd
 	}
 }
