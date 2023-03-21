@@ -42,13 +42,25 @@ export interface IGameEngine {
 
 	GetMessage(component: GameObjectComponent): [number, Message?]
 
-	CreateControllerBridge<
+	CreateWorkerBridge<
 		TInitData extends AbstractControllerData,
 		TTurnData extends AbstractControllerData,
 		TCommand extends AbstractControllerCommand
 	>(
 		controllerData: ControllerCreationData
 	): IAsyncControllerBridge<TInitData, TTurnData, TCommand>
+
+	GetOrCreateControllerFromData<
+		TInitData extends AbstractControllerData,
+		TTurnData extends AbstractControllerData,
+		TCommand extends AbstractControllerCommand
+	>(
+		controllerData: ControllerCreationData
+	): IAsyncControllerBridge<
+		AbstractControllerData,
+		AbstractControllerData,
+		AbstractControllerCommand
+	>
 }
 
 export class GameEngine implements IGameEngine {
@@ -135,7 +147,24 @@ export class GameEngine implements IGameEngine {
 		return this.scene.messageBroker.GetMessage(component)
 	}
 
-	CreateControllerBridge<
+	GetOrCreateControllerFromData<
+		TInitData extends AbstractControllerData,
+		TTurnData extends AbstractControllerData,
+		TCommand extends AbstractControllerCommand
+	>(
+		controllerData: ControllerCreationData
+	): IAsyncControllerBridge<
+		AbstractControllerData,
+		AbstractControllerData,
+		AbstractControllerCommand
+	> {
+		return (
+			controllerData.controllerBridgeInstance ??
+			this.CreateWorkerBridge<TInitData, TTurnData, TCommand>(controllerData)
+		)
+	}
+
+	CreateWorkerBridge<
 		TInitData extends AbstractControllerData,
 		TTurnData extends AbstractControllerData,
 		TCommand extends AbstractControllerCommand

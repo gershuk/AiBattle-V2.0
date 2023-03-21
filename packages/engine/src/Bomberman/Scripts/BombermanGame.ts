@@ -33,8 +33,10 @@ import {
 } from 'GameEngine/BaseComponents/RenderComponents/AnimationRenderComponent'
 import {
 	BombermanController,
+	BombermanControllerCommand,
 	BombermanControllerData,
 } from './BombermanController'
+import { IAsyncControllerBridge } from 'GameEngine/UserAIRuner/AsyncControllerBridge'
 
 export class BombermanGame extends GameEngine {
 	private _map: BombermanMap
@@ -92,7 +94,13 @@ export class BombermanGame extends GameEngine {
 		let i = 0
 		for (let controllerData of parameters.controllersData) {
 			const manBodyParameters = new ManBodyParameters(
-				this.CreateControllerBridge(controllerData),
+				this.GetOrCreateControllerFromData(
+					controllerData
+				) as IAsyncControllerBridge<
+					BombermanControllerData,
+					BombermanControllerData,
+					BombermanControllerCommand
+				>,
 				colliderSystem,
 				(position: Vector2, damage: number, range: number, ticksToExplosion) =>
 					this.CreateBomb(
