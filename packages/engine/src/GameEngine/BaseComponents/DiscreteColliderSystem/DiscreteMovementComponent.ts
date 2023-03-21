@@ -104,7 +104,7 @@ export class DiscreteMovementComponent extends GameObjectComponent {
 			)
 			this.oldPosition = this.newPosition.Clone()
 		}
-		this.oldPosition = this.gameObject.position.Clone()
+		this.gameObject.position = this.oldPosition.Clone()
 	}
 }
 
