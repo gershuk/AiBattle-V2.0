@@ -95,6 +95,8 @@ export interface IScene extends UpdatableGroup<GameObject> {
 	StartAutoTurn(): void
 
 	Init(parameters: SceneParameters): void
+
+	IsAutoTurn(): boolean
 }
 
 export class PlayModeParameters {

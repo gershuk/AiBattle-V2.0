@@ -167,7 +167,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	Init(parameters: SceneParameters): void {
-		if (this.autoTurnTimerId) this.StopAutoTurn()
+		if (this.IsAutoTurn()) this.StopAutoTurn()
 
 		this.messageBroker = new MessageBroker()
 
@@ -375,7 +375,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	public StopAutoTurn(): void {
-		if (!this.autoTurnTimerId) {
+		if (!this.IsAutoTurn()) {
 			throw new Error('AutoTurn not started')
 		}
 		clearTimeout(this.autoTurnTimerId)
@@ -393,7 +393,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 			throw new Error('turnIndex == this.maxTurnIndex')
 		}
 
-		if (this.autoTurnTimerId) {
+		if (this.IsAutoTurn()) {
 			throw new Error('AutoTurn already started')
 		}
 
@@ -407,5 +407,9 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 				}),
 			this.autoTurnTime
 		)
+	}
+
+	IsAutoTurn(): boolean {
+		return this.autoTurnTimerId !== undefined && this.autoTurnTimerId !== null
 	}
 }
