@@ -41,7 +41,7 @@ import { IAsyncControllerBridge } from 'GameEngine/UserAIRuner/AsyncControllerBr
 export class BombermanGame extends GameEngine {
 	private _map: BombermanMap
 
-	async Init(parameters: BombermanGameParameters) {
+	async Init(parameters: BombermanGameParameters): Promise<unknown> {
 		parameters.sceneParameters.isGameEnd ??= (gameObjectRefs): boolean => {
 			for (let ref of gameObjectRefs) {
 				if (ref.object.GetComponents(ManBody).length > 0) return false
@@ -118,6 +118,7 @@ export class BombermanGame extends GameEngine {
 
 			++i
 		}
+		return Promise.resolve()
 	}
 
 	private CreateGrass(position: Vector2) {

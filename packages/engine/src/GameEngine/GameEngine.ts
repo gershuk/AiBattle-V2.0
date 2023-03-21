@@ -20,7 +20,7 @@ export interface IGameEngine {
 
 	get playModeParameters(): PlayModeParameters
 
-	Init(parameters: GameEngineParameters): void
+	Init(parameters: GameEngineParameters): Promise<unknown>
 
 	Start(): Promise<unknown>
 
@@ -103,10 +103,11 @@ export class GameEngine implements IGameEngine {
 		return structuredClone(this.scene.playModeParameters)
 	}
 
-	public async Init(parameters: GameEngineParameters) {
+	public async Init(parameters: GameEngineParameters): Promise<unknown> {
 		this.scene = parameters.scene ?? new Scene()
 		this.scene.Init(parameters.sceneParameters)
 		this.imageLoader = parameters.imageLoader
+		return Promise.resolve()
 	}
 
 	public async Start(): Promise<unknown> {
