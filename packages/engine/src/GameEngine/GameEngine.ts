@@ -49,6 +49,8 @@ export interface IGameEngine {
 	>(
 		controllerData: ControllerCreationData
 	): IAsyncControllerBridge<TInitData, TTurnData, TCommand>
+
+	IsGameEnd(): boolean
 }
 
 export class GameEngine implements IGameEngine {
@@ -107,7 +109,12 @@ export class GameEngine implements IGameEngine {
 	}
 
 	public async DoNextTurn(): Promise<unknown> {
-		await this.scene?.DoNextTurn()
+		if (!this.IsGameEnd()) await this.scene?.DoNextTurn()
+
+		if (this.IsGameEnd()) {
+			if (this.scene.IsAutoTurn()) this.scene.StopAutoTurn()
+			console.log('Game ended!')
+		}
 		return Promise.resolve()
 	}
 
@@ -116,6 +123,11 @@ export class GameEngine implements IGameEngine {
 	}
 
 	public StartAutoTurn(): void {
+		if (this.IsGameEnd()) {
+			console.log('Game ended!')
+			return
+		}
+
 		this.scene?.StartAutoTurn()
 	}
 
@@ -146,6 +158,10 @@ export class GameEngine implements IGameEngine {
 			controllerData.text,
 			controllerData.uuid
 		)
+	}
+
+	public IsGameEnd(): boolean {
+		return false
 	}
 }
 

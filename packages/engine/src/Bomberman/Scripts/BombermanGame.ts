@@ -263,6 +263,14 @@ export class BombermanGame extends GameEngine {
 		])
 		return discreteColliderSystem
 	}
+
+	public IsGameEnd(): boolean {
+		for (let ref of this.scene.gameObjectRefs) {
+			if (ref.object.GetComponents(ManBody).length > 0) return false
+		}
+
+		return true
+	}
 }
 
 export class BombermanMap {
