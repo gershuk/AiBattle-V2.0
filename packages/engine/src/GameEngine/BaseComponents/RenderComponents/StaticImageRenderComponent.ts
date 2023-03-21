@@ -5,6 +5,8 @@ import { AbstractImageRenderComponent } from './AbstractImageRenderComponent'
 
 export class StaticImageRenderComponent extends AbstractImageRenderComponent {
 	private _offset: Vector2
+	private _size: Vector2
+	private _image: HTMLImageElement
 	public get offset(): Vector2 {
 		return this._offset
 	}
@@ -12,7 +14,6 @@ export class StaticImageRenderComponent extends AbstractImageRenderComponent {
 		this._offset = o
 	}
 
-	private _size: Vector2
 	public get size(): Vector2 {
 		return this._size
 	}
@@ -20,7 +21,6 @@ export class StaticImageRenderComponent extends AbstractImageRenderComponent {
 		this._size = s
 	}
 
-	private _image: HTMLImageElement
 	public get image(): HTMLImageElement {
 		return this._image
 	}

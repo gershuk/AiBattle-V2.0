@@ -6,6 +6,7 @@ import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 
 export class HealthComponent extends GameObjectComponent {
 	private _maxHealth: number
+	private _health: number
 	public get maxHealth(): number {
 		return this._maxHealth
 	}
@@ -13,7 +14,6 @@ export class HealthComponent extends GameObjectComponent {
 		this._maxHealth = v
 	}
 
-	private _health: number
 	public get health(): number {
 		return this._health
 	}

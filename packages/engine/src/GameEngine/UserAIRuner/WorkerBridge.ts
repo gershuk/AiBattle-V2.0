@@ -76,6 +76,8 @@ export class WorkerBridge<
 > implements IAsyncControllerBridge<TInitData, TTurnData, TCommand>
 {
 	private _controllerText: string
+	private _worker: Worker
+	private _uuid: string
 	public get controllerText(): string {
 		return this._controllerText
 	}
@@ -83,15 +85,12 @@ export class WorkerBridge<
 		this._controllerText = v
 	}
 
-	private _worker: Worker
 	public get worker(): Worker {
 		return this._worker
 	}
 	protected set worker(v: Worker) {
 		this._worker = v
 	}
-
-	private _uuid: string
 
 	public get UUID(): string {
 		return this._uuid

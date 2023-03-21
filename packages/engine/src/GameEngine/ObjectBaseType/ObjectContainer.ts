@@ -12,6 +12,7 @@ export interface IObjectContainer<T> extends Iterable<SafeReference<T>> {
 export class SafeReference<T> {
 	private _object: T
 
+	private _isDestroyed: boolean
 	public get object(): T {
 		if (this._isDestroyed) throw new Error('Object is destroyed')
 		return this._object
@@ -20,8 +21,6 @@ export class SafeReference<T> {
 	protected set object(v: T) {
 		this._object = v
 	}
-
-	private _isDestroyed: boolean
 
 	public get isDestroyed(): boolean {
 		return this._isDestroyed

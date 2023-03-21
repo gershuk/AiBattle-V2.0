@@ -15,6 +15,12 @@ export class ControllerBody<
 	TCommand extends AbstractControllerCommand
 > extends GameObjectComponent {
 	private _initTimeout: number
+	private _turnCalcTimeout: number
+	private _controllerBridge: IAsyncControllerBridge<
+		TInitData,
+		TTurnData,
+		TCommand
+	>
 	public get initTimeout(): number {
 		return this._initTimeout
 	}
@@ -22,7 +28,6 @@ export class ControllerBody<
 		this._initTimeout = v
 	}
 
-	private _turnCalcTimeout: number
 	public get commandCalcTimeout(): number {
 		return this._turnCalcTimeout
 	}
@@ -30,11 +35,6 @@ export class ControllerBody<
 		this._turnCalcTimeout = v
 	}
 
-	private _controllerBridge: IAsyncControllerBridge<
-		TInitData,
-		TTurnData,
-		TCommand
-	>
 	public get controllerBridge(): IAsyncControllerBridge<
 		TInitData,
 		TTurnData,

@@ -42,6 +42,11 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	private _canvas: HTMLCanvasElement
 
 	private _playModeParameters: PlayModeParameters
+	private _messageBroker: IMessageBroker
+	private _mousePositionOnCanvas: Vector2
+	private _renderOffset: Vector2
+	private _initTimeout: number
+	private _turnCalcTimeout: number
 	public get playModeParameters(): PlayModeParameters {
 		return this._playModeParameters
 	}
@@ -49,7 +54,6 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this._playModeParameters = v
 	}
 
-	private _messageBroker: IMessageBroker
 	public get messageBroker(): IMessageBroker {
 		return this._messageBroker
 	}
@@ -57,7 +61,6 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this._messageBroker = v
 	}
 
-	private _mousePositionOnCanvas: Vector2
 	public get mousePositionOnCanvas(): Vector2 {
 		return this._mousePositionOnCanvas
 	}
@@ -65,7 +68,6 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this._mousePositionOnCanvas = v
 	}
 
-	private _renderOffset: Vector2
 	public get renderOffset(): Vector2 {
 		return this._renderOffset
 	}
@@ -77,65 +79,58 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		return this._container.GetSafeRefsByFilter(() => true)
 	}
 
+	public get turnIndex(): number {
+		return this._turnIndex
+	}
 	public set turnIndex(turnIndex: number) {
 		if (turnIndex < 0) throw new Error('turnIndex < 0')
 		this._turnIndex = turnIndex
 	}
 
-	public get turnIndex(): number {
-		return this._turnIndex
+	public get maxTurnIndex(): number {
+		return this._maxTurnIndex
 	}
-
 	public set maxTurnIndex(maxTurnIndex: number) {
 		if (maxTurnIndex < 1) throw new Error('maxTurnIndex < 1')
 		this._maxTurnIndex = maxTurnIndex
 	}
 
-	public get maxTurnIndex(): number {
-		return this._maxTurnIndex
-	}
-
-	protected set state(state: SceneState) {
-		this._state = state
-	}
-
 	public get state(): SceneState {
 		return this._state
 	}
-
-	public set animTicksCount(animTicksCount: number) {
-		if (animTicksCount < 1) throw new Error('animTicksCount < 1')
-		this._animTicksCount = animTicksCount
+	protected set state(state: SceneState) {
+		this._state = state
 	}
 
 	public get animTicksCount(): number {
 		return this._animTicksCount
 	}
-
-	public set animTicksTime(animTicksTime: number) {
-		if (animTicksTime < 0) throw new Error('animTicksTime < 0')
-		this._animTicksTime = animTicksTime
+	public set animTicksCount(animTicksCount: number) {
+		if (animTicksCount < 1) throw new Error('animTicksCount < 1')
+		this._animTicksCount = animTicksCount
 	}
 
 	public get animTicksTime(): number {
 		return this._animTicksTime
 	}
-
-	public set autoTurnTime(autoTurnTime: number) {
-		if (autoTurnTime < 1) throw new Error('autoTurnTime < 1')
-		this._autoTurnTime = autoTurnTime
+	public set animTicksTime(animTicksTime: number) {
+		if (animTicksTime < 0) throw new Error('animTicksTime < 0')
+		this._animTicksTime = animTicksTime
 	}
 
 	public get autoTurnTime(): number {
 		return this._autoTurnTime
 	}
-
-	public set autoTurnTimerId(autoTurnTimerId: number | undefined) {
-		this._autoTurnTimerId = autoTurnTimerId
+	public set autoTurnTime(autoTurnTime: number) {
+		if (autoTurnTime < 1) throw new Error('autoTurnTime < 1')
+		this._autoTurnTime = autoTurnTime
 	}
 
 	public get autoTurnTimerId(): number | undefined {
 		return this._autoTurnTimerId
+	}
+	public set autoTurnTimerId(autoTurnTimerId: number | undefined) {
+		this._autoTurnTimerId = autoTurnTimerId
 	}
 
 	public get canvas(): HTMLCanvasElement {
@@ -155,8 +150,6 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		if (this.state && this.state !== SceneState.Starting) this.RenderFrame()
 	}
 
-	private _initTimeout: number
-
 	public get initTimeout(): number {
 		return this._initTimeout
 	}
@@ -164,8 +157,6 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	public set initTimeout(v: number) {
 		this._initTimeout = v
 	}
-
-	private _turnCalcTimeout: number
 
 	public get commandCalcTimeout(): number {
 		return this._turnCalcTimeout

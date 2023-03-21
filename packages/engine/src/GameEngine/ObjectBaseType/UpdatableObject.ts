@@ -3,11 +3,11 @@ import { Object } from './Object'
 export abstract class UpdatableObject extends Object {
 	private _executionPriority: number
 
-	protected set executionPriority(v: number) {
-		this._executionPriority = v
-	}
 	public get executionPriority(): number {
 		return this._executionPriority
+	}
+	protected set executionPriority(v: number) {
+		this._executionPriority = v
 	}
 
 	abstract OnStart(): void

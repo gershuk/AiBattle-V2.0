@@ -26,7 +26,24 @@
 		"@typescript-eslint/no-extra-semi": "off",
 		"no-case-declarations": "off",
 		"no-useless-escape": "off",
-		"no-mixed-spaces-and-tabs": "off"
+		"no-mixed-spaces-and-tabs": "off",
+		"sort-class-members/sort-class-members": [
+			2,
+			{
+				"order": [
+					"[static-properties]",
+					"[static-methods]",
+					"[conventional-private-properties]",
+					"[properties]",
+					"[getters]",
+					"[setters]",
+					"constructor",
+					"[conventional-private-methods]",
+					"[methods]"
+				],
+				"accessorPairPositioning": "getThenSet"
+			}
+		]
 	},
 	"ignorePatterns": ["build/", "build-js/", "node_modules/", "public/", "*.js"]
 }
