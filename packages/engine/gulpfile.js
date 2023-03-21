@@ -4,36 +4,18 @@ const concat = require('gulp-concat')
 const stripImportExport = require('gulp-strip-import-export')
 const dependencyTree = require('dependency-tree')
 
-const tsProject = ts.createProject('tsconfig.json', { target: 'ES2022' })
-
-/**
- * Возвращает отсортированный массив uri файлов по дереву зависимостей
- */
-const treeToArray = tree => {
-	const flatTree = []
-	const loop = (tree, depth = 0) => {
-		const nodes = Object.entries(tree)
-		nodes.forEach(([uri, node]) => {
-			flatTree.push({ uri, depth })
-			loop(node, depth + 1)
-		})
-	}
-	loop(tree)
-
-	const sortFlatTree = [...flatTree].sort((a, b) => b.depth - a.depth)
-	const uniqNodes = sortFlatTree
-		.map(({ uri }) => uri)
-		.filter((value, index, array) => array.indexOf(value) === index)
-
-	return uniqNodes
-}
+const tsProject = ts.createProject('tsconfig.json', {
+	target: 'ES2022',
+})
 
 gulp.task('default', function () {
-	var tree = dependencyTree({
+	var list = dependencyTree.toList({
 		filename: 'src/index.ts',
 		directory: 'src',
+		webpackConfig: './webpack.config.js',
+		tsConfig: './tsconfig.json',
 	})
-	const files = treeToArray(tree).slice(0, -1)
+	const files = list.filter(uri => !uri.includes('index.ts'))
 
 	var tsResult = gulp.src(files).pipe(tsProject())
 
