@@ -51,7 +51,7 @@ export class BombermanGame extends GameEngine {
 			return true
 		}
 
-		super.Init(parameters)
+		await super.Init(parameters)
 
 		await this.LoadAllImages([
 			'./Resources/Grass.png',
