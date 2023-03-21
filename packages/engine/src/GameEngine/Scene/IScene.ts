@@ -19,7 +19,7 @@ export interface IScene extends UpdatableGroup<GameObject> {
 
 	get messageBroker(): IMessageBroker
 
-	get mousePositionOnCanvas(): Vector2
+	get mousePositionOnCanvas(): Vector2 | undefined
 
 	get canvas(): HTMLCanvasElement
 

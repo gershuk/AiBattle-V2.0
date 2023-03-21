@@ -43,7 +43,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	private _canvas: HTMLCanvasElement
 	private _playModeParameters: PlayModeParameters
 	private _messageBroker: IMessageBroker
-	private _mousePositionOnCanvas: Vector2
+	private _mousePositionOnCanvas: Vector2 | undefined
 	private _renderOffset: Vector2
 	private _initTimeout: number
 	private _turnCalcTimeout: number
@@ -195,18 +195,26 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 
 		this.state = SceneState.Init
 
-		this.mousePositionOnCanvas = new Vector2()
-		this.canvas.addEventListener('mousemove', event => {
-			const rect = (
-				event.currentTarget as HTMLCanvasElement
-			).getBoundingClientRect()
-			const x = event.clientX - rect.left
-			const y = event.clientY - rect.top
-			this.mousePositionOnCanvas.SetXY(x, y)
-		})
+		this.InitMouseEventListener()
 
 		this.playModeParameters = parameters.playModeParameters
 		this.isGameEnd = parameters.isGameEnd
+	}
+
+	private InitMouseEventListener() {
+		if (this.canvas) {
+			this.mousePositionOnCanvas = new Vector2()
+			this.canvas.addEventListener('mousemove', event => {
+				const rect = (
+					event.currentTarget as HTMLCanvasElement
+				).getBoundingClientRect()
+				const x = event.clientX - rect.left
+				const y = event.clientY - rect.top
+				this.mousePositionOnCanvas.SetXY(x, y)
+			})
+		} else {
+			this.mousePositionOnCanvas = undefined
+		}
 	}
 
 	CreateDefaultGameObject(
