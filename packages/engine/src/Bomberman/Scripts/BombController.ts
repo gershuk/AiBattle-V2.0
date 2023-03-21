@@ -71,7 +71,7 @@ export class BombController extends GameObjectComponent {
 			this.gameObject.scene.RemoveGameObjectsByFilter(
 				r => this.gameObject == r.object
 			)
-			this.DamageTile(this.gameObject.position)
+			this.DamageTile(this.gameObject.position, index)
 
 			for (let dir of this._pattern) {
 				for (let i = 1; i <= this._range; ++i) {
@@ -85,23 +85,26 @@ export class BombController extends GameObjectComponent {
 					const wall = cellOwner?.gameObject?.GetComponents(Wall)
 					if (wall && wall.length > 0) break
 					if (destructibleWall && destructibleWall.length > 0) {
-						this.DamageTile(pos)
+						this.DamageTile(pos, index)
 						break
 					}
-					this.DamageTile(pos)
+					this.DamageTile(pos, index)
 				}
 			}
 		}
 	}
 
-	private DamageTile(position: Vector2) {
+	private DamageTile(position: Vector2, turn: number) {
 		this._blastSpawnFunction(position)
-		let cellOwner = this._discreteColliderSystem.GetCellData(
+		let cellData = this._discreteColliderSystem.GetCellData(
 			position.x,
 			position.y
-		).owner
+		)
 
-		if (cellOwner) {
+		let cellOwner = cellData.owner
+		let time = cellData.endRentTurn
+
+		if (cellOwner && (time === undefined || time < turn)) {
 			let healthComponent = cellOwner.gameObject.GetComponents(
 				HealthComponent
 			)[0] as SafeReference<HealthComponent>
