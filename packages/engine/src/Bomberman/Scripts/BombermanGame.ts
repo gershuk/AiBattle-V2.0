@@ -40,6 +40,14 @@ export class BombermanGame extends GameEngine {
 	private _map: BombermanMap
 
 	async Init(parameters: BombermanGameParameters) {
+		parameters.sceneParameters.isGameEnd ??= (gameObjectRefs): boolean => {
+			for (let ref of gameObjectRefs) {
+				if (ref.object.GetComponents(ManBody).length > 0) return false
+			}
+
+			return true
+		}
+
 		super.Init(parameters)
 
 		await this.imageLoader.LoadPngs([
