@@ -3,6 +3,17 @@ export function Lerp(from: number, to: number, by: number): number {
 }
 
 export class Vector2 {
+	public static CenterOf(...vecs: Vector2[]): Vector2 {
+		const v = new Vector2(0, 0)
+		for (let other of vecs) {
+			v.Add(other)
+		}
+		v.DivScalar(vecs.length)
+		return v
+	}
+	public static Lerp(from: Vector2, to: Vector2, by: number): Vector2 {
+		return from.MulScalar(1 - by).Add(to.MulScalar(by))
+	}
 	private _x: number
 	private _y: number
 
@@ -17,20 +28,18 @@ export class Vector2 {
 		return this
 	}
 
+	public get x(): number {
+		return this._x
+	}
 	public set x(x: number) {
 		this._x = x
 	}
 
-	public get x(): number {
-		return this._x
-	}
-
-	public set y(y: number) {
-		this._y = y
-	}
-
 	public get y(): number {
 		return this._y
+	}
+	public set y(y: number) {
+		this._y = y
 	}
 
 	public Add(other: Vector2): Vector2 {
@@ -73,19 +82,6 @@ export class Vector2 {
 		return Math.sqrt(
 			Math.pow(this.x - other.x, 2) + Math.pow(this.y - other.y, 2)
 		)
-	}
-
-	public static CenterOf(...vecs: Vector2[]): Vector2 {
-		const v = new Vector2(0, 0)
-		for (let other of vecs) {
-			v.Add(other)
-		}
-		v.DivScalar(vecs.length)
-		return v
-	}
-
-	public static Lerp(from: Vector2, to: Vector2, by: number): Vector2 {
-		return from.MulScalar(1 - by).Add(to.MulScalar(by))
 	}
 
 	public ToString(): string {

@@ -23,14 +23,13 @@ export class BombermanControllerData extends AbstractControllerData {
 }
 
 export class BombermanControllerCommand extends AbstractControllerCommand {
+	static GetIdleCommand(): BombermanControllerCommand {
+		return new BombermanControllerCommand(BombermanActions.idle)
+	}
 	bombermanAction: BombermanActions
 	constructor(bombermanCommands: BombermanActions) {
 		super()
 		this.bombermanAction = bombermanCommands
-	}
-
-	static GetIdleCommand(): BombermanControllerCommand {
-		return new BombermanControllerCommand(BombermanActions.idle)
 	}
 }
 

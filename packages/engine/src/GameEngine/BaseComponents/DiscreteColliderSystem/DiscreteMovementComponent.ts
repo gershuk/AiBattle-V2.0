@@ -10,6 +10,8 @@ export class DiscreteMovementComponent extends GameObjectComponent {
 	private _discreteColliderSystem: DiscreteColliderSystem
 
 	private _newPosition: Vector2
+	private _oldPosition: Vector2
+	private _bufferNewPosition: Vector2 | undefined
 	public get newPosition(): Vector2 {
 		return this._newPosition
 	}
@@ -17,7 +19,6 @@ export class DiscreteMovementComponent extends GameObjectComponent {
 		this._newPosition = v
 	}
 
-	private _oldPosition: Vector2
 	public get oldPosition(): Vector2 {
 		return this._oldPosition
 	}
@@ -25,7 +26,6 @@ export class DiscreteMovementComponent extends GameObjectComponent {
 		this._oldPosition = v
 	}
 
-	private _bufferNewPosition: Vector2 | undefined
 	public get bufferNewPosition(): Vector2 | undefined {
 		return this._bufferNewPosition
 	}

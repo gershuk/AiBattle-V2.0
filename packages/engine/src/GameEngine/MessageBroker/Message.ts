@@ -2,6 +2,10 @@ import { GenerateUUID } from 'Utilities'
 
 export class Message {
 	private _creationTime: number
+	private _messageUuid: string
+	private _senderUuid: string
+	private _receiverUuid: string
+	private _data: any
 	public get creationTime(): number {
 		return this._creationTime
 	}
@@ -9,7 +13,6 @@ export class Message {
 		this._creationTime = v
 	}
 
-	private _messageUuid: string
 	public get messageUuid(): string {
 		return this._messageUuid
 	}
@@ -17,7 +20,6 @@ export class Message {
 		this._messageUuid = v
 	}
 
-	private _senderUuid: string
 	public get senderUuid(): string {
 		return this._senderUuid
 	}
@@ -25,7 +27,6 @@ export class Message {
 		this._senderUuid = v
 	}
 
-	private _receiverUuid: string
 	public get receiverUuid(): string {
 		return this._receiverUuid
 	}
@@ -33,7 +34,6 @@ export class Message {
 		this._receiverUuid = v
 	}
 
-	private _data: any
 	public get data(): string {
 		return this._data
 	}

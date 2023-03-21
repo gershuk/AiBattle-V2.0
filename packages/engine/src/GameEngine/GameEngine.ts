@@ -54,6 +54,7 @@ export interface IGameEngine {
 export class GameEngine implements IGameEngine {
 	private _scene: IScene
 
+	private _imageLoader: ImageLoader
 	protected get scene(): IScene {
 		return this._scene
 	}
@@ -61,8 +62,6 @@ export class GameEngine implements IGameEngine {
 	protected set scene(v: IScene) {
 		this._scene = v
 	}
-
-	private _imageLoader: ImageLoader
 
 	protected get imageLoader(): ImageLoader {
 		return this._imageLoader

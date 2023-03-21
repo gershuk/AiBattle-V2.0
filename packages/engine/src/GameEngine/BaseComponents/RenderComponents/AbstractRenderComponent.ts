@@ -16,6 +16,8 @@ export class AbstractRenderComponent extends GameObjectComponent {
 export class ViewPort {
 	private _tileSizeScale: number
 
+	private _renderOffset: Vector2
+	private _canvasRenderingContext: CanvasRenderingContext2D
 	public get tileSizeScale(): number {
 		return this._tileSizeScale
 	}
@@ -24,8 +26,6 @@ export class ViewPort {
 		this._tileSizeScale = v
 	}
 
-	private _renderOffset: Vector2
-
 	public get renderOffset(): Vector2 {
 		return this._renderOffset
 	}
@@ -33,8 +33,6 @@ export class ViewPort {
 	public set renderOffset(v: Vector2) {
 		this._renderOffset = v
 	}
-
-	private _canvasRenderingContext: CanvasRenderingContext2D
 
 	public get canvasRenderingContext(): CanvasRenderingContext2D {
 		return this._canvasRenderingContext
