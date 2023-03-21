@@ -18,8 +18,8 @@ engine
 				1100,
 				document.getElementById('canvas') as HTMLCanvasElement,
 				50,
-				10,
-				10
+				80,
+				80
 			),
 			new BombermanMap(
 				[
@@ -39,12 +39,12 @@ engine
 			[
 				new ControllerCreationData(
 					'class Controller { \
-					Init(info) {}\
+					Init(info) {\
+					}\
 					\
 					GetRandomInt(min, max) {\
 						min = Math.ceil(min);\
 						max = Math.floor(max);\
-						while(true){}\
 						return Math.floor(Math.random() * (max - min)) + min;\
 					}\
 					\
