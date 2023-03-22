@@ -16,6 +16,8 @@ export interface IScene extends UpdatableGroup<GameObject> {
 
 	get OnTurnEnd(): SlimEvent<void>
 
+	get OnGameEnd(): SlimEvent<void>
+
 	get isGameEnd(): (refs: SafeReference<GameObject>[]) => boolean | undefined
 
 	get playModeParameters(): PlayModeParameters

@@ -19,6 +19,8 @@ export interface IGameEngine {
 
 	get OnTurnEnd(): SlimEvent<void>
 
+	get OnGameEnd(): SlimEvent<void>
+
 	get renderOffset(): Vector2
 	set renderOffset(v: Vector2)
 
@@ -87,6 +89,9 @@ export class GameEngine implements IGameEngine {
 	}
 	get OnTurnEnd(): SlimEvent<void> {
 		return this.scene.OnTurnEnd
+	}
+	get OnGameEnd(): SlimEvent<void> {
+		return this.scene.OnGameEnd
 	}
 
 	public get shouldLoadImage(): boolean {

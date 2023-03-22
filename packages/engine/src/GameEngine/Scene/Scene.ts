@@ -29,12 +29,14 @@ enum SceneState {
 	CalcCommands,
 	NextTurn,
 	Animation,
+	EndGame,
 }
 
 export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	private _onSceneStart: SlimEvent<void>
 	private _onTurnStart: SlimEvent<void>
 	private _onTurnEnd: SlimEvent<void>
+	private _onGameEnd: SlimEvent<void>
 	private _isGameEnd: (refs: SafeReference<GameObject>[]) => boolean | undefined
 	private _tileSizeScale: number
 	private _turnIndex: number
@@ -60,6 +62,9 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 	get OnTurnEnd(): SlimEvent<void> {
 		return this._onTurnEnd
+	}
+	get OnGameEnd(): SlimEvent<void> {
+		return this._onGameEnd
 	}
 
 	get isGameEnd(): (refs: SafeReference<GameObject>[] | undefined) => boolean {
@@ -196,6 +201,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this._onSceneStart = new SlimEvent<void>()
 		this._onTurnStart = new SlimEvent<void>()
 		this._onTurnEnd = new SlimEvent<void>()
+		this._onGameEnd = new SlimEvent<void>()
 
 		this.messageBroker = new MessageBroker()
 
@@ -429,10 +435,18 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this.autoTurnTimerId = undefined
 	}
 
-	private TryStopIfGameEnd() {
-		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
+	private SetGameEnd() {
+		if (this.state != SceneState.EndGame) {
 			console.log('Game ended!')
 			if (this.IsAutoTurn) this.StopAutoTurn()
+			this.state = SceneState.EndGame
+			this._onGameEnd.Notify()
+		}
+	}
+
+	private TryStopIfGameEnd() {
+		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
+			this.SetGameEnd()
 			return true
 		}
 		return false
