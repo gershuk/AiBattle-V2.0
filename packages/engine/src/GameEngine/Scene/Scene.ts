@@ -424,10 +424,10 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this.OnFixedUpdateEnded(this.turnIndex)
 		this.state = SceneState.ReadyToNextTurn
 
-		this.TryStopIfGameEnd()
 		this.RenderFrame()
 
 		this._onTurnEnd.Notify()
+		this.TryStopIfGameEnd()
 		return Promise.resolve()
 	}
 
