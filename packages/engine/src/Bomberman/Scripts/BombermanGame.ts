@@ -15,6 +15,7 @@ import {
 	ControllerCreationData,
 	GameEngine,
 	GameEngineParameters,
+	GameInfo,
 } from 'GameEngine/GameEngine'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
 import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
@@ -38,6 +39,7 @@ import {
 } from './BombermanController'
 import { IAsyncControllerBridge } from 'GameEngine/UserAIRuner/AsyncControllerBridge'
 import { Scene } from 'GameEngine/Scene/Scene'
+import { BodyAllData } from './MapData'
 
 export class BombermanGame extends GameEngine {
 	async Init(parameters: BombermanGameParameters): Promise<unknown> {
@@ -282,6 +284,43 @@ export class BombermanGame extends GameEngine {
 			],
 		])
 		return discreteColliderSystem
+	}
+
+	public GetGameInfo(): BombermanGameInfo {
+		const bodiesData: BodyAllData[] = []
+		for (let ref of this.scene.gameObjectRefs) {
+			for (let body of ref.object.GetComponents(ManBody)) {
+				bodiesData.push((body.object as ManBody).GetAllData())
+			}
+		}
+		const gameInfo = super.GetGameInfo()
+		return new BombermanGameInfo(
+			gameInfo.currentTurnNumber,
+			gameInfo.maxTurnIndex,
+			gameInfo.isGameEnd,
+			bodiesData
+		)
+	}
+}
+
+export class BombermanGameInfo extends GameInfo {
+	private _bodiesData: BodyAllData[]
+
+	public get bodiesData(): BodyAllData[] {
+		return this._bodiesData
+	}
+	public set bodiesData(v: BodyAllData[]) {
+		this._bodiesData = v
+	}
+
+	constructor(
+		currentTurnNumber: number,
+		maxTurnIndex: number,
+		isGameEnd: boolean,
+		bodiesData: BodyAllData[]
+	) {
+		super(currentTurnNumber, maxTurnIndex, isGameEnd)
+		this._bodiesData = bodiesData
 	}
 }
 
