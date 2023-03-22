@@ -7,8 +7,15 @@ import { Vector2 } from '../BaseComponents/Vector2'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
 import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
+import { SlimEvent } from 'Utilities'
 
 export interface IScene extends UpdatableGroup<GameObject> {
+	get OnSceneStart(): SlimEvent<void>
+
+	get OnTurnStart(): SlimEvent<void>
+
+	get OnTurnEnd(): SlimEvent<void>
+
 	get isGameEnd(): (refs: SafeReference<GameObject>[]) => boolean | undefined
 
 	get playModeParameters(): PlayModeParameters

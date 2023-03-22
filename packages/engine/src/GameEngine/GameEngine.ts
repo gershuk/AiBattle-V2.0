@@ -1,3 +1,4 @@
+import { SlimEvent } from 'Utilities'
 import { GameObjectComponent } from './BaseComponents/GameObjectComponent'
 import { Vector2 } from './BaseComponents/Vector2'
 import { Message } from './MessageBroker/Message'
@@ -12,6 +13,12 @@ import { IAsyncControllerBridge } from './UserAIRuner/AsyncControllerBridge'
 import { WorkerBridge } from './UserAIRuner/WorkerBridge'
 
 export interface IGameEngine {
+	get OnSceneStart(): SlimEvent<void>
+
+	get OnTurnStart(): SlimEvent<void>
+
+	get OnTurnEnd(): SlimEvent<void>
+
 	get renderOffset(): Vector2
 	set renderOffset(v: Vector2)
 
@@ -71,6 +78,16 @@ export class GameEngine implements IGameEngine {
 	private _shouldLoadImage: boolean
 	private _scene: IScene
 	private _imageLoader: ImageLoader
+
+	get OnSceneStart(): SlimEvent<void> {
+		return this.scene.OnSceneStart
+	}
+	get OnTurnStart(): SlimEvent<void> {
+		return this.scene.OnTurnStart
+	}
+	get OnTurnEnd(): SlimEvent<void> {
+		return this.scene.OnTurnEnd
+	}
 
 	public get shouldLoadImage(): boolean {
 		return this._shouldLoadImage

@@ -31,6 +31,7 @@ import {
 	ControllerBody,
 	ControllerBodyParameters,
 } from 'GameEngine/UserAIRuner/ControllerBody'
+import { SlimEvent } from 'Utilities'
 
 export {
 	type IGameEngine,
@@ -57,4 +58,5 @@ export {
 	StaticRenderComponentParameters,
 	MessageBroker,
 	Message,
+	SlimEvent
 }
