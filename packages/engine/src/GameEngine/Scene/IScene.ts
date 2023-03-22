@@ -66,6 +66,8 @@ export interface IScene extends UpdatableGroup<GameObject> {
 
 	get commandCalcTimeout(): number
 
+	CheckGameEnd(): boolean
+
 	CreateDefaultGameObject(
 		position: Vector2,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
