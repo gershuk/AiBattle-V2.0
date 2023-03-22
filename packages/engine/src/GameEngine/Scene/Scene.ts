@@ -442,14 +442,14 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	private SetGameEnd() {
 		if (this.state != SceneState.EndGame) {
 			console.log('Game ended!')
-			if (this.IsAutoTurn) this.StopAutoTurn()
+			if (this.IsAutoTurn()) this.StopAutoTurn()
 			this.state = SceneState.EndGame
 			this._onGameEnd.Notify()
 		}
 	}
 
 	private TryStopIfGameEnd() {
-		if (this.CheckGameEnd) {
+		if (this.CheckGameEnd()) {
 			this.SetGameEnd()
 			return true
 		}

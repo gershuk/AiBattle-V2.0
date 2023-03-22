@@ -1,6 +1,10 @@
 export class SlimEvent<T> {
 	private _listeners: ((data: T) => void)[]
 
+	constructor() {
+		this._listeners = []
+	}
+
 	public Subscribe(listener: (data: T) => void): void {
 		this._listeners.push(listener)
 	}
