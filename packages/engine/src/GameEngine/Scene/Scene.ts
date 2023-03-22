@@ -250,6 +250,10 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		return this.AddGameObject(position, gameObject, newComponents, id)
 	}
 
+	public CheckGameEnd(): boolean {
+		return this.isGameEnd && this.isGameEnd(this.gameObjectRefs)
+	}
+
 	public AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,
@@ -445,7 +449,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	private TryStopIfGameEnd() {
-		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
+		if (this.CheckGameEnd) {
 			this.SetGameEnd()
 			return true
 		}

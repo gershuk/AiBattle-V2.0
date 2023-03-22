@@ -89,7 +89,8 @@ export class ManBody extends ControllerBody<
 			this._bombsRestoreTicks,
 			this._bombsRestoreCount,
 			this._lastRestoreTurn,
-			this.uuid
+			this.uuid,
+			this.controllerBridge.UUID
 		)
 	}
 

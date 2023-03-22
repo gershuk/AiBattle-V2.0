@@ -4,6 +4,7 @@ import {
 	ControllerCreationData,
 	GameEngine,
 	GameEngineParameters,
+	GameInfo,
 	IGameEngine,
 } from 'GameEngine/GameEngine'
 import { Message } from 'GameEngine/MessageBroker/Message'
@@ -12,6 +13,7 @@ import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
 import { IScene, SceneParameters } from 'GameEngine/Scene/IScene'
 import {
 	BombermanGame,
+	BombermanGameInfo,
 	BombermanGameParameters,
 	BombermanMap,
 } from './Bomberman/Scripts/BombermanGame'
@@ -38,6 +40,7 @@ export {
 	type IScene,
 	GameEngine,
 	GameEngineParameters,
+	GameInfo,
 	ControllerCreationData,
 	AbstractController,
 	AbstractControllerData,
@@ -45,6 +48,7 @@ export {
 	ControllerBody,
 	ControllerBodyParameters,
 	BombermanGame,
+	BombermanGameInfo,
 	BombermanMap,
 	BombermanGameParameters,
 	MapObjectData,
@@ -58,5 +62,5 @@ export {
 	StaticRenderComponentParameters,
 	MessageBroker,
 	Message,
-	SlimEvent
+	SlimEvent,
 }
