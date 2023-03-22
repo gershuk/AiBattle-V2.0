@@ -29,6 +29,8 @@ export interface IGameEngine {
 
 	get playModeParameters(): PlayModeParameters
 
+	get shouldLoadImage(): boolean
+
 	Init(parameters: GameEngineParameters): Promise<unknown>
 
 	Start(): Promise<unknown>
@@ -72,8 +74,6 @@ export interface IGameEngine {
 	>
 
 	LoadAllImages(imagesPath: string[]): Promise<HTMLImageElement[]>
-
-	get shouldLoadImage(): boolean
 }
 
 export class GameEngine implements IGameEngine {
