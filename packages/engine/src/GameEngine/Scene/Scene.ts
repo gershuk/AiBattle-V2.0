@@ -29,6 +29,7 @@ enum SceneState {
 	CalcCommands,
 	NextTurn,
 	Animation,
+	EndGame,
 }
 
 export class Scene extends UpdatableGroup<GameObject> implements IScene {
@@ -429,10 +430,17 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this.autoTurnTimerId = undefined
 	}
 
-	private TryStopIfGameEnd() {
-		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
+	private SetGameEnd() {
+		if (this.state != SceneState.EndGame) {
 			console.log('Game ended!')
 			if (this.IsAutoTurn) this.StopAutoTurn()
+			this.state = SceneState.EndGame
+		}
+	}
+
+	private TryStopIfGameEnd() {
+		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
+			this.SetGameEnd()
 			return true
 		}
 		return false
