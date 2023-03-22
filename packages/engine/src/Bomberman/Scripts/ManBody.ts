@@ -62,7 +62,7 @@ export class ManBody extends ControllerBody<
 			this._blastRange = parameters.blastRange
 			this._ticksToExplosion = parameters.ticksToExplosion
 
-			this._bombsCount = this._bombsMaxCount
+			this._bombsCount = parameters.bombsMaxCount
 			this._bombsMaxCount = parameters.bombsMaxCount
 			this._bombsRestoreTicks = parameters.bombsRestoreTicks
 			this._bombsRestoreCount = parameters.bombsRestoreCount

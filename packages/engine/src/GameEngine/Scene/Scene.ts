@@ -109,7 +109,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	public get turnIndex(): number {
-		return this._turnIndex
+		return this._turnIndex ?? 0
 	}
 	public set turnIndex(turnIndex: number) {
 		if (turnIndex < 0) throw new Error('turnIndex < 0')
