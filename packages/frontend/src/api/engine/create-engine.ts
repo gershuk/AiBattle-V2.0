@@ -52,6 +52,11 @@ export const createEngine = () => {
 		) => {
 			return engine.Init(
 				new BombermanGameParameters(
+					new BombermanMap(
+						mapData.map,
+						mapData.spawns.map(({ x, y }) => new Vector2(x, y))
+					),
+					codesBot.map(code => new ControllerCreationData(code)),
 					new SceneParameters(
 						sceneParams?.maxTurnIndex ?? 1,
 						sceneParams?.animTicksCount ?? 1,
@@ -62,12 +67,7 @@ export const createEngine = () => {
 						sceneParams?.initTimeout,
 						sceneParams?.commandCalcTimeout,
 						sceneParams?.playModeParameters
-					),
-					new BombermanMap(
-						mapData.map,
-						mapData.spawns.map(({ x, y }) => new Vector2(x, y))
-					),
-					codesBot.map(code => new ControllerCreationData(code))
+					)
 				)
 			)
 		},

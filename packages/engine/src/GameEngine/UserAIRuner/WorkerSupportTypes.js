@@ -4,8 +4,7 @@ export const InitAnswerType = 'InitAnswer'
 export const TurnRequestType = 'TurnRequest'
 export const TurnAnswerType = 'TurnAnswer'
 
-export function workerInitFunction() {
-	// @ts-ignore
+export const workerInitFunctionString = `function workerInitFunction() {
 	let controller = new Controller()
 	onmessage = function (event) {
 		switch (event.data.type) {
@@ -38,4 +37,4 @@ export function workerInitFunction() {
 		}
 		controller.Init()
 	}
-}
+}`

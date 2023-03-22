@@ -9,7 +9,7 @@ import {
 	InitAnswerType,
 	TurnRequestType,
 	TurnAnswerType,
-	workerInitFunction,
+	workerInitFunctionString,
 } from './WorkerSupportTypes'
 
 //When adding constants update the function
@@ -111,7 +111,7 @@ export class WorkerBridge<
 			this.controllerText +
 			'\n' +
 			GetConstants() +
-			workerInitFunction.toString() +
+			workerInitFunctionString +
 			'\n' +
 			'workerInitFunction();'
 		const blob = new Blob([workerCode], {
