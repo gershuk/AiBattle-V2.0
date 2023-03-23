@@ -4,12 +4,12 @@ import {
 	AbstractControllerData,
 } from './AbstractController'
 import { IAsyncControllerBridge } from './AsyncControllerBridge'
+import { getWorkerInitFunction } from './WorkerInitFunction'
 import {
 	InitRequestType,
 	InitAnswerType,
 	TurnRequestType,
 	TurnAnswerType,
-	workerInitFunctionString,
 } from './WorkerSupportTypes'
 
 //When adding constants update the function
@@ -111,7 +111,12 @@ export class WorkerBridge<
 			this.controllerText +
 			'\n' +
 			GetConstants() +
-			workerInitFunctionString +
+			getWorkerInitFunction({
+				InitAnswerType,
+				TurnAnswerType,
+				InitRequestType,
+				TurnRequestType,
+			}) +
 			'\n' +
 			'workerInitFunction();'
 		const blob = new Blob([workerCode], {
