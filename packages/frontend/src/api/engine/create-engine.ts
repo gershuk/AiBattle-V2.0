@@ -202,7 +202,9 @@ export const createEngine = () => {
 			doNextTurn,
 			renderFrame,
 			toggleAutoTurn,
-			gameWinWatch: gameWinFx.doneData,
+		},
+		watchers: {
+			gameWin: gameWinFx.doneData,
 		},
 	}
 }
