@@ -64,7 +64,7 @@ export const createEngine = () => {
 			return {
 				status: 'unknown' as const,
 				gameInfo,
-				winInfo: null,
+				botWin: null,
 			}
 		},
 	})

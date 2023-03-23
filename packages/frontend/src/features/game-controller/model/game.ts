@@ -3,6 +3,23 @@ import { BotCodes, createEngine } from 'api'
 import { $codesData, MapData } from 'model'
 import { SubmitForm } from '../types'
 import { $selectedMap } from './select-map'
+import { showMessage } from 'ui'
+import { createTranslation } from 'libs'
+
+const { getTranslationItem } = createTranslation({
+	ru: {
+		error: 'Ошибка',
+		errorMsg: 'Незарегистрированное поведение окончание игры.',
+		win: 'Победа!',
+		botWin: 'Победил',
+	},
+	en: {
+		error: 'Error',
+		errorMsg: 'Unregistered game over behavior.',
+		win: 'Win!',
+		botWin: 'Bot won',
+	},
+})
 
 const engine = createEngine()
 
@@ -43,5 +60,18 @@ sample({
 sample({ clock: engine.methods.init.done, target: engine.methods.start })
 
 sample({ clock: stoppedGame, target: engine.methods.stopAutoTurn })
+
+engine.watchers.gameWin.watch(({ status, botWin }) => {
+	if (status === 'unknown')
+		showMessage({
+			content: getTranslationItem('errorMsg'),
+			title: getTranslationItem('error'),
+		})
+	if (status === 'win')
+		showMessage({
+			content: `${getTranslationItem('botWin')} - ${botWin.nameBot}`,
+			title: getTranslationItem('win'),
+		})
+})
 
 export { $activeGame, startedGame, stoppedGame, engine }
