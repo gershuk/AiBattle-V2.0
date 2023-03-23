@@ -72,10 +72,10 @@ const { useTranslation } = createTranslation(
 
 export const Debug = ({ selectedCodeName }: DebugProps) => {
 	const t = useTranslation()
-	const { startedAutoTurn, mapsKV, codesHashMap, formValues } = useUnit({
+	const { startedAutoTurn, mapsKV, codesKV, formValues } = useUnit({
 		startedAutoTurn: $startedAutoTurn,
 		mapsKV: $dataMaps,
-		codesHashMap: $codesData,
+		codesKV: $codesData,
 		formValues: $formValues,
 	})
 
@@ -129,11 +129,14 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 								mapName: string
 							}>(e.currentTarget)
 							const mapData = mapsKV[mapName].data!
-							const botCode = codesHashMap[selectedCodeName].content
+							const botCode = codesKV[selectedCodeName]
 							engineMethods.init({
 								sceneParams,
 								mapData,
-								codesBot: mapData.spawns.map(() => botCode),
+								codesBot: mapData.spawns.map(() => ({
+									code: botCode.content,
+									nameBot: botCode.name,
+								})),
 							})
 						} else {
 							engineMethods.stopAutoTurn()

@@ -1,5 +1,5 @@
 import { combine, createEvent, createStore, sample } from 'effector'
-import { createEngine } from 'api'
+import { BotCodes, createEngine } from 'api'
 import { $codesData, MapData } from 'model'
 import { SubmitForm } from '../types'
 import { $selectedMap } from './select-map'
@@ -24,9 +24,13 @@ sample({
 	clock: startedGame,
 	filter: ({ mapData }) => !!mapData,
 	fn: ({ mapData, codes }, { sceneParams, bot }) => {
-		const codesBot = bot
-			.map(({ controller }) => codes[controller]?.content)
-			.filter(Boolean)
+		const codesBot: BotCodes[] = bot
+			.filter(({ controller }) => !!codes[controller])
+			.map(({ controller }) => ({
+				nameBot: codes[controller].name,
+				code: codes[controller].content,
+			}))
+
 		return {
 			sceneParams,
 			mapData,

@@ -7,20 +7,23 @@ import {
 	Vector2,
 } from '@ai-battle/engine'
 import { attach, createStore, combine, sample, createEvent } from 'effector'
+import { generateGuid } from 'libs'
 import { MapData } from 'model'
 import { createEngineCanvas } from './engine-canvas'
-import { SceneParams } from './type'
+import { BotCodes, ControllerStorage, SceneParams } from './type'
 
 export const createEngine = () => {
 	const engine = new BombermanGame()
 
 	const $engine = createStore(engine)
+	const $controllers = createStore<ControllerStorage[]>([])
 
 	const $startedAutoTurn = createStore(false)
 	const $mapData = createStore<MapData | null>(null)
 	const $sceneParams = createStore<SceneParams | null>(null)
 	const $tileSize = createStore<number | null>(null)
 
+	const setControllers = createEvent<ControllerStorage[]>()
 	const toggleAutoTurn = createEvent()
 	const setMapData = createEvent<MapData | null>()
 	const setSceneParams = createEvent<SceneParams | null>()
@@ -36,22 +39,61 @@ export const createEngine = () => {
 	})
 	const $canvas = createStore(canvas)
 
+	$controllers.on(setControllers, (_, newControllers) => newControllers)
 	$mapData.on(setMapData, (_, mapData) => mapData)
 	$sceneParams.on(setSceneParams, (_, sceneParams) => sceneParams)
 	$tileSize.on(setTileSize, (_, newSize) => newSize)
 
+	const gameWinFx = attach({
+		source: { engine: $engine, controllers: $controllers },
+		effect: ({ engine, controllers }) => {
+			const gameInfo = engine.GetGameInfo()
+			if (gameInfo.bodiesData.length === 1) {
+				const lastBot = gameInfo.bodiesData[0]
+				const findBot = controllers.find(
+					controller => controller.guid === lastBot.controllerUUID
+				)
+				if (findBot) {
+					return {
+						status: 'win' as const,
+						gameInfo,
+						botWin: findBot,
+					}
+				}
+			}
+			return {
+				status: 'unknown' as const,
+				gameInfo,
+				winInfo: null,
+			}
+		},
+	})
+
 	const init = attach({
 		source: combine({ engine: $engine, canvas: $canvas }),
-		effect: (
+		effect: async (
 			{ engine, canvas },
 			{
 				sceneParams,
 				mapData,
 				codesBot,
-			}: { sceneParams: SceneParams; mapData: MapData; codesBot: string[] }
+			}: { sceneParams: SceneParams; mapData: MapData; codesBot: BotCodes[] }
 		) => {
-			return engine.Init(
+			const controllers = codesBot.map(({ code, nameBot }) => {
+				const guid = generateGuid()
+				return {
+					guid,
+					controller: new ControllerCreationData(code, guid),
+					nameBot,
+				}
+			})
+			await engine.Init(
 				new BombermanGameParameters(
+					new BombermanMap(
+						mapData.map,
+						mapData.spawns.map(({ x, y }) => new Vector2(x, y))
+					),
+					controllers.map(({ controller }) => controller),
 					new SceneParameters(
 						sceneParams?.maxTurnIndex ?? 1,
 						sceneParams?.animTicksCount ?? 1,
@@ -62,14 +104,14 @@ export const createEngine = () => {
 						sceneParams?.initTimeout,
 						sceneParams?.commandCalcTimeout,
 						sceneParams?.playModeParameters
-					),
-					new BombermanMap(
-						mapData.map,
-						mapData.spawns.map(({ x, y }) => new Vector2(x, y))
-					),
-					codesBot.map(code => new ControllerCreationData(code))
+					)
 				)
 			)
+			engine.OnGameEnd.Unsubscribe(gameWinFx)
+			engine.OnGameEnd.Subscribe(gameWinFx)
+			return {
+				controllers,
+			}
 		},
 	})
 
@@ -131,6 +173,12 @@ export const createEngine = () => {
 	})
 
 	sample({
+		clock: init.doneData,
+		fn: ({ controllers }) => controllers,
+		target: setControllers,
+	})
+
+	sample({
 		clock: init.done,
 		fn: ({ params }) => params.sceneParams,
 		target: setSceneParams,
@@ -154,6 +202,7 @@ export const createEngine = () => {
 			doNextTurn,
 			renderFrame,
 			toggleAutoTurn,
+			gameWinWatch: gameWinFx.doneData,
 		},
 	}
 }
