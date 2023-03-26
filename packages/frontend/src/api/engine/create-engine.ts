@@ -79,12 +79,13 @@ export const createEngine = () => {
 				codesBot,
 			}: { sceneParams: SceneParams; mapData: MapData; codesBot: BotCodes[] }
 		) => {
-			const controllers = codesBot.map(({ code, nameBot }) => {
+			const controllers = codesBot.map(({ code, codeName, botName }) => {
 				const guid = generateGuid()
 				return {
 					guid,
 					controller: new ControllerCreationData(code, guid),
-					nameBot,
+					codeName,
+					botName,
 				}
 			})
 			await engine.Init(

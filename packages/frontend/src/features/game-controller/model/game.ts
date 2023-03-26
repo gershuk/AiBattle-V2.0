@@ -43,8 +43,9 @@ sample({
 	fn: ({ mapData, codes }, { sceneParams, bot }) => {
 		const codesBot: BotCodes[] = bot
 			.filter(({ controller }) => !!codes[controller])
-			.map(({ controller }) => ({
-				nameBot: codes[controller].name,
+			.map(({ controller, name }) => ({
+				botName: name,
+				codeName: codes[controller].name,
 				code: codes[controller].content,
 			}))
 
@@ -62,6 +63,7 @@ sample({ clock: engine.methods.init.done, target: engine.methods.start })
 sample({ clock: stoppedGame, target: engine.methods.stopAutoTurn })
 
 engine.watchers.gameWin.watch(({ status, botWin }) => {
+	console.log('botWin', botWin)
 	if (status === 'unknown')
 		showMessage({
 			content: getTranslationItem('errorMsg'),
@@ -69,7 +71,9 @@ engine.watchers.gameWin.watch(({ status, botWin }) => {
 		})
 	if (status === 'win')
 		showMessage({
-			content: `${getTranslationItem('botWin')} - ${botWin.nameBot}`,
+			content: `${getTranslationItem('botWin')} - ${botWin.botName} (${
+				botWin.codeName
+			})`,
 			title: getTranslationItem('win'),
 		})
 })

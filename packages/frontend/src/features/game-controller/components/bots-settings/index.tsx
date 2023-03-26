@@ -20,11 +20,11 @@ const colors = [
 const { useTranslation } = createTranslation({
 	ru: {
 		configBot: 'Конфигурация ботов',
-		botName: 'Имя бота'
+		botName: 'Имя бота',
 	},
 	en: {
 		configBot: 'Bot configuration',
-		botName: 'Bot name'
+		botName: 'Bot name',
 	},
 })
 
@@ -49,12 +49,13 @@ export const BotsSetting = () => {
 			<div className={'bot-list'}>
 				{activeMap?.data?.spawns.map((_, i) => (
 					<div className={'bot-setting-item'}>
-						<div className={'bot-color'} style={{ background: colors[i] }} />
+						{/* <div className={'bot-color'} style={{ background: colors[i] }} /> */}
 						<Input
+							required
 							name={`bot[${i}].name`}
 							className="bot-name"
 							placeholder={t('botName')}
-							value={`bot#${i}`}
+							initialValue={`bot#${i}`}
 							disabled={startedGame}
 						/>
 						<DropDown

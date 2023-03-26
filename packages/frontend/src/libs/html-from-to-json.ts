@@ -40,7 +40,7 @@ const buildArray = (jsonData: { [k: string]: any }): { [k: string]: any } => {
 			valueFields[index] = isObject(value) ? buildArray(value) : value
 			return { ...acc, [itemName]: valueFields }
 		}
-		const newValue = isObject(value) ? buildArray(value) : value
+		const newValue: any = isObject(value) ? buildArray(value) : value
 		return {
 			...acc,
 			[key]: newValue,

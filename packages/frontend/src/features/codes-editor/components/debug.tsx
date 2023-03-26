@@ -135,7 +135,7 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 								mapData,
 								codesBot: mapData.spawns.map(() => ({
 									code: botCode.content,
-									nameBot: botCode.name,
+									codeName: botCode.name,
 								})),
 							})
 						} else {
