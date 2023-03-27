@@ -11,6 +11,7 @@ const { $values: $formValues, setFieldValue } = createFormValuesSaver({
 			initTimeout: -1,
 			commandCalcTimeout: -1,
 		},
+		bot: [],
 	},
 })
 
