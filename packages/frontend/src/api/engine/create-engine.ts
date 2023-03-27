@@ -201,7 +201,7 @@ export const createEngine = () => {
 
 	sample({
 		source: $engine,
-		clock: onTurnEnd,
+		clock: [onTurnEnd, init.done],
 		fn: engine => engine.GetGameInfo(),
 		target: setGameInfo,
 	})
