@@ -7,13 +7,18 @@ import {
 	SceneParameters,
 	Vector2,
 } from '@ai-battle/engine'
+import { GameObject } from '@ai-battle/engine/build/GameEngine/GameObject/GameObject'
+import { SafeReference } from '@ai-battle/engine/build/GameEngine/ObjectBaseType/ObjectContainer'
 import { attach, createStore, combine, sample, createEvent } from 'effector'
 import { generateGuid } from 'libs'
 import { MapData } from 'model'
 import { createEngineCanvas } from './engine-canvas'
 import { BotCodes, ControllerStorage, SceneParams } from './type'
 
-export const createEngine = () => {
+export const createEngine = (config?: {
+	isGameEnd?: (refs: SafeReference<GameObject>[]) => boolean
+}) => {
+	const { isGameEnd } = config || {}
 	const engine = new BombermanGame()
 
 	const $engine = createStore(engine)
@@ -109,7 +114,8 @@ export const createEngine = () => {
 						sceneParams?.tileSizeScale ?? 50,
 						sceneParams?.initTimeout,
 						sceneParams?.commandCalcTimeout,
-						sceneParams?.playModeParameters
+						sceneParams?.playModeParameters,
+						isGameEnd
 					)
 				)
 			)

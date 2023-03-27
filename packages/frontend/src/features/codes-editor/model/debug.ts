@@ -19,7 +19,7 @@ const {
 	CanvasComponent,
 	$startedAutoTurn,
 	methods: engineMethods,
-} = createEngine()
+} = createEngine({ isGameEnd: () => false })
 
 sample({
 	clock: engineMethods.init.done,

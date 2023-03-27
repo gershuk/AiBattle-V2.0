@@ -6,7 +6,7 @@ import { MapSelection } from './map-selection'
 import { $activeGame, engine, startedGame, stoppedGame } from '../model/game'
 import { $selectedMap } from '../model/select-map'
 import './styles.scss'
-import { Button, StartIcon, StopIcon } from 'ui'
+import { Button, showMessage, StartIcon, StopIcon } from 'ui'
 import { createTranslation, htmlFormToJson } from 'libs'
 import { SubmitForm } from '../types'
 import { PlayingGameInfo } from './playing-game-info'
@@ -44,7 +44,15 @@ export const GameController = () => {
 					e.preventDefault()
 					if (!startedGameFlag) {
 						const jsonForm = htmlFormToJson<SubmitForm>(e.currentTarget)
-						if (!jsonForm?.bot) jsonForm.bot = []
+						const filtersBots = (jsonForm?.bot || []).filter(
+							({ controller }) => controller
+						)
+						if (filtersBots.length < 2) {
+							showMessage({
+								content: 'Для проведения игры необходимо минимум два бота',
+							})
+							return
+						}
 						startedGame(jsonForm)
 					} else {
 						stoppedGame()
