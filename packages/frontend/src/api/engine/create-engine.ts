@@ -1,5 +1,6 @@
 import {
 	BombermanGame,
+	BombermanGameInfo,
 	BombermanGameParameters,
 	BombermanMap,
 	ControllerCreationData,
@@ -17,6 +18,7 @@ export const createEngine = () => {
 
 	const $engine = createStore(engine)
 	const $controllers = createStore<ControllerStorage[]>([])
+	const $gameInfo = createStore<BombermanGameInfo | null>(null)
 
 	const $startedAutoTurn = createStore(false)
 	const $mapData = createStore<MapData | null>(null)
@@ -24,6 +26,8 @@ export const createEngine = () => {
 	const $tileSize = createStore<number | null>(null)
 
 	const setControllers = createEvent<ControllerStorage[]>()
+	const setGameInfo = createEvent<BombermanGameInfo | null>()
+	const onTurnEnd = createEvent()
 	const toggleAutoTurn = createEvent()
 	const setMapData = createEvent<MapData | null>()
 	const setSceneParams = createEvent<SceneParams | null>()
@@ -40,6 +44,7 @@ export const createEngine = () => {
 	const $canvas = createStore(canvas)
 
 	$controllers.on(setControllers, (_, newControllers) => newControllers)
+	$gameInfo.on(setGameInfo, (_, newGameInfo) => newGameInfo)
 	$mapData.on(setMapData, (_, mapData) => mapData)
 	$sceneParams.on(setSceneParams, (_, sceneParams) => sceneParams)
 	$tileSize.on(setTileSize, (_, newSize) => newSize)
@@ -108,6 +113,8 @@ export const createEngine = () => {
 					)
 				)
 			)
+			engine.OnTurnEnd.Unsubscribe(onTurnEnd)
+			engine.OnTurnEnd.Subscribe(onTurnEnd)
 			engine.OnGameEnd.Unsubscribe(gameWinFx)
 			engine.OnGameEnd.Subscribe(gameWinFx)
 			return {
@@ -192,9 +199,24 @@ export const createEngine = () => {
 		target: setTileSize,
 	})
 
+	sample({
+		source: $engine,
+		clock: onTurnEnd,
+		fn: engine => engine.GetGameInfo(),
+		target: setGameInfo,
+	})
+
+	sample({
+		clock: init,
+		fn: () => null,
+		target: setGameInfo,
+	})
+
 	return {
 		CanvasComponent,
 		$startedAutoTurn,
+		$gameInfo,
+		$controllers,
 		methods: {
 			init,
 			start,

@@ -9,6 +9,7 @@ import './styles.scss'
 import { Button, StartIcon, StopIcon } from 'ui'
 import { createTranslation, htmlFormToJson } from 'libs'
 import { SubmitForm } from '../types'
+import { PlayingGameInfo } from './playing-game-info'
 
 const { useTranslation } = createTranslation({
 	ru: {
@@ -55,7 +56,7 @@ export const GameController = () => {
 					{activeMap ? (
 						<>
 							<MapInfo />
-							<BotsSetting />
+							{!startedGameFlag ? <BotsSetting /> : <PlayingGameInfo />}
 							<GameSettings />
 						</>
 					) : null}

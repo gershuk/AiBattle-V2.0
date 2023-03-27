@@ -63,7 +63,6 @@ sample({ clock: engine.methods.init.done, target: engine.methods.start })
 sample({ clock: stoppedGame, target: engine.methods.stopAutoTurn })
 
 engine.watchers.gameWin.watch(({ status, botWin }) => {
-	console.log('botWin', botWin)
 	if (status === 'unknown')
 		showMessage({
 			content: getTranslationItem('errorMsg'),
@@ -78,4 +77,43 @@ engine.watchers.gameWin.watch(({ status, botWin }) => {
 		})
 })
 
-export { $activeGame, startedGame, stoppedGame, engine }
+const $playingGameInfo = combine(
+	$activeGame,
+	engine.$gameInfo,
+	engine.$controllers,
+	(activeGame, gameInfo, controllers) => {
+		if (!gameInfo || !activeGame) return null
+		const currentBotsCount = gameInfo.bodiesData.length
+		const botsCount = controllers.length
+		const botsInfo = controllers.map(controller => {
+			const data = gameInfo.bodiesData.find(
+				({ controllerUUID }) => controller.guid === controllerUUID
+			)
+			if (data) {
+				return {
+					guid: controller.guid,
+					botName: controller.botName,
+					codeName: controller.codeName,
+					position: { x: data.position.x, y: data.position.y },
+					status: 'alive' as const,
+				}
+			}
+			return {
+				guid: controller.guid,
+				status: 'died' as const,
+				botName: controller.botName,
+				codeName: controller.codeName,
+				position: null,
+			}
+		})
+		return {
+			currentBotsCount,
+			botsCount,
+			currentStep: gameInfo.currentTurnNumber,
+			maxStep: gameInfo.maxTurnIndex,
+			botsInfo,
+		}
+	}
+)
+
+export { $activeGame, $playingGameInfo, startedGame, stoppedGame, engine }
