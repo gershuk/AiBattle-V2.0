@@ -41,7 +41,11 @@ $rawLanguage.on(changeLanguage, (_, newLanguage) => newLanguage)
 sample({ clock: changeLanguage, target: saveLanguageToLocalStorageFx })
 
 interface TranslationItem {
-	[k: string]: string | number | TranslationItem
+	[k: string]:
+		| string
+		| number
+		| ((a: any, b?: any, c?: any) => string)
+		| TranslationItem
 }
 
 type Translation<T extends TranslationItem> = {

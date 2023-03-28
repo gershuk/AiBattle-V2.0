@@ -1,14 +1,24 @@
 import { useUnit } from 'effector-react'
-import { createTranslation } from 'libs'
+import { AnyObject, createTranslation } from 'libs'
 import { $playingGameInfo } from '../../model'
 import './styles.scss'
 
 const { useTranslation } = createTranslation({
 	ru: {
-		configGame: 'Конфигурация игры',
+		title: 'Информация об игре',
+		currentStep: (current: number, max: number) => `Шаг ${current} из ${max}`,
+		remainingBots: (currentBots: number, max: number) =>
+			`Осталось ${currentBots} ботов из ${max}`,
+		bots: 'Боты:',
+		died: 'умер',
 	},
 	en: {
-		configGame: 'Game configuration',
+		title: 'Game Information',
+		currentStep: (current: number, max: number) => `Step ${current} of ${max}`,
+		remainingBots: (currentBots: number, max: number) =>
+			`${currentBots} bots left out of  ${max}`,
+		bots: 'Bots:',
+		died: 'died',
 	},
 })
 
@@ -18,16 +28,18 @@ export const PlayingGameInfo = () => {
 	if (!playingGameInfo) return null
 	return (
 		<div className={'playing-game-info'}>
-			<div className={'title'}>{t('configGame')}</div>
+			<div className={'title'}>{t('title')}</div>
 			<div className={'wrapper-steps'}>
-				Шаг {playingGameInfo.currentStep} из {playingGameInfo.maxStep}
+				{t('currentStep')(playingGameInfo.currentStep, playingGameInfo.maxStep)}
 			</div>
 			<div className={'bots-length-wrapper'}>
-				Осталось {playingGameInfo.currentBotsCount} ботов из{' '}
-				{playingGameInfo.botsCount}
+				{t('remainingBots')(
+					playingGameInfo.currentBotsCount,
+					playingGameInfo.botsCount
+				)}
 			</div>
 			<div className={'status-bots-game-wrapper'}>
-				Боты:
+				<div>{t('bots')}</div>
 				<div>
 					{playingGameInfo.botsInfo.map(bot => {
 						return (
@@ -43,7 +55,7 @@ export const PlayingGameInfo = () => {
 										x:{bot.position.x} y:{bot.position.y}
 									</span>
 								) : (
-									<span className={'status-bot-game-die'}>died</span>
+									<span className={'status-bot-game-die'}>{t('died')}</span>
 								)}
 							</div>
 						)
