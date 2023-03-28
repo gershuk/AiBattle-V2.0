@@ -15,11 +15,12 @@ const { $values: $formValues, setFieldValue } = createFormValuesSaver({
 	},
 })
 
-const {
-	CanvasComponent,
-	$startedAutoTurn,
-	methods: engineMethods,
-} = createEngine({ isGameEnd: () => false })
+const debugGameCanvas = document.createElement('canvas')
+
+const { methods: engineMethods, gameState: debugGameState } = createEngine({
+	canvas: debugGameCanvas,
+	isGameEnd: () => false,
+})
 
 sample({
 	clock: engineMethods.init.done,
@@ -32,9 +33,9 @@ sample({
 })
 
 export {
-	CanvasComponent,
+	debugGameCanvas,
 	engineMethods,
-	$startedAutoTurn,
-	$formValues,
 	setFieldValue,
+	$formValues,
+	debugGameState,
 }

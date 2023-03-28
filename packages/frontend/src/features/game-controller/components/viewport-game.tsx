@@ -1,12 +1,15 @@
 import { useUnit } from 'effector-react'
 import { useEffect } from 'preact/hooks'
-import { $activeGame, engine } from '../model/game'
+import { ViewportGame } from 'ui/viewport-game'
+import { $activeGame, engine, gameCanvas } from '../model/game'
 import './styles.scss'
 
-const { CanvasComponent } = engine
-
-export const ViewportGame = () => {
-	const activeGame = useUnit($activeGame)
+export const ViewGame = () => {
+	const { activeGame, tileSize, mapData } = useUnit({
+		activeGame: $activeGame,
+		tileSize: engine.gameState.$tileSize,
+		mapData: engine.gameState.$mapData,
+	})
 
 	useEffect(() => {
 		if (activeGame) engine.methods.renderFrame()
@@ -15,7 +18,13 @@ export const ViewportGame = () => {
 	if (!activeGame) return null
 	return (
 		<div className={'viewport-game'}>
-			<CanvasComponent className="awesome-canvas-game" />
+			<ViewportGame
+				canvas={gameCanvas}
+				className="awesome-canvas-game"
+				tileSize={tileSize ?? 0}
+				map={mapData?.map!}
+				onChangeTileSize={engine.methods.setTileSize}
+			/>
 		</div>
 	)
 }

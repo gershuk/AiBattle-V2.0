@@ -1,31 +1,24 @@
-import { useEffect, useMemo } from 'preact/hooks'
-import { clsx } from 'libs/clsx'
-import { MapData } from 'model'
-import { Store } from 'effector'
-import { useUnit } from 'effector-react'
+import { clsx, useDrag } from 'libs'
 import { memo } from 'preact/compat'
-import { useDrag } from 'libs'
+import { useEffect, useMemo } from 'preact/hooks'
 
-export const createEngineCanvas = ({
-	$map,
-	$tileSize,
-	onChangeTileSize,
-}: {
-	$map: Store<MapData['map']>
-	$tileSize: Store<number | null>
-	onChangeTileSize: (size: number) => void
-}) => {
-	const canvas = document.createElement('canvas')
+interface ViewportGameProps {
+	className?: string
+	canvas: HTMLCanvasElement
+	tileSize: number
+	map: number[][]
+	onChangeTileSize: (newSize: number) => void
+}
 
-	const CanvasComponent = memo(({ className }: { className?: string }) => {
+export const ViewportGame = memo(
+	({
+		className,
+		canvas,
+		tileSize,
+		map,
+		onChangeTileSize,
+	}: ViewportGameProps) => {
 		const { refDrag: refContainer, dragEnabled } = useDrag<HTMLDivElement>()
-
-		const { map, tileSize: _tileSize } = useUnit({
-			map: $map,
-			tileSize: $tileSize,
-		})
-
-		const tileSize = _tileSize || 0
 
 		const { width, height } = useMemo(() => {
 			const maxRowLength = map.reduce(
@@ -69,7 +62,5 @@ export const createEngineCanvas = ({
 				className={clsx('container-viewport-game', className)}
 			></div>
 		)
-	})
-
-	return { canvas, CanvasComponent }
-}
+	}
+)

@@ -25,7 +25,9 @@ const { getTranslationItem } = createTranslation({
 	},
 })
 
-const engine = createEngine()
+const gameCanvas = document.createElement('canvas')
+
+const engine = createEngine({ canvas: gameCanvas })
 
 const $activeGame = createStore(false)
 
@@ -91,8 +93,8 @@ engine.watchers.gameWin.watch(({ status, botWin }) => {
 
 const $playingGameInfo = combine(
 	$activeGame,
-	engine.$gameInfo,
-	engine.$controllers,
+	engine.gameState.$gameInfo,
+	engine.gameState.$controllers,
 	(activeGame, gameInfo, controllers) => {
 		if (!gameInfo || !activeGame) return null
 		const currentBotsCount = gameInfo.bodiesData.length
@@ -128,4 +130,11 @@ const $playingGameInfo = combine(
 	}
 )
 
-export { $activeGame, $playingGameInfo, startedGame, stoppedGame, engine }
+export {
+	$activeGame,
+	$playingGameInfo,
+	startedGame,
+	stoppedGame,
+	engine,
+	gameCanvas,
+}

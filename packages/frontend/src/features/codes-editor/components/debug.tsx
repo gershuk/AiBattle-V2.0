@@ -11,10 +11,11 @@ import {
 	StopIcon,
 	showConfirm,
 } from 'ui'
+import { ViewportGame } from 'ui/viewport-game'
 import {
 	$formValues,
-	$startedAutoTurn,
-	CanvasComponent,
+	debugGameCanvas,
+	debugGameState,
 	engineMethods,
 	setFieldValue,
 } from '../model'
@@ -72,11 +73,20 @@ const { useTranslation } = createTranslation(
 
 export const Debug = ({ selectedCodeName }: DebugProps) => {
 	const t = useTranslation()
-	const { startedAutoTurn, mapsKV, codesKV, formValues } = useUnit({
-		startedAutoTurn: $startedAutoTurn,
+	const {
+		startedAutoTurn,
+		mapsKV,
+		codesKV,
+		formValues,
+		tileSize,
+		mapDataGame,
+	} = useUnit({
+		startedAutoTurn: debugGameState.$startedAutoTurn,
 		mapsKV: $dataMaps,
 		codesKV: $codesData,
 		formValues: $formValues,
+		tileSize: debugGameState.$tileSize,
+		mapDataGame: debugGameState.$mapData,
 	})
 
 	const maps = useMemo(() => {
@@ -163,7 +173,12 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 			</div>
 			{startedAutoTurn ? (
 				<div className="debug-viewport">
-					<CanvasComponent />
+					<ViewportGame
+						canvas={debugGameCanvas}
+						tileSize={tileSize ?? 0}
+						map={mapDataGame?.map!}
+						onChangeTileSize={engineMethods.setTileSize}
+					/>
 				</div>
 			) : null}
 		</div>

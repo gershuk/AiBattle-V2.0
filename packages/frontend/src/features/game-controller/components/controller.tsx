@@ -33,7 +33,7 @@ export const GameController = () => {
 	} = useUnit({
 		activeMap: $selectedMap,
 		startedGame: $activeGame,
-		autoStep: engine.$startedAutoTurn,
+		autoStep: engine.gameState.$startedAutoTurn,
 	})
 
 	return (

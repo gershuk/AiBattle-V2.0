@@ -13,6 +13,11 @@ export interface SceneParams {
 	playModeParameters?: PlayModeParameters
 }
 
+export interface BombermanMapData {
+	map: number[][]
+	spawns: { x: number; y: number }[]
+}
+
 export interface BotCodes {
 	codeName: string
 	botName?: string
