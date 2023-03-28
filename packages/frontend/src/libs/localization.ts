@@ -53,8 +53,8 @@ type Translation<T extends TranslationItem> = {
 }
 
 type GetterTranslation<T> = {
-	<G>(param: (scheme: T) => G): G
-	<G extends keyof T>(param: G): T[G]
+	<G>(fn: (scheme: T) => G): G
+	<G extends keyof T>(key: G): T[G]
 }
 
 const createGetterTranslation = <T extends TranslationItem>(scheme: T) => {

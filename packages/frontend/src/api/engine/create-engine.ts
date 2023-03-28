@@ -71,6 +71,13 @@ export const createEngine = (config?: {
 					}
 				}
 			}
+			if (!gameInfo.bodiesData.length) {
+				return {
+					status: 'draw' as const,
+					gameInfo,
+					botWin: null,
+				}
+			}
 			return {
 				status: 'unknown' as const,
 				gameInfo,

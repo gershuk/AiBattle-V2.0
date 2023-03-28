@@ -9,15 +9,19 @@ import { createTranslation } from 'libs'
 const { getTranslationItem } = createTranslation({
 	ru: {
 		error: 'Ошибка',
-		errorMsg: 'Незарегистрированное поведение окончание игры.',
+		unknownWin: 'Незарегистрированное поведение окончание игры.',
 		win: 'Победа!',
 		botWin: 'Победил',
+		drawGame: 'Ничья!',
+		hm: 'Хм',
 	},
 	en: {
 		error: 'Error',
-		errorMsg: 'Unregistered game over behavior.',
+		unknownWin: 'Unregistered game over behavior.',
 		win: 'Win!',
 		botWin: 'Bot won',
+		drawGame: 'Draw in the game',
+		hm: 'Hm',
 	},
 })
 
@@ -63,18 +67,26 @@ sample({ clock: engine.methods.init.done, target: engine.methods.start })
 sample({ clock: stoppedGame, target: engine.methods.stopAutoTurn })
 
 engine.watchers.gameWin.watch(({ status, botWin }) => {
-	if (status === 'unknown')
-		showMessage({
-			content: getTranslationItem('errorMsg'),
-			title: getTranslationItem('error'),
-		})
-	if (status === 'win')
-		showMessage({
-			content: `${getTranslationItem('botWin')} - ${botWin.botName} (${
-				botWin.codeName
-			})`,
-			title: getTranslationItem('win'),
-		})
+	let content = ''
+	let title = ''
+	if (status === 'draw') {
+		content = getTranslationItem('drawGame')
+		title = getTranslationItem('hm')
+	}
+	if (status === 'unknown') {
+		content = getTranslationItem('unknownWin')
+		title = getTranslationItem('error')
+	}
+	if (status === 'win') {
+		content = `${getTranslationItem('botWin')} - ${botWin.botName} (${
+			botWin.codeName
+		})`
+		title = getTranslationItem('win')
+	}
+	showMessage({
+		content: content,
+		title: title,
+	})
 })
 
 const $playingGameInfo = combine(

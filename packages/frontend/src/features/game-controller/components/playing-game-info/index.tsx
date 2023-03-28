@@ -1,5 +1,5 @@
 import { useUnit } from 'effector-react'
-import { AnyObject, createTranslation } from 'libs'
+import { createTranslation } from 'libs'
 import { $playingGameInfo } from '../../model'
 import './styles.scss'
 
@@ -30,12 +30,16 @@ export const PlayingGameInfo = () => {
 		<div className={'playing-game-info'}>
 			<div className={'title'}>{t('title')}</div>
 			<div className={'wrapper-steps'}>
-				{t('currentStep')(playingGameInfo.currentStep, playingGameInfo.maxStep)}
+				{t(x =>
+					x.currentStep(playingGameInfo.currentStep, playingGameInfo.maxStep)
+				)}
 			</div>
 			<div className={'bots-length-wrapper'}>
-				{t('remainingBots')(
-					playingGameInfo.currentBotsCount,
-					playingGameInfo.botsCount
+				{t(x =>
+					x.remainingBots(
+						playingGameInfo.currentBotsCount,
+						playingGameInfo.botsCount
+					)
 				)}
 			</div>
 			<div className={'status-bots-game-wrapper'}>
