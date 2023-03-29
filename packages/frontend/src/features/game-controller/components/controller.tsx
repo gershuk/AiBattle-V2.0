@@ -16,11 +16,13 @@ const { useTranslation } = createTranslation({
 		startAutoStep: 'Запустить авто шаг',
 		stopAutoStep: 'Остановить авто шаг',
 		nextStep: 'Сделать 1 шаг',
+		minimumLimitBot: 'Для проведения игры необходимо минимум два бота',
 	},
 	en: {
 		startAutoStep: 'Run auto step',
 		stopAutoStep: 'Stop auto step',
 		nextStep: 'Take 1 step',
+		minimumLimitBot: 'At least two bots are required to play the game',
 	},
 })
 
@@ -49,7 +51,7 @@ export const GameController = () => {
 						)
 						if (filtersBots.length < 2) {
 							showMessage({
-								content: 'Для проведения игры необходимо минимум два бота',
+								content: t('minimumLimitBot'),
 							})
 							return
 						}
