@@ -12,6 +12,7 @@ const { useTranslation } = createTranslation({
 			`Осталось ${currentBots} ботов из ${max}`,
 		bots: 'Боты:',
 		died: 'умер',
+		showNameBots: 'Показать имена ботов',
 	},
 	en: {
 		title: 'Game information',
@@ -20,6 +21,7 @@ const { useTranslation } = createTranslation({
 			`${currentBots} bots left out of  ${max}`,
 		bots: 'Bots:',
 		died: 'died',
+		showNameBots: 'Show bot names',
 	},
 })
 
@@ -49,7 +51,7 @@ export const PlayingGameInfo = () => {
 			<div className={'show-name-bots'}>
 				<Checkbox
 					initValue={formValues.showPlayerName}
-					label={'Показать имена ботов'}
+					label={t('showNameBots')}
 					onChange={value =>
 						setFieldValue({ fieldName: 'showPlayerName', value })
 					}
