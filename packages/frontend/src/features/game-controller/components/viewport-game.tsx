@@ -1,19 +1,36 @@
 import { useUnit } from 'effector-react'
-import { useEffect } from 'preact/hooks'
-import { ViewportGame } from 'ui/viewport-game'
-import { $activeGame, engine, gameCanvas } from '../model/game'
+import { useEffect, useMemo } from 'preact/hooks'
+import { ViewportGame } from 'ui'
+import {
+	$activeGame,
+	$playingGameInfo,
+	AliveBot,
+	engine,
+	gameCanvas,
+} from '../model/game'
 import './styles.scss'
 
 export const ViewGame = () => {
-	const { activeGame, tileSize, mapData } = useUnit({
+	const { activeGame, tileSize, mapData, playingGameInfo } = useUnit({
 		activeGame: $activeGame,
 		tileSize: engine.gameState.$tileSize,
 		mapData: engine.gameState.$mapData,
+		playingGameInfo: $playingGameInfo,
 	})
 
 	useEffect(() => {
 		if (activeGame) engine.methods.renderFrame()
 	}, [activeGame])
+
+	const bots = useMemo(() => {
+		const aliveBot = (playingGameInfo?.botsInfo || []).filter(
+			({ status }) => status === 'alive'
+		) as AliveBot[]
+		return aliveBot.map(bot => ({
+			...bot,
+			botName: bot.botName ?? bot.codeName,
+		}))
+	}, [playingGameInfo])
 
 	if (!activeGame) return null
 	return (
@@ -24,6 +41,8 @@ export const ViewGame = () => {
 				tileSize={tileSize ?? 0}
 				map={mapData?.map!}
 				onChangeTileSize={engine.methods.setTileSize}
+				showPlayer
+				bots={bots}
 			/>
 		</div>
 	)

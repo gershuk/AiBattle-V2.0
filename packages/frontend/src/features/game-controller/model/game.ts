@@ -91,6 +91,25 @@ engine.watchers.gameWin.watch(({ status, botWin }) => {
 	})
 })
 
+export interface AliveBot {
+	guid: string
+	botName?: string
+	codeName: string
+	position: {
+		x: number
+		y: number
+	}
+	status: 'alive'
+}
+
+export interface DiedBot {
+	guid: string
+	status: 'died'
+	botName?: string | undefined
+	codeName: string
+	position: null
+}
+
 const $playingGameInfo = combine(
 	$activeGame,
 	engine.gameState.$gameInfo,
@@ -99,7 +118,7 @@ const $playingGameInfo = combine(
 		if (!gameInfo || !activeGame) return null
 		const currentBotsCount = gameInfo.bodiesData.length
 		const botsCount = controllers.length
-		const botsInfo = controllers.map(controller => {
+		const botsInfo = controllers.map<AliveBot | DiedBot>(controller => {
 			const data = gameInfo.bodiesData.find(
 				({ controllerUUID }) => controller.guid === controllerUUID
 			)

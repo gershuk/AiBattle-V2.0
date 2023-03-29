@@ -1,6 +1,7 @@
-import { clsx, useDrag } from 'libs'
+import { arrayObjectToHasMap, clsx, useDrag } from 'libs'
 import { memo } from 'preact/compat'
 import { useEffect, useMemo } from 'preact/hooks'
+import './styles.scss'
 
 interface ViewportGameProps {
 	className?: string
@@ -8,6 +9,8 @@ interface ViewportGameProps {
 	tileSize: number
 	map: number[][]
 	onChangeTileSize: (newSize: number) => void
+	showPlayer?: boolean
+	bots?: { position: { x: number; y: number }; botName: string }[]
 }
 
 export const ViewportGame = memo(
@@ -17,6 +20,8 @@ export const ViewportGame = memo(
 		tileSize,
 		map,
 		onChangeTileSize,
+		showPlayer,
+		bots,
 	}: ViewportGameProps) => {
 		const { refDrag: refContainer, dragEnabled } = useDrag<HTMLDivElement>()
 
@@ -30,6 +35,14 @@ export const ViewportGame = memo(
 				width: maxRowLength * tileSize,
 			}
 		}, [map, tileSize])
+
+		const botsHashMap = useMemo(() => {
+			const _bots = (bots || []).map(({ position, ...rest }) => ({
+				...rest,
+				position: `${position.x}-${position.y}`,
+			}))
+			return arrayObjectToHasMap(_bots, 'position')
+		}, [bots])
 
 		useEffect(() => {
 			canvas.width = width
@@ -60,7 +73,42 @@ export const ViewportGame = memo(
 				}}
 				ref={refContainer}
 				className={clsx('container-viewport-game', className)}
-			></div>
+			>
+				{bots ? (
+					<table
+						className={clsx(
+							'viewport-game-table',
+							showPlayer ? 'show-player' : null
+						)}
+					>
+						{map.map((row, i) => (
+							<tr>
+								{row.map((_, j) => (
+									<td
+										style={{
+											width: tileSize,
+											height: tileSize,
+											minWidth: tileSize,
+											minHeight: tileSize,
+										}}
+									>
+										<span className={'cell-content'}>
+											{botsHashMap[`${j}-${i}`] ? (
+												<span
+													className={'bot-name'}
+													style={{ fontSize: tileSize * 0.4 }}
+												>
+													{botsHashMap[`${j}-${i}`].botName}
+												</span>
+											) : null}
+										</span>
+									</td>
+								))}
+							</tr>
+						))}
+					</table>
+				) : null}
+			</div>
 		)
 	}
 )

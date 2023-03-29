@@ -11,7 +11,7 @@ import {
 	StopIcon,
 	showConfirm,
 } from 'ui'
-import { ViewportGame } from 'ui/viewport-game'
+import { ViewportGame } from 'ui'
 import {
 	$formValues,
 	debugGameCanvas,
