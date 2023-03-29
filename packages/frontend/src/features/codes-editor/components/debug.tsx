@@ -56,6 +56,11 @@ const _formFields = [
 		name: 'sceneParams.autoTurnTime',
 		min: 1,
 	},
+	{
+		type: 'number',
+		required: true,
+		name: 'sceneParams.commandCalcTimeout',
+	},
 ] as const
 
 const { useTranslation } = createTranslation(

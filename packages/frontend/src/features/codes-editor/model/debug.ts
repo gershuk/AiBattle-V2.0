@@ -11,6 +11,7 @@ const { $values: $formValues, setFieldValue } = createFormValuesSaver({
 			animTicksCount: 60,
 			animTicksTime: 12,
 			autoTurnTime: 1100,
+			commandCalcTimeout: -1,
 		},
 	},
 })

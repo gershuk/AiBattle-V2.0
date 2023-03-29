@@ -117,10 +117,10 @@ export const createEngine = (config: {
 						sceneParams?.autoTurnTime ?? 1,
 						canvas,
 						sceneParams?.tileSizeScale ?? 50,
-						sceneParams?.initTimeout,
-						sceneParams?.commandCalcTimeout,
-						sceneParams?.playModeParameters,
-						isGameEnd
+						sceneParams?.initTimeout ?? undefined,
+						sceneParams?.commandCalcTimeout ?? undefined,
+						sceneParams?.playModeParameters ?? undefined,
+						isGameEnd ?? undefined
 					)
 				)
 			)
