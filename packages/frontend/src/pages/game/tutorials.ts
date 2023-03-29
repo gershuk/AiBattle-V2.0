@@ -16,7 +16,7 @@ const { getTranslationItem } = createTranslation({
 		facilities: 'Удобства',
 	},
 	en: {
-		startGame: 'Game start',
+		startGame: 'To start the game',
 		configGame: 'Here you configure the game.',
 		activeStart:
 			'When you select a map and set up bots, the start button is activated.',

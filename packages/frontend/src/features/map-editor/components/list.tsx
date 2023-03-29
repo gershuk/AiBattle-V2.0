@@ -34,7 +34,7 @@ const { useTranslation } = createTranslation({
 		widthMap: 'Ширина карты',
 		heightMap: 'Высота карты',
 		fillCode: 'Заполнение карты (код клетки)',
-		fillBorderCode: 'Заполнение краев карты (код клетки)'
+		fillBorderCode: 'Заполнение краев карты (код клетки)',
 	},
 	en: {
 		removeFile: 'Remove file?',
@@ -48,8 +48,8 @@ const { useTranslation } = createTranslation({
 		createMap: 'Create map',
 		widthMap: 'Map width',
 		heightMap: 'Map height',
-		fillCode: 'Filling out the card (cell code)',
-		fillBorderCode: 'Filling the edges of the map (cell code)'
+		fillCode: 'Filling out the map (cell code)',
+		fillBorderCode: 'Filling the edges of the map (cell code)',
 	},
 })
 
@@ -154,8 +154,7 @@ const CreateMapForm = ({
 				e.preventDefault()
 				const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
 				const fileExists = !!mapsName.find(name => name === dataForm.name)
-				if (fileExists)
-					showMessage({ content: t('fileExists') })
+				if (fileExists) showMessage({ content: t('fileExists') })
 				else ok()
 			}}
 		>

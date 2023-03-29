@@ -71,7 +71,7 @@ const { useTranslation } = createTranslation(
 		},
 		en: {
 			map: 'Map',
-			emptyMaps: 'Cards are missing, create a new one?',
+			emptyMaps: 'Map are missing, create a new one?',
 		},
 	})
 )

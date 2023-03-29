@@ -6,8 +6,8 @@ import { $mode, setMode } from '../../model'
 
 const { useTranslation } = createTranslation({
 	ru: {
-		spawnList: 'Места спавнов:',
-		addSpawn: 'Укажите точку спавна на карте',
+		spawnList: 'Точки появления ботов:',
+		addSpawn: 'Укажите точку появления ботов на карте',
 	},
 	en: {
 		spawnList: 'Spawn list:',

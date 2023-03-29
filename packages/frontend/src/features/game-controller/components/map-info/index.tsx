@@ -8,7 +8,7 @@ const { useTranslation } = createTranslation({
 	ru: {
 		infoMap: 'Информация о карте',
 		cellCount: 'Количество клеток',
-		spawnCount: 'Количество спавнов',
+		spawnCount: 'Количество точек появлений ботов',
 	},
 	en: {
 		infoMap: 'Map information',

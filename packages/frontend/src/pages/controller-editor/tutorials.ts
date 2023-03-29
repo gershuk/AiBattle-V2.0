@@ -6,7 +6,7 @@ import { $selectCode } from './model'
 
 const { getTranslationItem } = createTranslation({
 	ru: {
-		scripts: 'Твои скрипты ии (ботов)',
+		scripts: 'Твои скрипты ботов',
 		addScript:
 			'Слева ты видишь список скриптов, наверное он пустой, давай создадим новый скрипт.',
 		clickAdd:
@@ -61,7 +61,7 @@ const { getTranslationItem } = createTranslation({
 		</div>
 		`,
 		debug:
-			'At the bottom of the panel for quick launch of the bot. Select a map and press the start button.',
+			'There is  the panel for quick launch of the bot At the bottom. Select the map and press the start button.',
 	},
 })
 
