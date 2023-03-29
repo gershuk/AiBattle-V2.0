@@ -1,6 +1,7 @@
 import { useUnit } from 'effector-react'
 import { useEffect, useMemo } from 'preact/hooks'
 import { ViewportGame } from 'ui'
+import { $formValues } from '../model'
 import {
 	$activeGame,
 	$playingGameInfo,
@@ -11,12 +12,14 @@ import {
 import './styles.scss'
 
 export const ViewGame = () => {
-	const { activeGame, tileSize, mapData, playingGameInfo } = useUnit({
-		activeGame: $activeGame,
-		tileSize: engine.gameState.$tileSize,
-		mapData: engine.gameState.$mapData,
-		playingGameInfo: $playingGameInfo,
-	})
+	const { activeGame, tileSize, mapData, playingGameInfo, formValues } =
+		useUnit({
+			activeGame: $activeGame,
+			tileSize: engine.gameState.$tileSize,
+			mapData: engine.gameState.$mapData,
+			playingGameInfo: $playingGameInfo,
+			formValues: $formValues,
+		})
 
 	useEffect(() => {
 		if (activeGame) engine.methods.renderFrame()
@@ -41,7 +44,7 @@ export const ViewGame = () => {
 				tileSize={tileSize ?? 0}
 				map={mapData?.map!}
 				onChangeTileSize={engine.methods.setTileSize}
-				showPlayer
+				showPlayerName={formValues.showPlayerName}
 				bots={bots}
 			/>
 		</div>

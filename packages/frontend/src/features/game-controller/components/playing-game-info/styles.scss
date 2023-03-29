@@ -12,6 +12,9 @@
 	.bots-length-wrapper {
 		margin-bottom: 8px;
 	}
+	.show-name-bots {
+		margin-bottom: 8px;
+	}
 	.status-bot-game-die {
 		color: var(--color-danger);
 	}
@@ -20,8 +23,8 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
-		margin-bottom: 4px;
 	}
+
 	.status-bot-game-position {
 		overflow: hidden;
 		white-space: nowrap;

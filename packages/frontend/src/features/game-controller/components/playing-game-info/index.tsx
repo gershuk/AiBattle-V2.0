@@ -1,6 +1,7 @@
 import { useUnit } from 'effector-react'
 import { createTranslation } from 'libs'
-import { $playingGameInfo } from '../../model'
+import { Checkbox } from 'ui'
+import { $formValues, $playingGameInfo, setFieldValue } from '../../model'
 import './styles.scss'
 
 const { useTranslation } = createTranslation({
@@ -24,7 +25,10 @@ const { useTranslation } = createTranslation({
 
 export const PlayingGameInfo = () => {
 	const t = useTranslation()
-	const playingGameInfo = useUnit($playingGameInfo)
+	const { playingGameInfo, formValues } = useUnit({
+		playingGameInfo: $playingGameInfo,
+		formValues: $formValues,
+	})
 	if (!playingGameInfo) return null
 	return (
 		<div className={'playing-game-info'}>
@@ -41,6 +45,15 @@ export const PlayingGameInfo = () => {
 						playingGameInfo.botsCount
 					)
 				)}
+			</div>
+			<div className={'show-name-bots'}>
+				<Checkbox
+					initValue={formValues.showPlayerName}
+					label={'Показать имена ботов'}
+					onChange={value =>
+						setFieldValue({ fieldName: 'showPlayerName', value })
+					}
+				/>
 			</div>
 			<div className={'status-bots-game-wrapper'}>
 				<div>{t('bots')}</div>

@@ -9,7 +9,7 @@ interface ViewportGameProps {
 	tileSize: number
 	map: number[][]
 	onChangeTileSize: (newSize: number) => void
-	showPlayer?: boolean
+	showPlayerName?: boolean
 	bots?: { position: { x: number; y: number }; botName: string }[]
 }
 
@@ -20,7 +20,7 @@ export const ViewportGame = memo(
 		tileSize,
 		map,
 		onChangeTileSize,
-		showPlayer,
+		showPlayerName,
 		bots,
 	}: ViewportGameProps) => {
 		const { refDrag: refContainer, dragEnabled } = useDrag<HTMLDivElement>()
@@ -78,7 +78,7 @@ export const ViewportGame = memo(
 					<table
 						className={clsx(
 							'viewport-game-table',
-							showPlayer ? 'show-player' : null
+							showPlayerName ? 'show-player' : null
 						)}
 					>
 						{map.map((row, i) => (
