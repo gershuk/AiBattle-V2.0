@@ -13,7 +13,7 @@ const { useTranslation } = createTranslation({
 		died: 'умер',
 	},
 	en: {
-		title: 'Game Information',
+		title: 'Game information',
 		currentStep: (current: number, max: number) => `Step ${current} of ${max}`,
 		remainingBots: (currentBots: number, max: number) =>
 			`${currentBots} bots left out of  ${max}`,

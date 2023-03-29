@@ -6,13 +6,13 @@ import { $selectCode } from './model'
 
 const { getTranslationItem } = createTranslation({
 	ru: {
-		scripts: 'Твои скрипты',
+		scripts: 'Твои скрипты ии (ботов)',
 		addScript:
 			'Слева ты видишь список скриптов, наверное он пустой, давай создадим новый скрипт.',
 		clickAdd:
 			'Нажми на плюсик, чтобы создать новый скрипт для бота. <b>Создастся пример бота.</b>',
 		clickUpload:
-			'Но если вдруг захочешь, ты можешь загрузить свой с компьютера',
+			'Но если вдруг захочешь, ты можешь загрузить свой с компьютера.',
 		editBot: 'Редактор бота',
 		infoEditBot: `
 		Контроллер должен возвращать код действия.
@@ -36,11 +36,11 @@ const { getTranslationItem } = createTranslation({
 			'Внизу панель для быстрого запуска бота. Выбери карту и нажми на кнопку старта.',
 	},
 	en: {
-		scripts: 'Your scripts',
+		scripts: 'Your bots scripts',
 		addScript: `On the left you see a list of scripts, it's probably empty, let's create a new script.`,
 		clickAdd:
 			'Click on the plus sign to create a new bot script. <b>An example bot will be created.</b>',
-		clickUpload: 'But if you want, you can download yours from your computer',
+		clickUpload: 'But if you want, you can download yours from your computer.',
 		editBot: 'Bot Editor',
 		infoEditBot: `
 		The controller must return an action code.

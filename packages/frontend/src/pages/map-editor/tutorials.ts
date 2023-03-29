@@ -17,7 +17,7 @@ const { getTranslationItem } = createTranslation({
 	en: {
 		maps: 'Your maps',
 		mapsMsg: 'Use the map wizard to create a map.',
-		mapEditor: 'Map Editor',
+		mapEditor: 'Map editor',
 		jsonEditor: `JSON map editor.`,
 		tileEditor: 'Map tile editor. Draw! Create!',
 		draw: 'To draw, you need to click on the desired block, move to the map on the right press/hold the left mouse button.',

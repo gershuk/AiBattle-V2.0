@@ -48,7 +48,7 @@ const { useTranslation } = createTranslation({
 		tileSize: 'Tile Size',
 		setActiveTile: 'Select active tile to draw:',
 		showCodes: 'Show cell codes',
-		enableGrid: 'Enable Grid',
+		enableGrid: 'Enable grid',
 	},
 })
 
