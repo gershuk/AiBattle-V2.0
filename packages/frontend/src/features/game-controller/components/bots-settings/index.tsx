@@ -28,7 +28,7 @@ const { useTranslation } = createTranslation({
 		botName: 'Имя бота',
 	},
 	en: {
-		configBot: 'Bot configuration',
+		configBot: 'Bots configuration',
 		botName: 'Bot name',
 	},
 })

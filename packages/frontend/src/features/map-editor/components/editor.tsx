@@ -24,7 +24,7 @@ const { useTranslation } = createTranslation({
 	},
 	en: {
 		jsonInvalid: 'Invalid JSON',
-		mapInvalid: 'JSON structure does not match the map',
+		mapInvalid: `JSON's structure does not match the map`,
 	},
 })
 

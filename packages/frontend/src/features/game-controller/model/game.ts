@@ -20,7 +20,7 @@ const { getTranslationItem } = createTranslation({
 		unknownWin: 'Unregistered game over behavior.',
 		win: 'Win!',
 		botWin: 'Bot won',
-		drawGame: 'Draw in the game',
+		drawGame: 'Tie in the game',
 		hm: 'Hm',
 	},
 })

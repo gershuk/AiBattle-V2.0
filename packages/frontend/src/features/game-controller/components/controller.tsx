@@ -21,7 +21,7 @@ const { useTranslation } = createTranslation({
 	en: {
 		startAutoStep: 'Run auto step',
 		stopAutoStep: 'Stop auto step',
-		nextStep: 'Take 1 step',
+		nextStep: 'Single step',
 		minimumLimitBot: 'At least two bots are required to play the game',
 	},
 })
