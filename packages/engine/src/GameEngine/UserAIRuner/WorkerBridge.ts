@@ -4,25 +4,15 @@ import {
 	AbstractControllerData,
 } from './AbstractController'
 import { IAsyncControllerBridge } from './AsyncControllerBridge'
-import { getWorkerInitFunction } from './WorkerInitFunction'
-import {
-	InitRequestType,
-	InitAnswerType,
-	TurnRequestType,
-	TurnAnswerType,
-} from './WorkerSupportTypes'
+import { workerMessageTypes, workerInitFunction } from './WorkerSupportTypes'
 
 //When adding constants update the function
 function GetConstants(): string {
-	let res = ''
-	res += `const ${
-		Object.keys({ InitRequestType })[0]
-	} = "${InitRequestType}";\n`
-	res += `const ${Object.keys({ InitAnswerType })[0]} = "${InitAnswerType}";\n`
-	res += `const ${
-		Object.keys({ TurnRequestType })[0]
-	} = "${TurnRequestType}";\n`
-	res += `const ${Object.keys({ TurnAnswerType })[0]} = "${TurnAnswerType}";\n`
+	let res = Object.entries(workerMessageTypes)
+		.reduce((acc, [key, value]) => {
+			return [...acc, `const ${key} = "${value}";`]
+		}, [])
+		.join('\n')
 	return res
 }
 
@@ -32,7 +22,7 @@ export class InitRequest {
 
 	constructor(initInfo: any) {
 		this.initInfo = initInfo
-		this.type = InitRequestType
+		this.type = workerMessageTypes.InitRequestType
 	}
 }
 
@@ -42,7 +32,7 @@ export class InitAnswer {
 
 	constructor(initError: Error) {
 		this.initError = initError
-		this.type = InitAnswerType
+		this.type = workerMessageTypes.InitAnswerType
 	}
 }
 
@@ -53,7 +43,7 @@ export class TurnRequest {
 
 	constructor(turnInfo: any, turnNumber: number) {
 		;(this.turnInfo = turnInfo), (this.turnNumber = turnNumber)
-		this.type = TurnRequestType
+		this.type = workerMessageTypes.TurnRequestType
 	}
 }
 
@@ -65,7 +55,7 @@ export class TurnAnswer {
 	constructor(turnAnswer: any, turnNumber: number) {
 		this.turnAnswer = turnAnswer
 		this.turnNumber = turnNumber
-		this.type = TurnAnswerType
+		this.type = workerMessageTypes.TurnAnswerType
 	}
 }
 
@@ -111,12 +101,7 @@ export class WorkerBridge<
 			this.controllerText +
 			'\n' +
 			GetConstants() +
-			getWorkerInitFunction({
-				InitAnswerType,
-				TurnAnswerType,
-				InitRequestType,
-				TurnRequestType,
-			}) +
+			workerInitFunction.toString() +
 			'\n' +
 			'workerInitFunction();'
 		const blob = new Blob([workerCode], {
@@ -130,7 +115,8 @@ export class WorkerBridge<
 
 		return new Promise((res, rej) => {
 			this.worker.onmessage = mes => {
-				if (mes.data.type === InitAnswerType) res(mes.data.initError)
+				if (mes.data.type === workerMessageTypes.InitAnswerType)
+					res(mes.data.initError)
 			}
 			if (timeout > -1) setTimeout(() => rej(new Error('Time out.')), timeout)
 		})
@@ -145,7 +131,7 @@ export class WorkerBridge<
 			this.worker.postMessage(new TurnRequest(info, turnNumber))
 			this.worker.onmessage = mes => {
 				if (
-					mes.data.type === TurnAnswerType &&
+					mes.data.type === workerMessageTypes.TurnAnswerType &&
 					mes.data.turnNumber === turnNumber
 				)
 					res(mes.data.turnAnswer)
