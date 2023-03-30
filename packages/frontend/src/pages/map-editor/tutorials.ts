@@ -21,7 +21,7 @@ const { getTranslationItem } = createTranslation({
 		jsonEditor: `JSON map editor.`,
 		tileEditor: 'Map tile editor. Draw! Create!',
 		draw: 'To draw, you need to click on the desired block, move to the map on the right press/hold the left mouse button.',
-		zoom: 'You can zoom in/zoom out the map with the mouse wheel while pressing ctrl. You can also move the map with the mouse.',
+		zoom: 'The map can be zoomed by using the mouse wheel + ctrl. You can also move the map by using mouse.',
 		spawn: `And don't forget to add the spawn locations for the bots. It is very important!`,
 	},
 })

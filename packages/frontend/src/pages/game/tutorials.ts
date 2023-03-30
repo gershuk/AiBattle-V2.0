@@ -16,13 +16,13 @@ const { getTranslationItem } = createTranslation({
 		facilities: 'Удобства',
 	},
 	en: {
-		startGame: 'To start the game',
+		startGame: 'To start play the game',
 		configGame: 'Here you configure the game.',
 		activeStart:
-			'When you select a map and set up bots, the start button is activated.',
+			'The start button is activated, when you select a map and set up bots.',
 		startInfo:
 			'You can start the bots to play automatically or control their every move.',
-		zoom: 'You can zoom in/zoom out of the game with the mouse wheel while pressing ctrl. You can also move the map with the mouse.',
+		zoom: 'The map can be zoomed by using the mouse wheel + ctrl. You can also move the map by using mouse.',
 		facilities: 'Facilities',
 	},
 })

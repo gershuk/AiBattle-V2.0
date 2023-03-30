@@ -36,11 +36,11 @@ const { getTranslationItem } = createTranslation({
 			'Внизу панель для быстрого запуска бота. Выбери карту и нажми на кнопку старта.',
 	},
 	en: {
-		scripts: 'Your bots scripts',
+		scripts: `Your bot's scripts`,
 		addScript: `On the left you see a list of scripts, it's probably empty, let's create a new script.`,
 		clickAdd:
 			'Click on the plus sign to create a new bot script. <b>An example bot will be created.</b>',
-		clickUpload: 'But if you want, you can download yours from your computer.',
+		clickUpload: 'But if you want, you can upload yours from your computer.',
 		editBot: 'Bot Editor',
 		infoEditBot: `
 		The controller must return an action code.
