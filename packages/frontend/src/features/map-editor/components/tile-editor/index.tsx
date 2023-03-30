@@ -44,7 +44,7 @@ const { useTranslation } = createTranslation({
 		enableGrid: 'Включить сетку',
 	},
 	en: {
-		spawnExit: 'Cannot place 2 identical spawn points.',
+		spawnExit: 'Can not place 2 same spawn points.',
 		tileSize: 'Tile size',
 		setActiveTile: 'Select active tile to draw:',
 		showCodes: 'Show cell codes',
