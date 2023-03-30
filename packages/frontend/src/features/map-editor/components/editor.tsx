@@ -23,8 +23,8 @@ const { useTranslation } = createTranslation({
 		mapInvalid: 'Структура JSON не соответствует карте',
 	},
 	en: {
-		jsonInvalid: 'JSON is not valid',
-		mapInvalid: 'JSON structure does not match the map',
+		jsonInvalid: 'Invalid JSON',
+		mapInvalid: `JSON's structure does not match the map`,
 	},
 })
 

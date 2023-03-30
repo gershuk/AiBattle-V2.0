@@ -36,11 +36,11 @@ const buildArray = (jsonData: { [k: string]: any }): { [k: string]: any } => {
 		if (regexpIsArray.test(key)) {
 			const itemName = regexpIsArray.exec(key)?.[1]!
 			const index = Number(key.replace(itemName, '').replace(/[\[\]']+/g, ''))
-			const valueFields = [...(acc?.[itemName] || [])]
+			const valueFields: any[] = [...(acc?.[itemName] || [])]
 			valueFields[index] = isObject(value) ? buildArray(value) : value
 			return { ...acc, [itemName]: valueFields }
 		}
-		const newValue = isObject(value) ? buildArray(value) : value
+		const newValue: any = isObject(value) ? buildArray(value) : value
 		return {
 			...acc,
 			[key]: newValue,

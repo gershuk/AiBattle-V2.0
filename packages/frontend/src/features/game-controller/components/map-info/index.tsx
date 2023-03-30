@@ -8,15 +8,14 @@ const { useTranslation } = createTranslation({
 	ru: {
 		infoMap: 'Информация о карте',
 		cellCount: 'Количество клеток',
-		spawnCount: 'Количество спавнов'
+		spawnCount: 'Количество точек появлений ботов',
 	},
 	en: {
-		infoMap: 'Map Information',
+		infoMap: 'Map information',
 		cellCount: 'Number of cells',
-		spawnCount: 'Number of spawns'
+		spawnCount: 'Number of spawns',
 	},
 })
-
 
 export const MapInfo = () => {
 	const t = useTranslation()
@@ -32,8 +31,12 @@ export const MapInfo = () => {
 		<div className={'map-info'}>
 			<div className={'title'}>{t('infoMap')}</div>
 			<div className={'infos-list'}>
-				<div>{t('cellCount')} - {countCell}</div>
-				<div>{t('spawnCount')} - {activeMap?.data?.spawns.length}</div>
+				<div>
+					{t('cellCount')} - {countCell}
+				</div>
+				<div>
+					{t('spawnCount')} - {activeMap?.data?.spawns.length}
+				</div>
 			</div>
 		</div>
 	)

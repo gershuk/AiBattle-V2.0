@@ -42,11 +42,6 @@ const _formFields = [
 	{
 		type: 'number',
 		required: true,
-		name: 'sceneParams.initTimeout',
-	},
-	{
-		type: 'number',
-		required: true,
 		name: 'sceneParams.commandCalcTimeout',
 	},
 ] as const

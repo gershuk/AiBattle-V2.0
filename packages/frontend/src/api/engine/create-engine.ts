@@ -1,48 +1,52 @@
 import {
 	BombermanGame,
+	BombermanGameInfo,
 	BombermanGameParameters,
 	BombermanMap,
 	ControllerCreationData,
 	SceneParameters,
 	Vector2,
 } from '@ai-battle/engine'
+import { GameObject } from '@ai-battle/engine/build/GameEngine/GameObject/GameObject'
+import { SafeReference } from '@ai-battle/engine/build/GameEngine/ObjectBaseType/ObjectContainer'
 import { attach, createStore, combine, sample, createEvent } from 'effector'
 import { generateGuid } from 'libs'
-import { MapData } from 'model'
-import { createEngineCanvas } from './engine-canvas'
-import { BotCodes, ControllerStorage, SceneParams } from './type'
+import {
+	BombermanMapData,
+	BotCodes,
+	ControllerStorage,
+	SceneParams,
+} from './type'
 
-export const createEngine = () => {
+export const createEngine = (config: {
+	canvas: HTMLCanvasElement
+	isGameEnd?: (refs: SafeReference<GameObject>[]) => boolean
+}) => {
+	const { isGameEnd, canvas } = config
 	const engine = new BombermanGame()
 
 	const $engine = createStore(engine)
+	const $canvas = createStore(canvas)
+
 	const $controllers = createStore<ControllerStorage[]>([])
+	const $gameInfo = createStore<BombermanGameInfo | null>(null)
 
 	const $startedAutoTurn = createStore(false)
-	const $mapData = createStore<MapData | null>(null)
+	const $mapData = createStore<BombermanMapData | null>(null)
 	const $sceneParams = createStore<SceneParams | null>(null)
 	const $tileSize = createStore<number | null>(null)
 
 	const setControllers = createEvent<ControllerStorage[]>()
+	const setGameInfo = createEvent<BombermanGameInfo | null>()
+	const onTurnEnd = createEvent()
 	const toggleAutoTurn = createEvent()
-	const setMapData = createEvent<MapData | null>()
+	const setMapData = createEvent<BombermanMapData | null>()
 	const setSceneParams = createEvent<SceneParams | null>()
-	const setTileSize = createEvent<number>()
-
-	const { canvas, CanvasComponent } = createEngineCanvas({
-		$map: $mapData.map(mapData => mapData?.map || []),
-		$tileSize: $tileSize,
-		onChangeTileSize: newSize => {
-			engine.tileSizeScale = newSize
-			setTileSize(newSize)
-		},
-	})
-	const $canvas = createStore(canvas)
 
 	$controllers.on(setControllers, (_, newControllers) => newControllers)
+	$gameInfo.on(setGameInfo, (_, newGameInfo) => newGameInfo)
 	$mapData.on(setMapData, (_, mapData) => mapData)
 	$sceneParams.on(setSceneParams, (_, sceneParams) => sceneParams)
-	$tileSize.on(setTileSize, (_, newSize) => newSize)
 
 	const gameWinFx = attach({
 		source: { engine: $engine, controllers: $controllers },
@@ -61,6 +65,13 @@ export const createEngine = () => {
 					}
 				}
 			}
+			if (!gameInfo.bodiesData.length) {
+				return {
+					status: 'draw' as const,
+					gameInfo,
+					botWin: null,
+				}
+			}
 			return {
 				status: 'unknown' as const,
 				gameInfo,
@@ -77,14 +88,19 @@ export const createEngine = () => {
 				sceneParams,
 				mapData,
 				codesBot,
-			}: { sceneParams: SceneParams; mapData: MapData; codesBot: BotCodes[] }
+			}: {
+				sceneParams: SceneParams
+				mapData: BombermanMapData
+				codesBot: BotCodes[]
+			}
 		) => {
-			const controllers = codesBot.map(({ code, nameBot }) => {
+			const controllers = codesBot.map(({ code, codeName, botName }) => {
 				const guid = generateGuid()
 				return {
 					guid,
 					controller: new ControllerCreationData(code, guid),
-					nameBot,
+					codeName,
+					botName,
 				}
 			})
 			await engine.Init(
@@ -101,12 +117,15 @@ export const createEngine = () => {
 						sceneParams?.autoTurnTime ?? 1,
 						canvas,
 						sceneParams?.tileSizeScale ?? 50,
-						sceneParams?.initTimeout,
-						sceneParams?.commandCalcTimeout,
-						sceneParams?.playModeParameters
+						sceneParams?.initTimeout ?? undefined,
+						sceneParams?.commandCalcTimeout ?? undefined,
+						sceneParams?.playModeParameters ?? undefined,
+						isGameEnd ?? undefined
 					)
 				)
 			)
+			engine.OnTurnEnd.Unsubscribe(onTurnEnd)
+			engine.OnTurnEnd.Subscribe(onTurnEnd)
 			engine.OnGameEnd.Unsubscribe(gameWinFx)
 			engine.OnGameEnd.Subscribe(gameWinFx)
 			return {
@@ -138,6 +157,13 @@ export const createEngine = () => {
 	const renderFrame = attach({
 		source: $engine,
 		effect: engine => engine.RenderFrame(),
+	})
+
+	const setTileSize = attach({
+		source: $engine,
+		effect: (engine, newSize: number) => {
+			engine.tileSizeScale = newSize
+		},
 	})
 
 	sample({
@@ -186,14 +212,32 @@ export const createEngine = () => {
 
 	sample({
 		source: $engine,
-		clock: init.done,
+		clock: [init.done, setTileSize.done],
 		fn: engine => Number(engine.tileSizeScale),
-		target: setTileSize,
+		target: $tileSize,
+	})
+
+	sample({
+		source: $engine,
+		clock: [onTurnEnd, init.done],
+		fn: engine => engine.GetGameInfo(),
+		target: setGameInfo,
+	})
+
+	sample({
+		clock: init,
+		fn: () => null,
+		target: setGameInfo,
 	})
 
 	return {
-		CanvasComponent,
-		$startedAutoTurn,
+		gameState: {
+			$startedAutoTurn,
+			$gameInfo,
+			$controllers,
+			$tileSize,
+			$mapData,
+		},
 		methods: {
 			init,
 			start,
@@ -202,6 +246,7 @@ export const createEngine = () => {
 			doNextTurn,
 			renderFrame,
 			toggleAutoTurn,
+			setTileSize,
 		},
 		watchers: {
 			gameWin: gameWinFx.doneData,

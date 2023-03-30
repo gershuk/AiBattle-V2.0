@@ -32,7 +32,7 @@ const { getTranslationItem } = createTranslation({
 		overwriteFile: 'Файл с таким именем уже существует. Перезаписать файл?',
 	},
 	en: {
-		errorConvertString: 'Unable to convert file to image',
+		errorConvertString: 'Unable to convert file to string',
 		errorRead: 'An error occurred while reading the file',
 		overwriteFile: 'A file with the same name already exists. Overwrite file?',
 	},
@@ -67,7 +67,6 @@ class Controller {
 } 
 
 new Controller()`
-
 
 const errorReadStringFile = new Error('error read string from file')
 const errorAbortLoadFileUser = new Error('user abort upload file')

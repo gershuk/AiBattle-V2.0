@@ -12,21 +12,20 @@ const { getTranslationItem } = createTranslation({
 	ru: {
 		hello: 'Привет!',
 		helloMsg:
-			'Начнем наше увлекательнейшее приключение по написанию самого лучшего в мире игрового ИИ!',
+			'Начнем наше увлекательнейшее приключение по созданию самого лучшего в мире игрового ИИ!',
 		sideBar: 'Сайдбар',
 		sideBarMsg: 'Это сайдбар, тут табы прям как в vs code!',
 		codeWrite:
-			'Например, нажав на вкладку "Код ИИ" ты окажешься в самом важном месте этого приложения. Будешь писать код для ботов и посещать <a href="https://learn.javascript.ru/">learn.javascript</a>.',
+			'Например, нажав на вкладку "Код ИИ" ты окажешься в самом важном месте этого приложения. Тут будешь писать код для ботов на языке <a href="https://learn.javascript.ru/">javascript</a>.',
 		appSetting:
 			'Внизу ты найдешь настройки приложения. Там мало пунктов, но вдруг ты захочешь сменить язык или отключить помощника?',
 	},
 	en: {
 		hello: 'Hi!',
-		helloMsg: `Let's begin our exciting adventure of writing the world's best game AI!`,
+		helloMsg: `Let's begin our exciting adventure of creating the world's best game AI!`,
 		sideBar: 'Sidebar',
 		sideBarMsg: 'This is a sidebar, it has tabs just like in vs code!',
-		codeWrite:
-			'For example, by clicking on the "AI Code" tab, you will write code for bots.',
+		codeWrite: 'For example, select the "AI Code" tab to write code for bots.',
 		appSetting:
 			'At the bottom you will find the application settings. There are few items, but what if you want to change the language or turn off the assistant?',
 	},

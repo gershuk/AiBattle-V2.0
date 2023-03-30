@@ -8,6 +8,7 @@
 		display: flex;
 		align-items: center;
 		gap: 8px;
+		font-size: 14px;
 		.button {
 			opacity: 0.75;
 			width: 20px;
@@ -176,6 +177,7 @@
 	margin-bottom: 16px;
 	width: 300px;
 	min-width: 300px;
+	overflow: auto;
 	.tile-editor-toolbar-row {
 		& + & {
 			margin-top: 8px;

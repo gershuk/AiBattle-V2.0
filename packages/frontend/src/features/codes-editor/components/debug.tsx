@@ -11,10 +11,11 @@ import {
 	StopIcon,
 	showConfirm,
 } from 'ui'
+import { ViewportGame } from 'ui'
 import {
 	$formValues,
-	$startedAutoTurn,
-	CanvasComponent,
+	debugGameCanvas,
+	debugGameState,
 	engineMethods,
 	setFieldValue,
 } from '../model'
@@ -55,6 +56,11 @@ const _formFields = [
 		name: 'sceneParams.autoTurnTime',
 		min: 1,
 	},
+	{
+		type: 'number',
+		required: true,
+		name: 'sceneParams.commandCalcTimeout',
+	},
 ] as const
 
 const { useTranslation } = createTranslation(
@@ -65,18 +71,27 @@ const { useTranslation } = createTranslation(
 		},
 		en: {
 			map: 'Map',
-			emptyMaps: 'Cards are missing, create a new one?',
+			emptyMaps: 'Map are missing, create a new one?',
 		},
 	})
 )
 
 export const Debug = ({ selectedCodeName }: DebugProps) => {
 	const t = useTranslation()
-	const { startedAutoTurn, mapsKV, codesKV, formValues } = useUnit({
-		startedAutoTurn: $startedAutoTurn,
+	const {
+		startedAutoTurn,
+		mapsKV,
+		codesKV,
+		formValues,
+		tileSize,
+		mapDataGame,
+	} = useUnit({
+		startedAutoTurn: debugGameState.$startedAutoTurn,
 		mapsKV: $dataMaps,
 		codesKV: $codesData,
 		formValues: $formValues,
+		tileSize: debugGameState.$tileSize,
+		mapDataGame: debugGameState.$mapData,
 	})
 
 	const maps = useMemo(() => {
@@ -135,7 +150,7 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 								mapData,
 								codesBot: mapData.spawns.map(() => ({
 									code: botCode.content,
-									nameBot: botCode.name,
+									codeName: botCode.name,
 								})),
 							})
 						} else {
@@ -163,7 +178,12 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 			</div>
 			{startedAutoTurn ? (
 				<div className="debug-viewport">
-					<CanvasComponent />
+					<ViewportGame
+						canvas={debugGameCanvas}
+						tileSize={tileSize ?? 0}
+						map={mapDataGame?.map!}
+						onChangeTileSize={engineMethods.setTileSize}
+					/>
 				</div>
 			) : null}
 		</div>
