@@ -1,11 +1,18 @@
-//When adding constants update the function GetConstants()
-export const InitRequestType = 'InitRequest'
-export const InitAnswerType = 'InitAnswer'
-export const TurnRequestType = 'TurnRequest'
-export const TurnAnswerType = 'TurnAnswer'
+//When adding constants update workerMessageTypes
+const InitRequestType = 'InitRequest'
+const InitAnswerType = 'InitAnswer'
+const TurnRequestType = 'TurnRequest'
+const TurnAnswerType = 'TurnAnswer'
+
+export const workerMessageTypes = {
+	InitRequestType,
+	InitAnswerType,
+	TurnRequestType,
+	TurnAnswerType,
+}
 
 export function workerInitFunction() {
-	// @ts-ignore
+	//@ts-ignore
 	let controller = new Controller()
 	onmessage = function (event) {
 		switch (event.data.type) {
