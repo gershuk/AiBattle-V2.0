@@ -41,7 +41,11 @@ $rawLanguage.on(changeLanguage, (_, newLanguage) => newLanguage)
 sample({ clock: changeLanguage, target: saveLanguageToLocalStorageFx })
 
 interface TranslationItem {
-	[k: string]: string | number | TranslationItem
+	[k: string]:
+		| string
+		| number
+		| ((a: any, b?: any, c?: any) => string)
+		| TranslationItem
 }
 
 type Translation<T extends TranslationItem> = {
@@ -49,8 +53,8 @@ type Translation<T extends TranslationItem> = {
 }
 
 type GetterTranslation<T> = {
-	<G>(param: (scheme: T) => G): G
-	<G extends keyof T>(param: G): T[G]
+	<G>(fn: (scheme: T) => G): G
+	<G extends keyof T>(key: G): T[G]
 }
 
 const createGetterTranslation = <T extends TranslationItem>(scheme: T) => {

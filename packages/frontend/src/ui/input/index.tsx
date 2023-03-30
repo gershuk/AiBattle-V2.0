@@ -7,6 +7,7 @@ export interface InputProps {
 	placeholder?: string
 	className?: string
 	value?: string
+	initialValue?: string
 	onChange?: (value: string) => void
 	required?: boolean
 	autoFocus?: boolean
@@ -19,12 +20,13 @@ export const Input = ({
 	placeholder,
 	className,
 	value: valueProps,
+	initialValue,
 	required,
 	onChange,
 	autoFocus,
 	...props
 }: InputProps) => {
-	const [value, setValue] = useState(valueProps ?? '')
+	const [value, setValue] = useState(valueProps ?? initialValue ?? '')
 	const ref = useRef<HTMLInputElement | null>(null)
 
 	useEffect(() => {
@@ -38,7 +40,7 @@ export const Input = ({
 	}, [ref, value])
 
 	useEffect(() => {
-		setValue(valueProps ?? '')
+		if (typeof valueProps === 'string') setValue(valueProps ?? '')
 	}, [valueProps])
 
 	useEffect(() => {

@@ -1,3 +1,4 @@
+import { ControllerCreationData } from '@ai-battle/engine'
 import { PlayModeParameters } from '@ai-battle/engine/build/GameEngine/Scene/IScene'
 
 export interface SceneParams {
@@ -10,4 +11,22 @@ export interface SceneParams {
 	initTimeout?: number
 	commandCalcTimeout?: number
 	playModeParameters?: PlayModeParameters
+}
+
+export interface BombermanMapData {
+	map: number[][]
+	spawns: { x: number; y: number }[]
+}
+
+export interface BotCodes {
+	codeName: string
+	botName?: string
+	code: string
+}
+
+export interface ControllerStorage {
+	guid: string
+	controller: ControllerCreationData
+	codeName: string
+	botName?: string
 }

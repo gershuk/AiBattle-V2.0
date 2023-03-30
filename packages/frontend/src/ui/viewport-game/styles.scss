@@ -1,0 +1,50 @@
+.container-viewport-game {
+	position: relative;
+	.viewport-game-table {
+		position: absolute;
+		left: 0;
+		top: 0;
+		&,
+		th,
+		td {
+			border-collapse: collapse;
+		}
+		td {
+			position: relative;
+			&:hover {
+				.cell-content {
+					display: flex;
+				}
+			}
+		}
+		&.show-player {
+			.cell-content {
+				display: flex;
+			}
+		}
+		.cell-content {
+			display: none;
+			justify-content: center;
+			align-items: center;
+			width: 100%;
+			height: 100%;
+			position: absolute;
+			left: 0;
+			top: 0;
+			z-index: 1;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+
+			.bot-name {
+				background: var(--color-light-overlay);
+				color: var(--color-secondary-text);
+				transform: translate(-50%, -100%);
+				position: absolute;
+				left: 50%;
+				top: 0;
+				padding: 2px;
+				border-radius: 3px;
+			}
+		}
+	}
+}

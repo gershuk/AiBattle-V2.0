@@ -15,6 +15,7 @@ import {
 	ControllerCreationData,
 	GameEngine,
 	GameEngineParameters,
+	GameInfo,
 } from 'GameEngine/GameEngine'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
 import { ImageLoader } from 'GameEngine/ResourceStorage/ImageLoader'
@@ -38,14 +39,17 @@ import {
 } from './BombermanController'
 import { IAsyncControllerBridge } from 'GameEngine/UserAIRuner/AsyncControllerBridge'
 import { Scene } from 'GameEngine/Scene/Scene'
+import { BodyAllData } from './MapData'
 
 export class BombermanGame extends GameEngine {
-	private _map: BombermanMap
-
 	async Init(parameters: BombermanGameParameters): Promise<unknown> {
 		parameters.sceneParameters.isGameEnd ??= (gameObjectRefs): boolean => {
+			let counter = 0
 			for (let ref of gameObjectRefs) {
-				if (ref.object.GetComponents(ManBody).length > 0) return false
+				if (ref.object.GetComponents(ManBody).length > 0) {
+					counter++
+					if (counter > 1) return
+				}
 			}
 
 			return true
@@ -63,14 +67,14 @@ export class BombermanGame extends GameEngine {
 			'./Resources/Man.png',
 		])
 
-		this._map = parameters.map
+		const map = parameters.map
 
-		const height = this._map.field.length
-		const width = this._map.field[0].length
+		const height = map.field.length
+		const width = map.field[0].length
 
 		const colliderSystem = this.CreateColliderSystem(width, height)
 
-		const shuffledSpawns = shuffle(this._map.spawns)
+		const shuffledSpawns = shuffle(map.spawns)
 
 		if (parameters.map.spawns.length < parameters.controllersData.length) {
 			throw Error('Spawn less then controllers')
@@ -78,7 +82,7 @@ export class BombermanGame extends GameEngine {
 
 		for (let y = 0; y < height; ++y) {
 			for (let x = 0; x < width; ++x) {
-				switch (this._map.field[y][x]) {
+				switch (map.field[y][x]) {
 					case 1:
 						this.CreateDestructibleWall(new Vector2(x, y), colliderSystem)
 						break
@@ -280,6 +284,43 @@ export class BombermanGame extends GameEngine {
 			],
 		])
 		return discreteColliderSystem
+	}
+
+	public GetGameInfo(): BombermanGameInfo {
+		const bodiesData: BodyAllData[] = []
+		for (let ref of this.scene.gameObjectRefs) {
+			for (let body of ref.object.GetComponents(ManBody)) {
+				bodiesData.push((body.object as ManBody).GetAllData())
+			}
+		}
+		const gameInfo = super.GetGameInfo()
+		return new BombermanGameInfo(
+			gameInfo.currentTurnNumber,
+			gameInfo.maxTurnIndex,
+			gameInfo.isGameEnd,
+			bodiesData
+		)
+	}
+}
+
+export class BombermanGameInfo extends GameInfo {
+	private _bodiesData: BodyAllData[]
+
+	public get bodiesData(): BodyAllData[] {
+		return this._bodiesData
+	}
+	public set bodiesData(v: BodyAllData[]) {
+		this._bodiesData = v
+	}
+
+	constructor(
+		currentTurnNumber: number,
+		maxTurnIndex: number,
+		isGameEnd: boolean,
+		bodiesData: BodyAllData[]
+	) {
+		super(currentTurnNumber, maxTurnIndex, isGameEnd)
+		this._bodiesData = bodiesData
 	}
 }
 

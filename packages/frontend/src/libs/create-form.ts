@@ -15,7 +15,7 @@ export const createFormValuesSaver = ({
 		[fieldName]: value,
 	}))
 
-	$values.on(setValues, (_, values) => ({ ...values }))
+	$values.on(setValues, (_, values) => jsonToDot(values))
 
 	return { $values, setFieldValue, setValues }
 }

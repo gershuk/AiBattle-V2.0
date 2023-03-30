@@ -19,7 +19,7 @@ const _formFields = [
 		type: 'number',
 		required: true,
 		name: 'sceneParams.maxTurnIndex',
-		min: 1,
+		min: 2,
 	},
 	{
 		type: 'number',
@@ -38,11 +38,6 @@ const _formFields = [
 		required: true,
 		name: 'sceneParams.autoTurnTime',
 		min: 1,
-	},
-	{
-		type: 'number',
-		required: true,
-		name: 'sceneParams.initTimeout',
 	},
 	{
 		type: 'number',

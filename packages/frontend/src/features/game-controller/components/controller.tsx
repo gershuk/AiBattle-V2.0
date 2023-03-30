@@ -6,20 +6,23 @@ import { MapSelection } from './map-selection'
 import { $activeGame, engine, startedGame, stoppedGame } from '../model/game'
 import { $selectedMap } from '../model/select-map'
 import './styles.scss'
-import { Button, StartIcon, StopIcon } from 'ui'
+import { Button, showMessage, StartIcon, StopIcon } from 'ui'
 import { createTranslation, htmlFormToJson } from 'libs'
 import { SubmitForm } from '../types'
+import { PlayingGameInfo } from './playing-game-info'
 
 const { useTranslation } = createTranslation({
 	ru: {
 		startAutoStep: 'Запустить авто шаг',
 		stopAutoStep: 'Остановить авто шаг',
 		nextStep: 'Сделать 1 шаг',
+		minimumLimitBot: 'Для проведения игры необходимо минимум два бота',
 	},
 	en: {
 		startAutoStep: 'Run auto step',
 		stopAutoStep: 'Stop auto step',
-		nextStep: 'Take 1 step',
+		nextStep: 'Single step',
+		minimumLimitBot: 'At least two bots are required to play the game',
 	},
 })
 
@@ -32,7 +35,7 @@ export const GameController = () => {
 	} = useUnit({
 		activeMap: $selectedMap,
 		startedGame: $activeGame,
-		autoStep: engine.$startedAutoTurn,
+		autoStep: engine.gameState.$startedAutoTurn,
 	})
 
 	return (
@@ -43,7 +46,15 @@ export const GameController = () => {
 					e.preventDefault()
 					if (!startedGameFlag) {
 						const jsonForm = htmlFormToJson<SubmitForm>(e.currentTarget)
-						if (!jsonForm?.bot) jsonForm.bot = []
+						const filtersBots = (jsonForm?.bot || []).filter(
+							({ controller }) => controller
+						)
+						if (filtersBots.length < 2) {
+							showMessage({
+								content: t('minimumLimitBot'),
+							})
+							return
+						}
 						startedGame(jsonForm)
 					} else {
 						stoppedGame()
@@ -55,7 +66,7 @@ export const GameController = () => {
 					{activeMap ? (
 						<>
 							<MapInfo />
-							<BotsSetting />
+							{!startedGameFlag ? <BotsSetting /> : <PlayingGameInfo />}
 							<GameSettings />
 						</>
 					) : null}

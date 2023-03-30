@@ -102,7 +102,7 @@ export class WorkerBridge<
 
 	constructor(controllerText: string, uuid?: string) {
 		this.controllerText = controllerText
-		this.UUID == uuid ?? GenerateUUID()
+		this.UUID = uuid ?? GenerateUUID()
 	}
 
 	Init(info: TInitData, timeout: number): Promise<unknown> {

@@ -11,10 +11,11 @@ import {
 	StopIcon,
 	showConfirm,
 } from 'ui'
+import { ViewportGame } from 'ui'
 import {
 	$formValues,
-	$startedAutoTurn,
-	CanvasComponent,
+	debugGameCanvas,
+	debugGameState,
 	engineMethods,
 	setFieldValue,
 } from '../model'
@@ -35,7 +36,7 @@ const _formFields = [
 		type: 'number',
 		required: true,
 		name: 'sceneParams.maxTurnIndex',
-		min: 1,
+		min: 2,
 	},
 	{
 		type: 'number',
@@ -55,6 +56,11 @@ const _formFields = [
 		name: 'sceneParams.autoTurnTime',
 		min: 1,
 	},
+	{
+		type: 'number',
+		required: true,
+		name: 'sceneParams.commandCalcTimeout',
+	},
 ] as const
 
 const { useTranslation } = createTranslation(
@@ -65,18 +71,27 @@ const { useTranslation } = createTranslation(
 		},
 		en: {
 			map: 'Map',
-			emptyMaps: 'Cards are missing, create a new one?',
+			emptyMaps: 'Map are missing, create a new one?',
 		},
 	})
 )
 
 export const Debug = ({ selectedCodeName }: DebugProps) => {
 	const t = useTranslation()
-	const { startedAutoTurn, mapsKV, codesHashMap, formValues } = useUnit({
-		startedAutoTurn: $startedAutoTurn,
+	const {
+		startedAutoTurn,
+		mapsKV,
+		codesKV,
+		formValues,
+		tileSize,
+		mapDataGame,
+	} = useUnit({
+		startedAutoTurn: debugGameState.$startedAutoTurn,
 		mapsKV: $dataMaps,
-		codesHashMap: $codesData,
+		codesKV: $codesData,
 		formValues: $formValues,
+		tileSize: debugGameState.$tileSize,
+		mapDataGame: debugGameState.$mapData,
 	})
 
 	const maps = useMemo(() => {
@@ -129,11 +144,14 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 								mapName: string
 							}>(e.currentTarget)
 							const mapData = mapsKV[mapName].data!
-							const botCode = codesHashMap[selectedCodeName].content
+							const botCode = codesKV[selectedCodeName]
 							engineMethods.init({
 								sceneParams,
 								mapData,
-								codesBot: mapData.spawns.map(() => botCode),
+								codesBot: mapData.spawns.map(() => ({
+									code: botCode.content,
+									codeName: botCode.name,
+								})),
 							})
 						} else {
 							engineMethods.stopAutoTurn()
@@ -160,7 +178,12 @@ export const Debug = ({ selectedCodeName }: DebugProps) => {
 			</div>
 			{startedAutoTurn ? (
 				<div className="debug-viewport">
-					<CanvasComponent />
+					<ViewportGame
+						canvas={debugGameCanvas}
+						tileSize={tileSize ?? 0}
+						map={mapDataGame?.map!}
+						onChangeTileSize={engineMethods.setTileSize}
+					/>
 				</div>
 			) : null}
 		</div>

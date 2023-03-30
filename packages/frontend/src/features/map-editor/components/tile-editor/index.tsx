@@ -37,18 +37,18 @@ import { TileTable } from './tile-table'
 
 const { useTranslation } = createTranslation({
 	ru: {
-		spawnExit: 'Невозможно поставить 2 одинаковые точки спавна.',
+		spawnExit: 'Невозможно поставить 2 одинаковые точки.',
 		tileSize: 'Размер тайла',
 		setActiveTile: 'Выберите активный тайл для рисования:',
 		showCodes: 'Показать коды ячеек',
 		enableGrid: 'Включить сетку',
 	},
 	en: {
-		spawnExit: 'Cannot place 2 identical spawn points.',
-		tileSize: 'Tile Size',
+		spawnExit: 'Can not place 2 same spawn points.',
+		tileSize: 'Tile size',
 		setActiveTile: 'Select active tile to draw:',
 		showCodes: 'Show cell codes',
-		enableGrid: 'Enable Grid',
+		enableGrid: 'Enable grid',
 	},
 })
 

@@ -20,6 +20,7 @@ import {
 	AbstractControllerData,
 } from 'GameEngine/UserAIRuner/AbstractController'
 import { ControllerBody } from 'GameEngine/UserAIRuner/ControllerBody'
+import { SlimEvent } from 'Utilities'
 
 enum SceneState {
 	Init,
@@ -28,9 +29,14 @@ enum SceneState {
 	CalcCommands,
 	NextTurn,
 	Animation,
+	EndGame,
 }
 
 export class Scene extends UpdatableGroup<GameObject> implements IScene {
+	private _onSceneStart: SlimEvent<void>
+	private _onTurnStart: SlimEvent<void>
+	private _onTurnEnd: SlimEvent<void>
+	private _onGameEnd: SlimEvent<void>
 	private _isGameEnd: (refs: SafeReference<GameObject>[]) => boolean | undefined
 	private _tileSizeScale: number
 	private _turnIndex: number
@@ -47,6 +53,19 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	private _renderOffset: Vector2
 	private _initTimeout: number
 	private _turnCalcTimeout: number
+
+	get OnSceneStart(): SlimEvent<void> {
+		return this._onSceneStart
+	}
+	get OnTurnStart(): SlimEvent<void> {
+		return this._onTurnStart
+	}
+	get OnTurnEnd(): SlimEvent<void> {
+		return this._onTurnEnd
+	}
+	get OnGameEnd(): SlimEvent<void> {
+		return this._onGameEnd
+	}
 
 	get isGameEnd(): (refs: SafeReference<GameObject>[] | undefined) => boolean {
 		return this._isGameEnd
@@ -90,7 +109,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	public get turnIndex(): number {
-		return this._turnIndex
+		return this._turnIndex ?? 0
 	}
 	public set turnIndex(turnIndex: number) {
 		if (turnIndex < 0) throw new Error('turnIndex < 0')
@@ -179,6 +198,11 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	Init(parameters: SceneParameters): void {
 		if (this.IsAutoTurn()) this.StopAutoTurn()
 
+		this._onSceneStart = new SlimEvent<void>()
+		this._onTurnStart = new SlimEvent<void>()
+		this._onTurnEnd = new SlimEvent<void>()
+		this._onGameEnd = new SlimEvent<void>()
+
 		this.messageBroker = new MessageBroker()
 
 		this.maxTurnIndex = parameters.maxTurnIndex
@@ -226,6 +250,10 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		return this.AddGameObject(position, gameObject, newComponents, id)
 	}
 
+	public CheckGameEnd(): boolean {
+		return this.isGameEnd && this.isGameEnd(this.gameObjectRefs)
+	}
+
 	public AddGameObject<T extends GameObject>(
 		position: Vector2,
 		gameObject: T,
@@ -270,6 +298,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 
 	public async Start(): Promise<unknown> {
 		this.state = SceneState.Starting
+		this._onSceneStart.Notify()
 		await this.InitControllers()
 		this.OnStart()
 		this.turnIndex = 0
@@ -381,6 +410,8 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 			this.StopAutoTurn()
 		}
 
+		this._onTurnStart.Notify()
+
 		this.state = SceneState.CalcCommands
 		await this.CalcCommands(this.turnIndex)
 
@@ -393,8 +424,10 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this.OnFixedUpdateEnded(this.turnIndex)
 		this.state = SceneState.ReadyToNextTurn
 
-		this.TryStopIfGameEnd()
 		this.RenderFrame()
+
+		this._onTurnEnd.Notify()
+		this.TryStopIfGameEnd()
 		return Promise.resolve()
 	}
 
@@ -406,10 +439,18 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this.autoTurnTimerId = undefined
 	}
 
-	private TryStopIfGameEnd() {
-		if (this.isGameEnd && this.isGameEnd(this.gameObjectRefs)) {
+	private SetGameEnd() {
+		if (this.state != SceneState.EndGame) {
 			console.log('Game ended!')
-			if (this.IsAutoTurn) this.StopAutoTurn()
+			if (this.IsAutoTurn()) this.StopAutoTurn()
+			this.state = SceneState.EndGame
+			this._onGameEnd.Notify()
+		}
+	}
+
+	private TryStopIfGameEnd() {
+		if (this.CheckGameEnd()) {
+			this.SetGameEnd()
 			return true
 		}
 		return false

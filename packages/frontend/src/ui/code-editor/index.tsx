@@ -3,8 +3,8 @@ import AceEditor from 'react-ace'
 import './styles.scss'
 import 'ace-builds/src-noconflict/theme-tomorrow'
 import 'ace-builds/src-noconflict/ext-language_tools'
-import { useCallback, useEffect, useRef } from 'preact/hooks'
-import { createTranslation, createAndDownloadFile } from 'libs'
+import { useEffect, useRef } from 'preact/hooks'
+import { createTranslation, createAndDownloadFile, useKeyboard } from 'libs'
 import { useMemo } from 'react'
 
 interface CodeEditorProps {
@@ -67,23 +67,11 @@ export const CodeEditor = ({
 		)
 	}
 
-	const handlerSaveKeyboard = useCallback(
-		(e?: KeyboardEvent) => {
-			if (e?.ctrlKey && e?.key.toLowerCase() === 's') {
-				e.preventDefault()
-				onSave?.(refEditor.current?.getSession().getValue() || '')
-			}
-		},
-		[session]
-	)
-
-	useEffect(() => {
-		document.removeEventListener('keydown', handlerSaveKeyboard)
-		document.addEventListener('keydown', handlerSaveKeyboard)
-		return () => {
-			document.removeEventListener('keydown', handlerSaveKeyboard)
-		}
-	}, [handlerSaveKeyboard])
+	useKeyboard({
+		filter: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 's',
+		fn: () => onSave?.(refEditor.current?.getSession().getValue() || ''),
+		dependencies: [onSave, session],
+	})
 
 	useEffect(() => {
 		window.dispatchEvent(new Event('resize'))

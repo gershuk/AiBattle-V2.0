@@ -92,6 +92,7 @@ export class BodyAllData extends BodyPublicData {
 	bombsRestoreTicks: number
 	bombsRestoreCount: number
 	lastBombRestoreTurn: number
+	controllerUUID: string
 
 	constructor(
 		position: Vector2,
@@ -101,7 +102,8 @@ export class BodyAllData extends BodyPublicData {
 		bombsRestoreTicks: number,
 		bombsRestoreCount: number,
 		lastBombRestoreTurn: number,
-		uuid: string
+		uuid: string,
+		controllerUUID: string
 	) {
 		super(position, health, uuid)
 		this.health = health
@@ -110,6 +112,7 @@ export class BodyAllData extends BodyPublicData {
 		this.bombsRestoreTicks = bombsRestoreTicks
 		this.bombsRestoreCount = bombsRestoreCount
 		this.lastBombRestoreTurn = lastBombRestoreTurn
+		this.controllerUUID = controllerUUID
 	}
 }
 

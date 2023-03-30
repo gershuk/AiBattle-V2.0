@@ -1,3 +1,4 @@
+import { SlimEvent } from 'Utilities'
 import { GameObjectComponent } from './BaseComponents/GameObjectComponent'
 import { Vector2 } from './BaseComponents/Vector2'
 import { Message } from './MessageBroker/Message'
@@ -11,7 +12,54 @@ import {
 import { IAsyncControllerBridge } from './UserAIRuner/AsyncControllerBridge'
 import { WorkerBridge } from './UserAIRuner/WorkerBridge'
 
+export class GameInfo {
+	private _currentTurnNumber: number
+	private _maxTurnIndex: number
+	private _isGameEnd: boolean
+
+	public get currentTurnNumber(): number {
+		return this._currentTurnNumber
+	}
+	public set currentTurnNumber(v: number) {
+		this._currentTurnNumber = v
+	}
+
+	public get maxTurnIndex(): number {
+		return this._maxTurnIndex
+	}
+	public set maxTurnIndex(v: number) {
+		this._maxTurnIndex = v
+	}
+
+	public get isGameEnd(): boolean {
+		return this._isGameEnd
+	}
+	public set isGameEnd(v: boolean) {
+		this._isGameEnd = v
+	}
+
+	constructor(
+		currentTurnNumber: number,
+		maxTurnIndex: number,
+		isGameEnd: boolean
+	) {
+		this.currentTurnNumber = currentTurnNumber
+		this.maxTurnIndex = maxTurnIndex
+		this.isGameEnd = isGameEnd
+	}
+}
+
 export interface IGameEngine {
+	get OnSceneStart(): SlimEvent<void>
+
+	get OnTurnStart(): SlimEvent<void>
+
+	get OnTurnEnd(): SlimEvent<void>
+
+	get OnGameEnd(): SlimEvent<void>
+
+	get isGameEnd(): boolean
+
 	get renderOffset(): Vector2
 	set renderOffset(v: Vector2)
 
@@ -19,6 +67,12 @@ export interface IGameEngine {
 	set tileSizeScale(v: Number)
 
 	get playModeParameters(): PlayModeParameters
+
+	get shouldLoadImage(): boolean
+
+	get turnIndex(): number
+
+	get maxTurnIndex(): number
 
 	Init(parameters: GameEngineParameters): Promise<unknown>
 
@@ -64,13 +118,37 @@ export interface IGameEngine {
 
 	LoadAllImages(imagesPath: string[]): Promise<HTMLImageElement[]>
 
-	get shouldLoadImage(): boolean
+	GetGameInfo(): GameInfo
 }
 
 export class GameEngine implements IGameEngine {
 	private _shouldLoadImage: boolean
 	private _scene: IScene
 	private _imageLoader: ImageLoader
+
+	get isGameEnd(): boolean {
+		return this.scene.CheckGameEnd()
+	}
+
+	get turnIndex(): number {
+		return this.scene.turnIndex
+	}
+	get maxTurnIndex(): number {
+		return this.scene.maxTurnIndex
+	}
+
+	get OnSceneStart(): SlimEvent<void> {
+		return this.scene.OnSceneStart
+	}
+	get OnTurnStart(): SlimEvent<void> {
+		return this.scene.OnTurnStart
+	}
+	get OnTurnEnd(): SlimEvent<void> {
+		return this.scene.OnTurnEnd
+	}
+	get OnGameEnd(): SlimEvent<void> {
+		return this.scene.OnGameEnd
+	}
 
 	public get shouldLoadImage(): boolean {
 		return this._shouldLoadImage
@@ -117,6 +195,10 @@ export class GameEngine implements IGameEngine {
 
 	public LoadAllImages(imagesPath: string[]): Promise<HTMLImageElement[]> {
 		if (this.shouldLoadImage) return this.imageLoader.LoadPngs(imagesPath)
+	}
+
+	public GetGameInfo(): GameInfo {
+		return new GameInfo(this.turnIndex, this.maxTurnIndex, this.isGameEnd)
 	}
 
 	public async Init(parameters: GameEngineParameters): Promise<unknown> {
