@@ -9,9 +9,7 @@ import { workerMessageTypes, workerInitFunction } from './WorkerSupportTypes'
 //When adding constants update the function
 function GetConstants(): string {
 	let res = Object.entries(workerMessageTypes)
-		.reduce((acc, [key, value]) => {
-			return [...acc, `const ${key} = "${value}";`]
-		}, [])
+		.map(([key, value]) => `const ${key} = "${value}";`)
 		.join('\n')
 	return res
 }
