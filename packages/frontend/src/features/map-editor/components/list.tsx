@@ -48,8 +48,8 @@ const { useTranslation } = createTranslation({
 		createMap: 'Create map',
 		widthMap: 'Map width',
 		heightMap: 'Map height',
-		fillCode: 'Filling out the map (cell code)',
-		fillBorderCode: 'Filling the edges of the map (cell code)',
+		fillCode: 'Type of tile (cell code)',
+		fillBorderCode: `Type of map's border (cell code)`,
 	},
 })
 
