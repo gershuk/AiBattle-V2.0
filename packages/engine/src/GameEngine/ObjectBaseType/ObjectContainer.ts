@@ -1,4 +1,7 @@
-export interface IObjectContainer<T> extends Iterable<SafeReference<T>> {
+import { UpdatableObject } from './UpdatableObject'
+
+export interface IObjectContainer<T extends UpdatableObject>
+	extends Iterable<SafeReference<T>> {
 	Add(object: T): SafeReference<T>
 	GetSafeRefsByFilter(
 		filter: (o: SafeReference<T>) => boolean
@@ -9,7 +12,7 @@ export interface IObjectContainer<T> extends Iterable<SafeReference<T>> {
 	AliveCount(): number
 }
 
-export class SafeReference<T> {
+export class SafeReference<T extends UpdatableObject> {
 	private _object: T
 
 	private _isDestroyed: boolean
@@ -36,6 +39,7 @@ export class SafeReference<T> {
 	}
 
 	public Destroy() {
+		this.object.OnDestroy()
 		this.object = null
 		this.isDestroyed = true
 	}
