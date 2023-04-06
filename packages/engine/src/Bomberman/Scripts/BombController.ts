@@ -23,6 +23,7 @@ export class BombController extends GameObjectComponent {
 		new Vector2(0, -1),
 	]
 
+	private _isColliderInit: boolean
 	private _turnToExplosion: number
 	private _discreteColliderSystem: DiscreteColliderSystem
 	private _damage: number
@@ -49,14 +50,17 @@ export class BombController extends GameObjectComponent {
 			this._damage = parameters.damage
 			this._range = parameters.range
 			this._blastSpawnFunction = parameters.blastSpawnFunction
+			this._isColliderInit = false
 		}
 	}
 
 	OnFixedUpdate(index: number): void {
 		if (
+			!this._isColliderInit &&
 			this._discreteColliderSystem.CanInit(
 				this.gameObject.position.x,
-				this.gameObject.position.y
+				this.gameObject.position.y,
+				this.gameObject
 			)
 		) {
 			this.gameObject.AddComponents([

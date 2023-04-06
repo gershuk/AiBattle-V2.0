@@ -13,52 +13,44 @@ engine
 		new BombermanGameParameters(
 			new BombermanMap(
 				[
-					[2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-					[2, 0, 0, 1, 0, 0, 0, 0, 0, 2],
-					[2, 0, 0, 1, 0, 0, 0, 0, 0, 2],
-					[2, 1, 1, 1, 0, 0, 0, 0, 0, 2],
-					[2, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-					[2, 0, 0, 0, 0, 0, 0, 0, 0, 2],
-					[2, 0, 0, 0, 0, 0, 1, 1, 1, 2],
-					[2, 0, 0, 0, 0, 0, 1, 0, 0, 2],
-					[2, 0, 0, 0, 0, 0, 1, 0, 0, 2],
-					[2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+					[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+					[2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2],
+					[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
 				],
-				[new Vector2(1, 1), new Vector2(8, 8)]
+				[new Vector2(1, 1), new Vector2(9, 1)]
 			),
 			[
 				new ControllerCreationData(
-					'class Controller { \
-				Init(info) {\
-				}\
-				\
-				GetRandomInt(min, max) {\
-					min = Math.ceil(min);\
-					max = Math.floor(max);\
-					return Math.floor(Math.random() * (max - min)) + min;\
-				}\
-				\
-				GetCommand(info) { \
-					return {bombermanAction:this.GetRandomInt(0, 6)};\
-				}\
-				\
-			}'
+					`
+class Controller {
+    step = 0;
+    Init(info) {}
+    
+    GetCommand(info) { 
+        this.step = this.step + 1;       
+        if(this.step === 4) return { bombermanAction: 5 }
+        if(this.step > 4 && this.step < 10) return { bombermanAction: 4 }
+        return { bombermanAction: 2 }
+    }
+    
+} 
+`
 				),
 				new ControllerCreationData(
-					'class Controller { \
-				Init(info) {}\
-				\
-				GetRandomInt(min, max) {\
-					min = Math.ceil(min);\
-					max = Math.floor(max);\
-					return Math.floor(Math.random() * (max - min)) + min;\
-				}\
-				\
-				GetCommand(info) { \
-					return {bombermanAction:this.GetRandomInt(0, 6)};\
-				}\
-				\
-			}'
+					`
+class Controller {
+    step = 0;
+    Init(info) {}
+    
+    GetCommand(info) { 
+        this.step = this.step + 1;    
+		if(this.step === 4) return { bombermanAction: 5 }   
+        if(this.step > 4 && this.step < 10) return { bombermanAction: 4 }
+        return { bombermanAction: 2 }
+    }
+    
+} 
+`
 				),
 			],
 			new SceneParameters(

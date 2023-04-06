@@ -105,7 +105,7 @@ export class DiscreteColliderSystem extends GameObjectComponent {
 		)
 	}
 
-	public CanInit(x: number, y: number, owner?: GameObject) {
+	public CanInit(x: number, y: number, owner?: IGameObject) {
 		if (!this.CellExist(x, y)) {
 			console.error(`Cell is not exist (${x} ${y})`)
 			return false

@@ -90,20 +90,23 @@ export class DiscreteMovementComponent extends GameObjectComponent {
 	}
 
 	OnFixedUpdateEnded(index: number): void {
-		if (
-			this.newPosition &&
-			this._discreteColliderSystem.GetCellData(
-				this.oldPosition.x,
-				this.oldPosition.y
-			).owner === this
-		) {
-			this._discreteColliderSystem.ClearCell(
-				this,
-				this.oldPosition.x,
-				this.oldPosition.y
-			)
+		if (this.newPosition) {
+			if (
+				this._discreteColliderSystem.GetCellData(
+					this.oldPosition.x,
+					this.oldPosition.y
+				).owner === this
+			) {
+				this._discreteColliderSystem.ClearCell(
+					this,
+					this.oldPosition.x,
+					this.oldPosition.y
+				)
+			}
+
 			this.oldPosition = this.newPosition.Clone()
 		}
+
 		this.gameObject.position = this.oldPosition.Clone()
 	}
 }
