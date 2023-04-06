@@ -22,6 +22,11 @@ export class HealthComponent extends GameObjectComponent {
 	}
 
 	public TakeDamage(damage: number) {
+		if (this.health === 0) {
+			console.warn('Already dead')
+			return
+		}
+
 		this.health = Math.max(this.health - damage, 0)
 
 		if (this.health === 0)
