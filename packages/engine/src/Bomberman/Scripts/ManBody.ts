@@ -111,7 +111,7 @@ export class ManBody extends ControllerBody<
 		const bodiesData: BodyPublicData[] = []
 		const playerData = this.GetAllData()
 		const refObjects: SafeReference<GameObject>[] =
-			this.gameObject.scene.gameObjectRefs
+			this.gameObject.scene.GetGameObjectsRefByFilter(() => true)
 
 		for (let ref of refObjects) {
 			if (ref.object === this.gameObject) continue

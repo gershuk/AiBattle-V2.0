@@ -12,7 +12,10 @@ import {
 	ViewPort,
 } from 'GameEngine/BaseComponents/RenderComponents/AbstractRenderComponent'
 import { Delay } from 'Utilities/Delay'
-import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
+import {
+	IReadOnlyObjectContainer,
+	SafeReference,
+} from 'GameEngine/ObjectBaseType/ObjectContainer'
 import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
 import { UpdatableObjectArrayContainer } from 'GameEngine/ObjectBaseType/UpdatableObjectArrayContainer'
 import {
@@ -37,7 +40,9 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	private _onTurnStart: SlimEvent<void>
 	private _onTurnEnd: SlimEvent<void>
 	private _onGameEnd: SlimEvent<void>
-	private _isGameEnd: (refs: SafeReference<GameObject>[]) => boolean | undefined
+	private _isGameEnd:
+		| ((refs: IReadOnlyObjectContainer<GameObject>) => boolean)
+		| undefined
 	private _tileSizeScale: number
 	private _turnIndex: number
 	private _maxTurnIndex: number
@@ -67,11 +72,13 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		return this._onGameEnd
 	}
 
-	get isGameEnd(): (refs: SafeReference<GameObject>[] | undefined) => boolean {
+	get isGameEnd():
+		| ((refs: IReadOnlyObjectContainer<GameObject>) => boolean)
+		| undefined {
 		return this._isGameEnd
 	}
 	public set isGameEnd(
-		v: (refs: SafeReference<GameObject>[]) => boolean | undefined
+		v: ((refs: IReadOnlyObjectContainer<GameObject>) => boolean) | undefined
 	) {
 		this._isGameEnd = v
 	}
@@ -102,10 +109,6 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 	public set renderOffset(v: Vector2) {
 		this._renderOffset = v
-	}
-
-	public get gameObjectRefs(): SafeReference<GameObject>[] {
-		return this._container.GetSafeRefsByFilter(() => true)
 	}
 
 	public get turnIndex(): number {
@@ -251,7 +254,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	public CheckGameEnd(): boolean {
-		return this.isGameEnd && this.isGameEnd(this.gameObjectRefs)
+		return this.isGameEnd && this.isGameEnd(this.GetReadonlyContainer())
 	}
 
 	public AddGameObject<T extends GameObject>(
@@ -311,7 +314,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		if (this.playModeParameters.disableRender) return
 
 		let renderRefs: SafeReference<AbstractRenderComponent>[] = []
-		for (let gameObject of this.gameObjectRefs) {
+		for (let gameObject of this.GetReadonlyContainer()) {
 			renderRefs = renderRefs.concat(
 				gameObject.object.GetComponents(
 					AbstractRenderComponent
@@ -352,7 +355,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 
 	protected async InitControllers(): Promise<unknown> {
 		const promises: Promise<unknown>[] = []
-		for (let gameObject of this.gameObjectRefs) {
+		for (let gameObject of this.GetReadonlyContainer()) {
 			const bodiesRefs = gameObject.object.GetComponents(
 				ControllerBody
 			) as SafeReference<
@@ -372,7 +375,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	protected async CalcCommands(turnIndex: number) {
-		for (let gameObject of this.gameObjectRefs) {
+		for (let gameObject of this.GetReadonlyContainer()) {
 			const bodiesRefs = gameObject.object.GetComponents(
 				ControllerBody
 			) as SafeReference<

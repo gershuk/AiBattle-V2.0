@@ -1,10 +1,18 @@
-import { IObjectContainer, SafeReference } from './ObjectContainer'
+import {
+	IObjectContainer,
+	IReadOnlyObjectContainer,
+	SafeReference,
+} from './ObjectContainer'
 import { UpdatableObject } from './UpdatableObject'
 
 export abstract class UpdatableGroup<
 	T extends UpdatableObject
 > extends UpdatableObject {
 	protected _container: IObjectContainer<T>
+
+	public GetReadonlyContainer(): IReadOnlyObjectContainer<T> {
+		return this._container
+	}
 
 	protected Add(object: T): SafeReference<T> {
 		return this._container.Add(object)

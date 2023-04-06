@@ -288,7 +288,7 @@ export class BombermanGame extends GameEngine {
 
 	public GetGameInfo(): BombermanGameInfo {
 		const bodiesData: BodyAllData[] = []
-		for (let ref of this.scene.gameObjectRefs) {
+		for (let ref of this.scene.GetReadonlyContainer()) {
 			for (let body of ref.object.GetComponents(ManBody)) {
 				bodiesData.push((body.object as ManBody).GetAllData())
 			}
