@@ -54,9 +54,7 @@ export abstract class UpdatableGroup<
 	}
 
 	public OnDestroy(): void {
-		for (let ref of this._container) {
-			ref.object.OnDestroy()
-		}
+		//Children's OnDestory called in DestroyObjectsByFilter
 		this.DestroyObjectsByFilter(() => true)
 		this._container.ClearDestroyed()
 	}
