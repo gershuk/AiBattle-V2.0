@@ -6,6 +6,7 @@ import {
 	$codesData,
 	readCodesFromLocalStorageFx,
 	changeCode,
+	renameCode,
 } from 'model'
 import { createSessionsManager } from 'libs/ace-editor'
 import { showConfirm, showMessage } from 'ui'
@@ -71,7 +72,7 @@ new Controller()`
 const errorReadStringFile = new Error('error read string from file')
 const errorAbortLoadFileUser = new Error('user abort upload file')
 
-const { $sessions, $sessionsValue, addSession, removeSession, resetSession } =
+const { $sessions, $sessionsValue, addSession, removeSession, resetSession, renameSession } =
 	createSessionsManager({
 		mode: 'ace/mode/javascript',
 	})
@@ -92,6 +93,7 @@ const $codesModified = combine(
 const uploadedFileCode = createEvent()
 const createdFileCode = createEvent<string>()
 const removedFileCode = createEvent<string>()
+const renameFileCode = createEvent<{ oldName: string; newName: string }>()
 
 const loadScriptFx = attach({
 	source: $codes,
@@ -165,6 +167,11 @@ sample({
 	target: removeSession,
 })
 
+sample({
+	clock: renameFileCode,
+	target: [renameCode, renameSession],
+})
+
 alertErrors({
 	fxs: [loadScriptFx],
 	errorList: [
@@ -195,4 +202,5 @@ export {
 	uploadedFileCode,
 	removedFileCode,
 	createdFileCode,
+	renameFileCode
 }

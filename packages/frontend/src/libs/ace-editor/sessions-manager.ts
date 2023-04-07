@@ -27,8 +27,26 @@ export const createSessionsManager = ({
 		name: string
 		content?: string
 	}>()
+	const renameSession = createEvent<{
+		oldName: string
+		newName: string
+	}>()
 
 	const setSessionValue = createEvent<SessionItem | SessionItem[]>()
+
+	const addListenersFx = attach({
+		source: $sessions,
+		effect: (sessions, name: string | string[]) => {
+			const names = Array.isArray(name) ? name : [name]
+			names.forEach(name => {
+				const session = sessions[name]
+				session.removeAllListeners()
+				session.addEventListener('change', () => {
+					setSessionValue({ name, value: session.doc.getValue() })
+				})
+			})
+		},
+	})
 
 	const addSessionFx = createEffect(
 		(newSession: SessionItem | SessionItem[]) => {
@@ -38,9 +56,7 @@ export const createSessionsManager = ({
 				const session = createEditSession(value || '', mode)
 				session.getUndoManager().reset()
 				setSessionValue({ name, value })
-				session.on('change', () => {
-					setSessionValue({ name, value: session.doc.getValue() })
-				})
+
 				return {
 					...acc,
 					[name]: session,
@@ -114,6 +130,26 @@ export const createSessionsManager = ({
 		}
 	})
 
+	$sessions.on(renameSession, (sessions, { oldName, newName }) => {
+		const temp = sessions[oldName]
+		const newSessions = { ...sessions }
+		delete newSessions[oldName]
+		return {
+			...newSessions,
+			[newName]: temp,
+		}
+	})
+
+	$sessionsValue.on(renameSession, (sessionsValue, { oldName, newName }) => {
+		const temp = sessionsValue[oldName]
+		const newSessionsValue = { ...sessionsValue }
+		delete newSessionsValue[oldName]
+		return {
+			...newSessionsValue,
+			[newName]: temp,
+		}
+	})
+
 	sample({ clock: resetUndoManager, target: resetUndoManagerFx })
 
 	sample({ clock: resetSession, target: resetSessionFx })
@@ -122,6 +158,19 @@ export const createSessionsManager = ({
 
 	sample({ clock: removeSession, target: removeSessionFx })
 
+	sample({
+		clock: addSessionFx.done,
+		fn: ({ params }) =>
+			(Array.isArray(params) ? params : [params]).map(({ name }) => name),
+		target: addListenersFx,
+	})
+
+	sample({
+		clock: renameSession,
+		fn: ({ newName }) => newName,
+		target: addListenersFx,
+	})
+
 	return {
 		$sessions,
 		$sessionsValue,
@@ -129,5 +178,6 @@ export const createSessionsManager = ({
 		removeSession,
 		resetUndoManager,
 		resetSession,
+		renameSession,
 	}
 }
