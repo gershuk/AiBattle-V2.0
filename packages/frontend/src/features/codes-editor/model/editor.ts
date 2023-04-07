@@ -66,8 +66,7 @@ class Controller {
     }
     
 } 
-
-new Controller()`
+`
 
 const errorReadStringFile = new Error('error read string from file')
 const errorAbortLoadFileUser = new Error('user abort upload file')
