@@ -33,7 +33,6 @@ import {
 	AnimationRenderComponentParameters,
 } from 'GameEngine/BaseComponents/RenderComponents/AnimationRenderComponent'
 import {
-	BombermanController,
 	BombermanControllerCommand,
 	BombermanControllerData,
 } from './BombermanController'
@@ -43,9 +42,9 @@ import { BodyAllData } from './MapData'
 
 export class BombermanGame extends GameEngine {
 	async Init(parameters: BombermanGameParameters): Promise<unknown> {
-		parameters.sceneParameters.isGameEnd ??= (gameObjectRefs): boolean => {
+		parameters.sceneParameters.isGameEnd ??= (container): boolean => {
 			let counter = 0
-			for (let ref of gameObjectRefs) {
+			for (let ref of container) {
 				if (ref.object.GetComponents(ManBody).length > 0) {
 					counter++
 					if (counter > 1) return
@@ -288,7 +287,7 @@ export class BombermanGame extends GameEngine {
 
 	public GetGameInfo(): BombermanGameInfo {
 		const bodiesData: BodyAllData[] = []
-		for (let ref of this.scene.gameObjectRefs) {
+		for (let ref of this.scene.GetReadonlyContainer()) {
 			for (let body of ref.object.GetComponents(ManBody)) {
 				bodiesData.push((body.object as ManBody).GetAllData())
 			}

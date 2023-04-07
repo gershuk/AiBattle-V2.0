@@ -6,7 +6,10 @@ import { GameObject } from '../GameObject/GameObject'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
 import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
-import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
+import {
+	IReadOnlyObjectContainer,
+	SafeReference,
+} from 'GameEngine/ObjectBaseType/ObjectContainer'
 import { SlimEvent } from 'Utilities'
 
 export interface IScene extends UpdatableGroup<GameObject> {
@@ -18,7 +21,9 @@ export interface IScene extends UpdatableGroup<GameObject> {
 
 	get OnGameEnd(): SlimEvent<void>
 
-	get isGameEnd(): (refs: SafeReference<GameObject>[]) => boolean | undefined
+	get isGameEnd():
+		| ((refs: IReadOnlyObjectContainer<GameObject>) => boolean)
+		| undefined
 
 	get playModeParameters(): PlayModeParameters
 
@@ -31,8 +36,6 @@ export interface IScene extends UpdatableGroup<GameObject> {
 	get mousePositionOnCanvas(): Vector2 | undefined
 
 	get canvas(): HTMLCanvasElement
-
-	get gameObjectRefs(): SafeReference<GameObject>[]
 
 	get renderOffset(): Vector2
 
@@ -135,7 +138,7 @@ export class SceneParameters {
 	canvas: HTMLCanvasElement
 	tileSizeScale: number
 	playModeParameters: PlayModeParameters
-	isGameEnd: (refs: SafeReference<GameObject>[]) => boolean | undefined
+	isGameEnd: (refs: IReadOnlyObjectContainer<GameObject>) => boolean | undefined
 
 	constructor(
 		maxTurnIndex: number,
@@ -147,7 +150,7 @@ export class SceneParameters {
 		initTimeout: number = -1,
 		commandCalcTimeout: number = -1,
 		playModeParameters: PlayModeParameters = new PlayModeParameters(),
-		isGameEnd?: (refs: SafeReference<GameObject>[]) => boolean
+		isGameEnd?: (refs: IReadOnlyObjectContainer<GameObject>) => boolean
 	) {
 		this.maxTurnIndex = maxTurnIndex
 		this.animTicksCount = animTicksCount

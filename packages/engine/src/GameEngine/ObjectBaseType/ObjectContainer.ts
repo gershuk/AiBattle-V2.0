@@ -1,15 +1,19 @@
 import { UpdatableObject } from './UpdatableObject'
 
-export interface IObjectContainer<T extends UpdatableObject>
+export interface IReadOnlyObjectContainer<T extends UpdatableObject>
 	extends Iterable<SafeReference<T>> {
-	Add(object: T): SafeReference<T>
 	GetSafeRefsByFilter(
 		filter: (o: SafeReference<T>) => boolean
 	): SafeReference<T>[]
-	DestroyObjectsByFilter(filter: (o: SafeReference<T>) => boolean): void
-	ClearDestroyed(): void
 	Count(): number
 	AliveCount(): number
+}
+
+export interface IObjectContainer<T extends UpdatableObject>
+	extends IReadOnlyObjectContainer<T> {
+	Add(object: T): SafeReference<T>
+	DestroyObjectsByFilter(filter: (o: SafeReference<T>) => boolean): void
+	ClearDestroyed(): void
 }
 
 export class SafeReference<T extends UpdatableObject> {
