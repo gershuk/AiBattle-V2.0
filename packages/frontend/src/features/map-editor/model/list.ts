@@ -15,10 +15,16 @@ import {
 	changeMap,
 	readMapsFromLocalStorageFx,
 	removeMap,
+	renameMap,
 } from 'model'
 import { showConfirm, showMessage } from 'ui'
 import { makeMap } from '../utils'
-import { addSession, removeSession, resetSession } from './session'
+import {
+	addSession,
+	removeSession,
+	renameSession,
+	resetSession,
+} from './session'
 
 const { getTranslationItem } = createTranslation({
 	ru: {
@@ -48,6 +54,7 @@ const createdFile = createEvent<{
 	borderCode: number
 }>()
 const removedFileMap = createEvent<string>()
+const renameFileMap = createEvent<{ oldName: string; newName: string }>()
 
 const loadMapFx = attach({
 	source: $dataMaps,
@@ -130,6 +137,8 @@ sample({
 	target: removeSession,
 })
 
+sample({ clock: renameFileMap, target: [renameMap, renameSession] })
+
 alertErrors({
 	fxs: [loadMapFx],
 	errorList: [
@@ -158,4 +167,4 @@ alertErrors({
 	showMessage: ({ msg }) => showMessage({ content: msg }),
 })
 
-export { uploadedFile, removedFileMap, createdFile }
+export { uploadedFile, removedFileMap, createdFile, renameFileMap }

@@ -16,6 +16,7 @@ import {
 	$mapsWithSessionValue,
 	createdFile,
 	removedFileMap,
+	renameFileMap,
 	uploadedFile,
 } from '../model'
 import './styles.scss'
@@ -35,6 +36,7 @@ const { useTranslation } = createTranslation({
 		heightMap: 'Высота карты',
 		fillCode: 'Заполнение карты (код клетки)',
 		fillBorderCode: 'Заполнение краев карты (код клетки)',
+		rename: 'Переименовать',
 	},
 	en: {
 		removeFile: 'Remove file?',
@@ -50,6 +52,7 @@ const { useTranslation } = createTranslation({
 		heightMap: 'Map height',
 		fillCode: 'Type of tile (cell code)',
 		fillBorderCode: `Type of map's border (cell code)`,
+		rename: 'Rename',
 	},
 })
 
@@ -99,6 +102,18 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 		if (status === 'ok') removedFileMap(item.id)
 	}
 
+	const handlerRename = async (item: ListItem) => {
+		const { status, htmlElement } = await showPopup({
+			content: props => (
+				<RenameMapForm {...props} mapsName={maps.map(({ name }) => name)} />
+			),
+		})
+		if (status !== 'ok') return
+		const form = htmlElement.querySelector('form')
+		const { name } = htmlFormToJson<{ name: string }>(form!)
+		renameFileMap({ oldName: item.id, newName: name })
+	}
+
 	return (
 		<div className={'maps-list'}>
 			<div className={'header'}>
@@ -130,6 +145,10 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 					{
 						text: t('saveToDevice'),
 						onClick: handlerDeviceSave,
+					},
+					{
+						text: t('rename'),
+						onClick: handlerRename,
 					},
 				]}
 			/>
@@ -179,6 +198,46 @@ const CreateMapForm = ({
 				<div className={'create-map-popup-item'}>
 					<div>{t('fillBorderCode')}</div>
 					<InputNumber initValue={2} required name={'borderCode'} />
+				</div>
+			</div>
+			<div className={'popup-footer'}>
+				<Button onClick={() => cancel()} type="button" color="danger">
+					{t('cancel')}
+				</Button>
+				<Button type="submit" color="primary">
+					{t('ok')}
+				</Button>
+			</div>
+		</form>
+	)
+}
+
+const RenameMapForm = ({
+	ok,
+	cancel,
+	mapsName,
+}: {
+	ok: () => void
+	cancel: () => void
+	mapsName: string[]
+}) => {
+	const t = useTranslation()
+
+	return (
+		<form
+			onSubmit={e => {
+				e.preventDefault()
+				const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
+				const fileExists = !!mapsName.find(name => name === dataForm.name)
+				if (fileExists) showMessage({ content: t('fileExists') })
+				else ok()
+			}}
+		>
+			<div className={'popup-header'}>{t('rename')}</div>
+			<div className={'popup-content create-map-popup'}>
+				<div className={'create-map-popup-item'}>
+					<div>{t('fileName')}</div>
+					<Input autoFocus required name={'name'} />
 				</div>
 			</div>
 			<div className={'popup-footer'}>

@@ -9,11 +9,12 @@ config.setModuleUrl(
 
 const {
 	$sessions,
+	$sessionsValue,
 	addSession,
 	removeSession,
 	resetUndoManager,
 	resetSession,
-	$sessionsValue,
+	renameSession,
 } = createSessionsManager({
 	mode: 'ace/mode/json',
 })
@@ -25,4 +26,5 @@ export {
 	removeSession,
 	resetUndoManager,
 	resetSession,
+	renameSession,
 }
