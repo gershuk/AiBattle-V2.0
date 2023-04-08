@@ -10,10 +10,6 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 	private _version: number = 0
 	private _references: SafeReference<T>[] = []
 
-	public Count(): number {
-		return this._references.length
-	}
-
 	public get version(): number {
 		return this._version
 	}
@@ -29,12 +25,6 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 	protected set references(o: SafeReference<T>[]) {
 		this._references = o
 		this.version++
-	}
-
-	public AliveCount(): number {
-		return this.GetSafeRefsByFilter((s: SafeReference<T>): boolean => {
-			return !s.isDestroyed
-		}).length
 	}
 
 	private SortArray() {

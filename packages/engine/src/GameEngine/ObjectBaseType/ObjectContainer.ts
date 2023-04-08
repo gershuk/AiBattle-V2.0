@@ -5,8 +5,6 @@ export interface IReadOnlyObjectContainer<T extends UpdatableObject>
 	GetSafeRefsByFilter(
 		filter: (o: SafeReference<T>) => boolean
 	): SafeReference<T>[]
-	Count(): number
-	AliveCount(): number
 }
 
 export interface IObjectContainer<T extends UpdatableObject>
