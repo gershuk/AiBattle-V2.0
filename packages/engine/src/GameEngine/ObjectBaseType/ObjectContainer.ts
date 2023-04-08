@@ -5,6 +5,7 @@ export interface IReadOnlyObjectContainer<T extends UpdatableObject>
 	GetSafeRefsByFilter(
 		filter: (o: SafeReference<T>) => boolean
 	): SafeReference<T>[]
+	GetSafeRefForObject(object: T): SafeReference<T>
 }
 
 export interface IObjectContainer<T extends UpdatableObject>

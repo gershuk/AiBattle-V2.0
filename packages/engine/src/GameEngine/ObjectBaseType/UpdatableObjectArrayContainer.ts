@@ -9,6 +9,7 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 {
 	private _version: number = 0
 	private _references: SafeReference<T>[] = []
+	private _objectToRef: { [key: string]: SafeReference<T> } = {}
 
 	public get version(): number {
 		return this._version
@@ -42,6 +43,7 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 		const safeReference: SafeReference<T> = new SafeReference<T>(object)
 		this.references.push(safeReference)
 		this.SortArray()
+		this._objectToRef[object.uuid] = safeReference
 		return safeReference
 	}
 
@@ -69,6 +71,7 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 		}
 
 		for (let ref of refs) {
+			delete this._objectToRef[ref.object.uuid]
 			ref.Destroy()
 		}
 	}
@@ -78,6 +81,10 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 			(s: SafeReference<T>): boolean => !s.isDestroyed
 		)
 		this.SortArray()
+	}
+
+	public GetSafeRefForObject(object: T): SafeReference<T> {
+		return this._objectToRef[object.uuid]
 	}
 
 	[Symbol.iterator](): Iterator<SafeReference<T>, any, undefined> {
