@@ -19,8 +19,10 @@ export class SafeReference<T extends UpdatableObject> {
 	private _object: T
 
 	private _isDestroyed: boolean
+	private _isAdded: boolean
+
 	public get object(): T {
-		if (this._isDestroyed) throw new Error('Object is destroyed')
+		if (this.isDestroyed) throw new Error('Object is destroyed')
 		return this._object
 	}
 
@@ -36,9 +38,24 @@ export class SafeReference<T extends UpdatableObject> {
 		this._isDestroyed = v
 	}
 
+	public get isAdded(): boolean {
+		return this._isAdded
+	}
+
+	protected set isAdded(v: boolean) {
+		this._isAdded = v
+	}
+
 	constructor(object: T) {
 		this.object = object
 		this.isDestroyed = false
+	}
+
+	public SetAdded() {
+		if (this.isDestroyed) throw new Error('Object is destroyed')
+		if (this.isAdded) throw new Error('Object already added')
+		this.isAdded = true
+		this.object.OnAddedToGroup()
 	}
 
 	public Destroy() {

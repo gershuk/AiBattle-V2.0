@@ -263,8 +263,8 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
 	): SafeReference<GameObject> {
-		const ref = this._container.Add(gameObject)
 		gameObject.Init(position, this, newComponents, id)
+		const ref = this._container.Add(gameObject)
 		return ref
 	}
 

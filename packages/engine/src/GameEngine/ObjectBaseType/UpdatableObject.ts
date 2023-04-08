@@ -21,4 +21,6 @@ export abstract class UpdatableObject extends Object {
 	abstract OnFixedUpdate(index: number): void
 
 	abstract OnDestroy(): void
+
+	OnAddedToGroup(): void {}
 }

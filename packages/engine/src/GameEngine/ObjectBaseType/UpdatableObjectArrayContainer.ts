@@ -44,6 +44,7 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 		this.references.push(safeReference)
 		this.SortArray()
 		this._objectToRef[object.uuid] = safeReference
+		safeReference.SetAdded()
 		return safeReference
 	}
 

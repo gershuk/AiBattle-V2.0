@@ -14,6 +14,8 @@ export interface IGameObject extends UpdatableGroup<GameObjectComponent> {
 
 	set position(v: Vector2)
 
+	OnInit(): void
+
 	Init(
 		position: Vector2,
 		scene?: IScene,

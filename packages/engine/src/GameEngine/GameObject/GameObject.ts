@@ -70,4 +70,9 @@ export class GameObject
 	public OnInit(): void {
 		for (let componentRef of this._container) componentRef.object.OnOwnerInit()
 	}
+
+	public OnAddedToGroup(): void {
+		for (let componentRef of this._container)
+			componentRef.object.OnOwnerAddedToGroup()
+	}
 }
