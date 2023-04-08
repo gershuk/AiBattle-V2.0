@@ -416,7 +416,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 
 		this._onTurnStart.Notify()
 
-		this._container.Finaliaze()
+		this.OnFinalize()
 
 		this.state = SceneState.CalcCommands
 		await this.CalcCommands(this.turnIndex)
@@ -424,7 +424,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		this.state = SceneState.CreationStage
 		await this.OnObjectCreationStage(this.turnIndex)
 
-		this._container.Finaliaze()
+		this.OnFinalize()
 
 		this.state = SceneState.NextTurn
 		this.OnFixedUpdate(this.turnIndex)
