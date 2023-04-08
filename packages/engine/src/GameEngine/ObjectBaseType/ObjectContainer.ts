@@ -10,7 +10,11 @@ export interface IReadOnlyObjectContainer<T extends UpdatableObject>
 
 export interface IObjectContainer<T extends UpdatableObject>
 	extends IReadOnlyObjectContainer<T> {
-	Add(object: T): SafeReference<T>
+	Add(
+		object: T,
+		addAction?: () => void,
+		destroyAction?: () => void
+	): SafeReference<T>
 	DestroyObjectsByFilter(filter: (o: SafeReference<T>) => boolean): void
 	Finaliaze(): void
 }
@@ -20,6 +24,9 @@ export class SafeReference<T extends UpdatableObject> {
 
 	private _isDestroyed: boolean
 	private _isAdded: boolean
+
+	private _addAction: (() => void) | undefined
+	private _destroyAction: (() => void) | undefined
 
 	public get object(): T {
 		if (this.isDestroyed) throw new Error('Object is destroyed')
@@ -46,10 +53,12 @@ export class SafeReference<T extends UpdatableObject> {
 		this._isAdded = v
 	}
 
-	constructor(object: T) {
+	constructor(object: T, addAction?: () => void, destroyAction?: () => void) {
 		this.object = object
 		this.isDestroyed = false
 		this.isAdded = false
+		this._addAction = addAction
+		this._destroyAction = destroyAction
 	}
 
 	public SetAdded() {
@@ -57,10 +66,12 @@ export class SafeReference<T extends UpdatableObject> {
 		if (this.isAdded) throw new Error('Object already added')
 		this.isAdded = true
 		this.object.OnAddedToGroup()
+		this._addAction()
 	}
 
 	public Destroy() {
 		this.object.OnDestroy()
+		this._destroyAction()
 		this.object = null
 		this.isDestroyed = true
 	}
