@@ -52,7 +52,6 @@ export abstract class UpdatableGroup<
 		for (let ref of this._container) {
 			ref.object.OnFixedUpdateEnded(index)
 		}
-		this._container.ClearDestroyed()
 	}
 
 	public OnFixedUpdate(index: number): void {
@@ -64,6 +63,12 @@ export abstract class UpdatableGroup<
 	public OnDestroy(): void {
 		//Children's OnDestory called in DestroyObjectsByFilter
 		this.DestroyObjectsByFilter(() => true)
-		this._container.ClearDestroyed()
+		this._container.Finaliaze()
+	}
+
+	public OnObjectCreationStage(index: number): void {
+		for (let ref of this._container) {
+			ref.object.OnObjectCreationStage(index)
+		}
 	}
 }

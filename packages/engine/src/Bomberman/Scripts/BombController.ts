@@ -54,7 +54,7 @@ export class BombController extends GameObjectComponent {
 		}
 	}
 
-	OnFixedUpdate(index: number): void {
+	OnObjectCreationStage(index: number): void {
 		if (
 			!this._isColliderInit &&
 			this._discreteColliderSystem.CanInit(

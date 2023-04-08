@@ -77,7 +77,7 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 		}
 	}
 
-	public ClearDestroyed(): void {
+	public Finaliaze(): void {
 		this.references = this._references.filter(
 			(s: SafeReference<T>): boolean => !s.isDestroyed
 		)

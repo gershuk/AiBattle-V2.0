@@ -12,7 +12,7 @@ export interface IObjectContainer<T extends UpdatableObject>
 	extends IReadOnlyObjectContainer<T> {
 	Add(object: T): SafeReference<T>
 	DestroyObjectsByFilter(filter: (o: SafeReference<T>) => boolean): void
-	ClearDestroyed(): void
+	Finaliaze(): void
 }
 
 export class SafeReference<T extends UpdatableObject> {

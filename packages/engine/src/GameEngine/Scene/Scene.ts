@@ -30,6 +30,7 @@ enum SceneState {
 	Starting,
 	ReadyToNextTurn,
 	CalcCommands,
+	CreationStage,
 	NextTurn,
 	Animation,
 	EndGame,
@@ -415,8 +416,15 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 
 		this._onTurnStart.Notify()
 
+		this._container.Finaliaze()
+
 		this.state = SceneState.CalcCommands
 		await this.CalcCommands(this.turnIndex)
+
+		this.state = SceneState.CreationStage
+		await this.OnObjectCreationStage(this.turnIndex)
+
+		this._container.Finaliaze()
 
 		this.state = SceneState.NextTurn
 		this.OnFixedUpdate(this.turnIndex)
@@ -491,4 +499,6 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	IsAutoTurn(): boolean {
 		return this.autoTurnTimerId !== undefined && this.autoTurnTimerId !== null
 	}
+
+	OnAddedToGroup(): void {}
 }
