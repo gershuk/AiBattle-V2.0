@@ -49,6 +49,7 @@ export class SafeReference<T extends UpdatableObject> {
 	constructor(object: T) {
 		this.object = object
 		this.isDestroyed = false
+		this.isAdded = false
 	}
 
 	public SetAdded() {

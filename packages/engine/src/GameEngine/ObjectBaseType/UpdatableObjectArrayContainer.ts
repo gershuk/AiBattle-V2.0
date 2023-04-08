@@ -135,7 +135,8 @@ export class UpdatableObjectContainerIterator<T extends UpdatableObject>
 	private SkipToFirstAliveOrEnd() {
 		while (
 			this._index < this._references.length &&
-			this._references[this._index].isDestroyed
+			this._references[this._index].isDestroyed &&
+			this._references[this._index].isAdded
 		)
 			this._index++
 	}
