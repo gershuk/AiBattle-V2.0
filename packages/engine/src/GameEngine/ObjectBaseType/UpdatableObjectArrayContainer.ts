@@ -3,12 +3,16 @@ import {
 	IObjectContainer,
 	SafeReference,
 } from 'GameEngine/ObjectBaseType/ObjectContainer'
+import { Queue } from 'Utilities'
 
 export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 	implements IObjectContainer<T>
 {
+	private _hasAdded: boolean = false
+	private _hasDelete: boolean = false
 	private _version: number = 0
 	private _references: SafeReference<T>[] = []
+	private _newRefsQueue: Queue<SafeReference<T>> = new Queue()
 	private _objectToRef: { [key: string]: SafeReference<T> } = {}
 
 	public get version(): number {
@@ -28,23 +32,18 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 		this.version++
 	}
 
-	private SortArray() {
-		this.references = this.references.sort(
-			(a: SafeReference<T>, b: SafeReference<T>): number => {
-				return (
-					(b.isDestroyed ? 0 : b.object.executionPriority) -
-					(a.isDestroyed ? 0 : a.object.executionPriority)
-				)
-			}
+	public Add(
+		object: T,
+		addAction?: () => void,
+		destroyAction?: () => void
+	): SafeReference<T> {
+		const safeReference: SafeReference<T> = new SafeReference<T>(
+			object,
+			addAction,
+			destroyAction
 		)
-	}
-
-	public Add(object: T): SafeReference<T> {
-		const safeReference: SafeReference<T> = new SafeReference<T>(object)
-		this.references.push(safeReference)
-		this.SortArray()
-		this._objectToRef[object.uuid] = safeReference
-		safeReference.SetAdded()
+		this._newRefsQueue.Enqueue(safeReference)
+		this._hasAdded = true
 		return safeReference
 	}
 
@@ -75,13 +74,44 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 			delete this._objectToRef[ref.object.uuid]
 			ref.Destroy()
 		}
+
+		this._hasDelete = true
 	}
 
 	public Finaliaze(): void {
-		this.references = this._references.filter(
-			(s: SafeReference<T>): boolean => !s.isDestroyed
-		)
-		this.SortArray()
+		if (this._hasDelete) {
+			this.references = this._references.filter(
+				(s: SafeReference<T>): boolean => !s.isDestroyed
+			)
+		}
+
+		if (this._hasAdded) {
+			const startIndex = this.references.length
+
+			while (this._newRefsQueue.Size() > 0) {
+				const ref = this._newRefsQueue.Dequeue()
+				this._objectToRef[ref.object.uuid] = ref
+				this.references.push(ref)
+			}
+
+			for (let i = startIndex; i < this.references.length; ++i) {
+				this.references[i].SetAdded()
+			}
+		}
+
+		if (this._hasAdded || this._hasDelete) {
+			this.references = this.references.sort(
+				(a: SafeReference<T>, b: SafeReference<T>): number => {
+					return (
+						(b.isDestroyed ? 0 : b.object.executionPriority) -
+						(a.isDestroyed ? 0 : a.object.executionPriority)
+					)
+				}
+			)
+		}
+
+		this._hasAdded = false
+		this._hasDelete = false
 	}
 
 	public GetSafeRefForObject(object: T): SafeReference<T> {
@@ -115,8 +145,8 @@ export class UpdatableObjectContainerIterator<T extends UpdatableObject>
 	}
 
 	next(...args: [] | [undefined]): IteratorResult<SafeReference<T>, any> {
-		// if (this._version != this._getCurrentVersionNumber())
-		// 	throw new Error('Container version was changed')
+		if (this._version != this._getCurrentVersionNumber())
+			throw new Error('Container version was changed')
 
 		this.SkipToFirstAliveOrEnd()
 		const result: IteratorResult<SafeReference<T>, any> = {
@@ -135,8 +165,8 @@ export class UpdatableObjectContainerIterator<T extends UpdatableObject>
 	private SkipToFirstAliveOrEnd() {
 		while (
 			this._index < this._references.length &&
-			this._references[this._index].isDestroyed &&
-			this._references[this._index].isAdded
+			(this._references[this._index].isDestroyed ||
+				!this._references[this._index].isAdded)
 		)
 			this._index++
 	}

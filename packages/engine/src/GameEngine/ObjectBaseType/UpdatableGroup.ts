@@ -63,7 +63,6 @@ export abstract class UpdatableGroup<
 	public OnDestroy(): void {
 		//Children's OnDestory called in DestroyObjectsByFilter
 		this.DestroyObjectsByFilter(() => true)
-		this.OnFinalize()
 	}
 
 	public OnObjectCreationStage(index: number): void {
@@ -75,7 +74,9 @@ export abstract class UpdatableGroup<
 	public OnFinalize(): void {
 		this._container.Finaliaze()
 		for (let ref of this._container) {
-			if (ref.object instanceof UpdatableGroup) ref.object.OnFinalize()
+			if (ref.object instanceof UpdatableGroup) {
+				ref.object.OnFinalize()
+			}
 		}
 	}
 }

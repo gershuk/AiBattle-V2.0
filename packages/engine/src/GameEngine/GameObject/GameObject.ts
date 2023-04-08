@@ -42,6 +42,7 @@ export class GameObject
 		this._scene = scene
 		this.executionPriority = executionPriority
 		this.AddComponents(newComponents)
+		this.OnFinalize()
 		this.OnInit()
 	}
 
@@ -69,10 +70,5 @@ export class GameObject
 
 	public OnInit(): void {
 		for (let componentRef of this._container) componentRef.object.OnOwnerInit()
-	}
-
-	public OnAddedToGroup(): void {
-		for (let componentRef of this._container)
-			componentRef.object.OnOwnerAddedToGroup()
 	}
 }

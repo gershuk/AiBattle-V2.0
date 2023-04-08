@@ -264,8 +264,9 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
 	): SafeReference<GameObject> {
-		gameObject.Init(position, this, newComponents, id)
-		const ref = this._container.Add(gameObject)
+		const ref = this._container.Add(gameObject, () =>
+			gameObject.Init(position, this, newComponents, id)
+		)
 		return ref
 	}
 
@@ -302,10 +303,12 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 
 	public async Start(): Promise<unknown> {
 		this.state = SceneState.Starting
+		this.OnFinalize()
 		this._onSceneStart.Notify()
-		await this.InitControllers()
 		this.OnStart()
+		await this.InitControllers()
 		this.turnIndex = 0
+		this.OnFinalize()
 		this.state = SceneState.ReadyToNextTurn
 		this.RenderFrame()
 		return Promise.resolve()
@@ -354,8 +357,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		}
 	}
 
-	protected async InitControllers(): Promise<unknown> {
-		const promises: Promise<unknown>[] = []
+	protected async InitControllers() {
 		for (let gameObject of this.GetReadonlyContainer()) {
 			const bodiesRefs = gameObject.object.GetComponents(
 				ControllerBody
@@ -368,11 +370,9 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 			>[]
 
 			for (let body of bodiesRefs) {
-				promises.push(body.object.InitStartData())
+				await body.object.InitStartData()
 			}
 		}
-
-		return Promise.all(promises)
 	}
 
 	protected async CalcCommands(turnIndex: number) {
@@ -499,6 +499,4 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	IsAutoTurn(): boolean {
 		return this.autoTurnTimerId !== undefined && this.autoTurnTimerId !== null
 	}
-
-	OnAddedToGroup(): void {}
 }

@@ -36,8 +36,6 @@ export class GameObjectComponent extends UpdatableObject {
 
 	OnOwnerAddedToGroup(): void {}
 
-	OnAddedToGroup(): void {}
-
 	OnObjectCreationStage(index: number): void {}
 }
 

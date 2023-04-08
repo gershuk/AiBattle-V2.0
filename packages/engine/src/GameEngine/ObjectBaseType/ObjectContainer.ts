@@ -65,13 +65,12 @@ export class SafeReference<T extends UpdatableObject> {
 		if (this.isDestroyed) throw new Error('Object is destroyed')
 		if (this.isAdded) throw new Error('Object already added')
 		this.isAdded = true
-		this.object.OnAddedToGroup()
-		this._addAction()
+		if (this._addAction) this._addAction()
 	}
 
 	public Destroy() {
+		if (this._destroyAction) this._destroyAction()
 		this.object.OnDestroy()
-		this._destroyAction()
 		this.object = null
 		this.isDestroyed = true
 	}
