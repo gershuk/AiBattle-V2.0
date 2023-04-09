@@ -8,7 +8,7 @@ import {
 	Vector2,
 } from '@ai-battle/engine'
 import { GameObject } from '@ai-battle/engine/build/GameEngine/GameObject/GameObject'
-import { SafeReference } from '@ai-battle/engine/build/GameEngine/ObjectBaseType/ObjectContainer'
+import { IReadOnlyObjectContainer } from '@ai-battle/engine/build/GameEngine/ObjectBaseType/ObjectContainer'
 import { attach, createStore, combine, sample, createEvent } from 'effector'
 import { generateGuid } from 'libs'
 import {
@@ -20,7 +20,7 @@ import {
 
 export const createEngine = (config: {
 	canvas: HTMLCanvasElement
-	isGameEnd?: (refs: SafeReference<GameObject>[]) => boolean
+	isGameEnd?: (refs: IReadOnlyObjectContainer<GameObject>) => boolean
 }) => {
 	const { isGameEnd, canvas } = config
 	const engine = new BombermanGame()

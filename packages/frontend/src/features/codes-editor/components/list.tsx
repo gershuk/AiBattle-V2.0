@@ -4,6 +4,7 @@ import {
 	removedFileCode,
 	createdFileCode,
 	$codesModified,
+	renameFileCode,
 } from '../model'
 import { UploadedCode } from 'model'
 import './styles.scss'
@@ -19,7 +20,6 @@ import {
 	UploadIcon,
 } from 'ui'
 import { createTranslation, htmlFormToJson, createAndDownloadFile } from 'libs'
-import { useEffect } from 'react'
 
 export interface LoaderScriptProps {
 	active?: string | null
@@ -37,6 +37,7 @@ const { useTranslation } = createTranslation({
 		ok: 'Ок',
 		cancel: 'Отмена',
 		createScript: 'Создать скрипт',
+		rename: 'Переименовать',
 	},
 	en: {
 		removeFile: 'Remove file?',
@@ -48,6 +49,7 @@ const { useTranslation } = createTranslation({
 		ok: 'Ок',
 		cancel: 'Cancel',
 		createScript: 'Create script',
+		rename: 'Rename',
 	},
 })
 
@@ -58,7 +60,11 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 	const createCodeFile = async () => {
 		const { status, htmlElement } = await showPopup({
 			content: props => (
-				<CreateCodeForm {...props} codesName={codes.map(({ name }) => name)} />
+				<CreateCodeForm
+					{...props}
+					codesName={codes.map(({ name }) => name)}
+					title={t('createScript')}
+				/>
 			),
 		})
 		if (status !== 'ok') return
@@ -77,13 +83,29 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 	}
 
 	const handlerDeviceSave = (item: ListItem) => {
-		const map = codes.find(x => x.name === item.id)
-		createAndDownloadFile(map?.content, item.id, 'text/plain')
+		const code = codes.find(x => x.name === item.id)
+		createAndDownloadFile(code?.content, item.id, 'text/plain')
 	}
 
 	const handlerRemove = async (item: ListItem) => {
 		const { status } = await showConfirm({ content: t('removeFile') })
 		if (status === 'ok') removedFileCode(item.id)
+	}
+
+	const handlerRename = async (item: ListItem) => {
+		const { status, htmlElement } = await showPopup({
+			content: props => (
+				<CreateCodeForm
+					{...props}
+					codesName={codes.map(({ name }) => name)}
+					title={t('rename')}
+				/>
+			),
+		})
+		if (status !== 'ok') return
+		const form = htmlElement.querySelector('form')
+		const { name } = htmlFormToJson<{ name: string }>(form!)
+		renameFileCode({ oldName: item.id, newName: name })
 	}
 
 	return (
@@ -118,6 +140,10 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 						text: t('saveToDevice'),
 						onClick: handlerDeviceSave,
 					},
+					{
+						text: t('rename'),
+						onClick: handlerRename,
+					},
 				]}
 			/>
 		</div>
@@ -128,10 +154,12 @@ const CreateCodeForm = ({
 	ok,
 	cancel,
 	codesName,
+	title,
 }: {
 	ok: () => void
 	cancel: () => void
 	codesName: string[]
+	title: string
 }) => {
 	const t = useTranslation()
 
@@ -145,7 +173,7 @@ const CreateCodeForm = ({
 				else ok()
 			}}
 		>
-			<div className={'popup-header'}>{t('createScript')}</div>
+			<div className={'popup-header'}>{title}</div>
 			<div className={'popup-content'}>
 				<div className={'create-map-popup-item'}>
 					<div>{t('fileName')}</div>

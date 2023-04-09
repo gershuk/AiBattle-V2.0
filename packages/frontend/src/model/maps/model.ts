@@ -32,6 +32,7 @@ const $dataMaps = $maps.map(maps =>
 const addMap = createEvent<{ content: string; name: string }>()
 const removeMap = createEvent<string>()
 const changeMap = createEvent<{ content: string; name: string }>()
+const renameMap = createEvent<{ oldName: string; newName: string }>()
 
 const addMapsToLocalStorageFx = attach({
 	source: $maps,
@@ -55,6 +56,17 @@ $maps.on(changeMap, (maps, mapChanged) =>
 )
 $maps.on(readMapsFromLocalStorageFx.doneData, (_, maps) => maps)
 
+$maps.on(renameMap, (maps, { oldName, newName }) => {
+	return maps.map(map => {
+		if (map.name === oldName)
+			return {
+				...map,
+				name: newName,
+			}
+		return map
+	})
+})
+
 sample({
 	clock: $maps,
 	target: addMapsToLocalStorageFx,
@@ -66,5 +78,6 @@ export {
 	addMap,
 	removeMap,
 	changeMap,
+	renameMap,
 	readMapsFromLocalStorageFx,
 }
