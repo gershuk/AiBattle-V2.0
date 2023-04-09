@@ -33,6 +33,10 @@ export class GameObjectComponent extends UpdatableObject {
 	OnDestroy(): void {}
 
 	OnOwnerInit(): void {}
+
+	OnOwnerAddedToGroup(): void {}
+
+	OnObjectCreationStage(index: number): void {}
 }
 
 export class ComponentParameters {

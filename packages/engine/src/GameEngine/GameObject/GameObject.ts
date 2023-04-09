@@ -42,6 +42,7 @@ export class GameObject
 		this._scene = scene
 		this.executionPriority = executionPriority
 		this.AddComponents(newComponents)
+		this.OnFinalize()
 		this.OnInit()
 	}
 
