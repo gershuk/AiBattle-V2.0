@@ -11,13 +11,11 @@ export class ObjectMovementData {
 	ref: SafeReference<GameObject>
 	oldPosition: Vector2
 	newPosition: Vector2 | null
-	moveTime: number | null
 
 	constructor(ref: SafeReference<GameObject>) {
 		this.ref = ref
 		this.oldPosition = this.ref.object.position
 		this.newPosition = null
-		this.moveTime = null
 	}
 }
 
@@ -130,13 +128,12 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 
 	public abstract CanObjectMoveTo(
 		ref: SafeReference<GameObject>,
-		newPosition: Vector2
+		newPosition: Vector2,
 	): boolean
 
 	public TryMoveObject(
 		ref: SafeReference<GameObject>,
 		newPosition: Vector2,
-		moveTime: number
 	) {
 		if (this.commandReceiveLock) {
 			console.warn(`Receiving of movement commands is blocked (moving phase).`)
@@ -159,7 +156,6 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 		}
 
 		data.newPosition = newPosition.Clone()
-		data.moveTime = moveTime
 
 		this.AddObjectMovementDataToCell(data, data.newPosition)
 	}
@@ -191,7 +187,6 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 
 			data.oldPosition = data.newPosition.Clone()
 			data.newPosition = null
-			data.moveTime = null
 		}
 
 		this.commandReceiveLock = false
