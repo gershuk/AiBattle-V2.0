@@ -47,6 +47,13 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 		return safeReference
 	}
 
+	private Comparator(a: SafeReference<T>, b: SafeReference<T>): number {
+		return (
+			(b.isDestroyed ? 0 : b.object.executionPriority) -
+			(a.isDestroyed ? 0 : a.object.executionPriority)
+		)
+	}
+
 	public GetSafeRefsByFilter(
 		filter: (s: SafeReference<T>) => boolean
 	): SafeReference<T>[] {
@@ -86,28 +93,24 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 		}
 
 		if (this._hasAdded) {
-			const startIndex = this.references.length
+			const newRefs = []
 
 			while (this._newRefsQueue.Size() > 0) {
 				const ref = this._newRefsQueue.Dequeue()
 				this._objectToRef[ref.object.uuid] = ref
 				this.references.push(ref)
+				newRefs.push(ref)
 			}
 
-			for (let i = startIndex; i < this.references.length; ++i) {
-				this.references[i].SetAdded()
+			newRefs.sort(this.Comparator)
+
+			for (let ref of newRefs) {
+				ref.SetAdded()
 			}
 		}
 
 		if (this._hasAdded || this._hasDelete) {
-			this.references = this.references.sort(
-				(a: SafeReference<T>, b: SafeReference<T>): number => {
-					return (
-						(b.isDestroyed ? 0 : b.object.executionPriority) -
-						(a.isDestroyed ? 0 : a.object.executionPriority)
-					)
-				}
-			)
+			this.references = this.references.sort(this.Comparator)
 		}
 
 		this._hasAdded = false
