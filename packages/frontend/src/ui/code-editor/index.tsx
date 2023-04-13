@@ -26,7 +26,7 @@ const { useTranslation } = createTranslation({
 	en: {
 		save: 'Save',
 		saveToDevice: 'Save to device',
-		fontSize: 'Размер шрифта',
+		fontSize: 'Font size',
 	},
 })
 
