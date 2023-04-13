@@ -13,7 +13,8 @@ export interface EditorCode {
 
 const { $sizes, setSizes } = createPanelSizeController(
 	window.innerHeight / 2,
-	'vertical'
+	'vertical',
+	'code-bot-and-debug'
 )
 
 const { $fontSize, changedFontSize } = createFontSizeController(

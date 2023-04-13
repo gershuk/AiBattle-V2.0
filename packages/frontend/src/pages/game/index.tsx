@@ -6,7 +6,11 @@ import { SplitPanel } from 'ui'
 import './styles.scss'
 import { tutorialGameSetting } from './tutorials'
 
-const { $sizes, setSizes } = createPanelSizeController(400)
+const { $sizes, setSizes } = createPanelSizeController(
+	400,
+	'horizontal',
+	'page-game-setting'
+)
 
 export const GamePage = () => {
 	const sizes = useUnit($sizes)
