@@ -7,7 +7,11 @@ import { createPanelSizeController } from 'libs'
 import { useEffect } from 'react'
 import { tutorialCodeList as tutorialCodeList } from './tutorials'
 
-const { $sizes, setSizes } = createPanelSizeController(200)
+const { $sizes, setSizes } = createPanelSizeController(
+	200,
+	'horizontal',
+	'page-bot-editor'
+)
 
 export const ControllerEditorPage = () => {
 	const { selectCode, sizes } = useUnit({

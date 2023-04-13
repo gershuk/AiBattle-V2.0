@@ -1,7 +1,7 @@
 import { useUnit } from 'effector-react'
-import { createPanelSizeController } from 'libs'
+import { createFontSizeController, createPanelSizeController } from 'libs'
 import { useMemo } from 'preact/hooks'
-import { CodeEditor, SplitPanel } from '../../../ui'
+import { CodeEditor, SplitPanel } from 'ui'
 import { Debug } from './debug'
 import { $codesModified, $sessions } from '../model'
 import './styles.scss'
@@ -13,14 +13,21 @@ export interface EditorCode {
 
 const { $sizes, setSizes } = createPanelSizeController(
 	window.innerHeight / 2,
-	'vertical'
+	'vertical',
+	'code-bot-and-debug'
+)
+
+const { $fontSize, changedFontSize } = createFontSizeController(
+	14,
+	'code-editor'
 )
 
 export const EditorCode = ({ active, onSave }: EditorCode) => {
-	const { codes, sessions, sizes } = useUnit({
+	const { codes, sessions, sizes, fontSize } = useUnit({
 		codes: $codesModified,
 		sessions: $sessions,
 		sizes: $sizes,
+		fontSize: $fontSize,
 	})
 	const selectCode = useMemo(() => {
 		if (!active) return null
@@ -53,6 +60,8 @@ export const EditorCode = ({ active, onSave }: EditorCode) => {
 						session={session}
 						fileName={selectCode.name}
 						onSave={value => onSave?.(value)}
+						fontSize={fontSize}
+						onChangeFontSize={changedFontSize}
 					/>
 				) : null
 			}

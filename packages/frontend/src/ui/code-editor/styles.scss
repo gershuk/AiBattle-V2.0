@@ -14,9 +14,11 @@
 		display: flex;
 		align-items: center;
 		background: var(--color-medium-bg);
+		font-size: 12px;
+		gap: 16px;
+
 		.toolbar-item {
 			color: var(--color-text);
-			font-size: 12px;
 			line-height: 22px;
 			padding: 0 8px;
 			border-radius: 5px;
@@ -24,6 +26,17 @@
 			&:hover {
 				background: var(--color-hover-item);
 			}
+		}
+
+		.toolbar-item-input {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.toolbar-group {
+			display: flex;
+			align-items: center;
 		}
 	}
 }

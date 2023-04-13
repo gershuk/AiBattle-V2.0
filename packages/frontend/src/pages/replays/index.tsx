@@ -11,7 +11,11 @@ import {
 } from './model'
 import './styles.scss'
 
-const { $sizes, setSizes } = createPanelSizeController(200)
+const { $sizes, setSizes } = createPanelSizeController(
+	200,
+	'horizontal',
+	'page-replay-list'
+)
 
 export const ReplaysPage = () => {
 	const { selectReplay, startGame, sizes } = useUnit({

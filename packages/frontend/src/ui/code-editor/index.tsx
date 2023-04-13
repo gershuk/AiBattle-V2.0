@@ -5,33 +5,44 @@ import 'ace-builds/src-noconflict/theme-tomorrow'
 import 'ace-builds/src-noconflict/ext-language_tools'
 import { useEffect, useRef } from 'preact/hooks'
 import { createTranslation, createAndDownloadFile, useKeyboard } from 'libs'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
+import { InputNumber } from 'ui/input-number'
 
 interface CodeEditorProps {
 	onChange?: (value: string) => void
 	onSave?: (value: string) => void
 	fileName: string
 	session: Ace.EditSession
+	fontSize?: number
+	onChangeFontSize?: (fontSize: number) => void
 }
 
 const { useTranslation } = createTranslation({
 	ru: {
 		save: 'Сохранить',
 		saveToDevice: 'Сохранить на устройство',
+		fontSize: 'Размер шрифта',
 	},
 	en: {
 		save: 'Save',
 		saveToDevice: 'Save to device',
+		fontSize: 'Font size',
 	},
 })
+
+const minFontSize = 0
+const maxFontSize = 100
 
 export const CodeEditor = ({
 	onChange,
 	onSave,
 	fileName,
 	session,
+	fontSize: fontSizeProps = 14,
+	onChangeFontSize,
 }: CodeEditorProps) => {
 	const t = useTranslation()
+	const [fontSize, setFontSize] = useState(fontSizeProps)
 	const refEditor = useRef<Ace.Editor | null>(null)
 	const mode = useMemo(() => session.getMode(), [session])
 
@@ -67,6 +78,17 @@ export const CodeEditor = ({
 		)
 	}
 
+	const handlerChangeFontSize = (_value: number | null) => {
+		const value = _value ?? minFontSize
+		const newSize = (() => {
+			if (value <= minFontSize) return minFontSize
+			// if (value >= maxFontSize) return maxFontSize
+			return value
+		})()
+		setFontSize(newSize)
+		onChangeFontSize?.(newSize)
+	}
+
 	useKeyboard({
 		filter: ({ key, ctrlKey }) => ctrlKey && key.toLowerCase() === 's',
 		fn: () => onSave?.(refEditor.current?.getSession().getValue() || ''),
@@ -78,13 +100,34 @@ export const CodeEditor = ({
 	}, [])
 
 	return (
-		<div className={'code-editor'}>
+		<div
+			className={'code-editor'}
+			onWheel={e => {
+				if (!e.ctrlKey) return
+				e.preventDefault()
+				const newSize = e.deltaY > 0 ? fontSize - 1 : fontSize + 1
+				handlerChangeFontSize(newSize)
+			}}
+		>
 			<div className={'toolbar'}>
-				<div className={'toolbar-item'} onClick={handlerSave}>
-					{t('save')}
+				<div className={'toolbar-group'}>
+					<div className={'toolbar-item'} onClick={handlerSave}>
+						{t('save')}
+					</div>
+					<div className={'toolbar-item'} onClick={handlerSaveDevise}>
+						{t('saveToDevice')}
+					</div>
 				</div>
-				<div className={'toolbar-item'} onClick={handlerSaveDevise}>
-					{t('saveToDevice')}
+				<div className={'toolbar-group'}>
+					<div className={'toolbar-item-input'}>
+						{t('fontSize')}
+						<InputNumber
+							onChange={handlerChangeFontSize}
+							value={fontSize}
+							max={maxFontSize}
+							min={minFontSize}
+						/>
+					</div>
 				</div>
 			</div>
 			<AceEditor
@@ -98,7 +141,7 @@ export const CodeEditor = ({
 				className="ace-editor"
 				height="100%"
 				width="100%"
-				fontSize={14}
+				fontSize={fontSize}
 				mode={mode}
 				theme="tomorrow"
 				setOptions={{

@@ -8,7 +8,11 @@ import { createPanelSizeController } from 'libs'
 import { useEffect } from 'react'
 import { tutorialMapList } from './tutorials'
 
-const { $sizes, setSizes } = createPanelSizeController(200)
+const { $sizes, setSizes } = createPanelSizeController(
+	200,
+	'horizontal',
+	'page-map-editor'
+)
 
 export const MapEditorPage = () => {
 	const { selectMap, sizes } = useUnit({ selectMap: $selectMap, sizes: $sizes })
