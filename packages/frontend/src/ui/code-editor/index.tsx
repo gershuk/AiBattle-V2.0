@@ -45,7 +45,6 @@ export const CodeEditor = ({
 
 	useEffect(() => {
 		if (session && refEditor.current) {
-			console.log('session', session)
 			refEditor.current.setSession(session)
 		}
 	}, [session])

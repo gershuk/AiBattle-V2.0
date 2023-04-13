@@ -1,5 +1,9 @@
 import { useUnit } from 'effector-react'
-import { createPanelSizeController, createTranslation } from 'libs'
+import {
+	createFontSizeController,
+	createPanelSizeController,
+	createTranslation,
+} from 'libs'
 import { MapData } from 'model'
 import { useMemo } from 'preact/hooks'
 import { CodeEditor, SplitPanel } from 'ui'
@@ -17,6 +21,11 @@ const { $sizes, setSizes } = createPanelSizeController(
 	'vertical'
 )
 
+const { $fontSize, changedFontSize } = createFontSizeController(
+	14,
+	'map-editor'
+)
+
 const { useTranslation } = createTranslation({
 	ru: {
 		jsonInvalid: 'JSON не валиден',
@@ -30,10 +39,11 @@ const { useTranslation } = createTranslation({
 
 export const EditorMap = ({ active, onSave }: EditorCode) => {
 	const t = useTranslation()
-	const { maps, sizes, sessions } = useUnit({
+	const { maps, sizes, sessions, fontSize } = useUnit({
 		maps: $mapsWithSessionValue,
 		sizes: $sizes,
 		sessions: $sessions,
+		fontSize: $fontSize,
 	})
 	const selectMap = useMemo(() => {
 		if (!active) return null
@@ -70,6 +80,8 @@ export const EditorMap = ({ active, onSave }: EditorCode) => {
 						session={activeSession}
 						fileName={selectMap.name}
 						onSave={value => onSave?.(value)}
+						fontSize={fontSize}
+						onChangeFontSize={changedFontSize}
 					/>
 				) : null
 			}
