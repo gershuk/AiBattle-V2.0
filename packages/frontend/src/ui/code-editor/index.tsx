@@ -30,6 +30,9 @@ const { useTranslation } = createTranslation({
 	},
 })
 
+const minFontSize = 0
+const maxFontSize = 100
+
 export const CodeEditor = ({
 	onChange,
 	onSave,
@@ -75,9 +78,15 @@ export const CodeEditor = ({
 		)
 	}
 
-	const handlerChangeFontSize = (value: number | null) => {
-		setFontSize(value ?? 14)
-		onChangeFontSize?.(value ?? 14)
+	const handlerChangeFontSize = (_value: number | null) => {
+		const value = _value ?? minFontSize
+		const newSize = (() => {
+			if (value <= minFontSize) return minFontSize
+			// if (value >= maxFontSize) return maxFontSize
+			return value
+		})()
+		setFontSize(newSize)
+		onChangeFontSize?.(newSize)
 	}
 
 	useKeyboard({
@@ -115,8 +124,8 @@ export const CodeEditor = ({
 						<InputNumber
 							onChange={handlerChangeFontSize}
 							value={fontSize}
-							max={100}
-							min={1}
+							max={maxFontSize}
+							min={minFontSize}
 						/>
 					</div>
 				</div>
