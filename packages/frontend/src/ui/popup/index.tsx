@@ -40,39 +40,52 @@ const createPopupContainer = () => {
 	}
 }
 
-export const showPopup = ({
+export const showPopup = <T = void,>({
 	content,
 }: {
 	content: (props: {
 		htmlElement: HTMLDivElement | null
 		close: () => void
-		ok: () => void
+		ok: (value: T) => void
 		cancel: () => void
 	}) => ComponentChild
 }) => {
-	return new Promise<{ status: 'ok' | 'cancel'; htmlElement: HTMLDivElement }>(
-		resolve => {
-			const { open, close } = createPopupContainer()
-			const ref = createRef<HTMLDivElement>()
+	type ShowPopupResult =
+		| {
+				status: 'ok'
+				htmlElement: HTMLDivElement
+				value: T
+		  }
+		| {
+				status: 'cancel'
+				htmlElement: HTMLDivElement
+				value: null
+		  }
+	return new Promise<ShowPopupResult>(resolve => {
+		const { open, close } = createPopupContainer()
+		const ref = createRef<HTMLDivElement>()
 
-			open(
-				<PopupBaseComponent htmlRef={ref}>
-					{content({
-						htmlElement: ref.current,
-						close,
-						ok: () => {
-							resolve({ status: 'ok', htmlElement: ref.current! })
-							close()
-						},
-						cancel: () => {
-							resolve({ status: 'cancel', htmlElement: ref.current! })
-							close()
-						},
-					})}
-				</PopupBaseComponent>
-			)
-		}
-	)
+		open(
+			<PopupBaseComponent htmlRef={ref}>
+				{content({
+					htmlElement: ref.current,
+					close,
+					ok: (value: T) => {
+						resolve({ status: 'ok', htmlElement: ref.current!, value })
+						close()
+					},
+					cancel: () => {
+						resolve({
+							status: 'cancel',
+							htmlElement: ref.current!,
+							value: null,
+						})
+						close()
+					},
+				})}
+			</PopupBaseComponent>
+		)
+	})
 }
 
 export const showConfirm = ({

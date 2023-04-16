@@ -4,7 +4,7 @@ import {
 	removedFileCode,
 	createdFileCode,
 	$codesModified,
-	renameFileCode,
+	renamedFileCode,
 } from '../model'
 import { UploadedCode } from 'model'
 import './styles.scss'
@@ -58,7 +58,7 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 	const t = useTranslation()
 
 	const createCodeFile = async () => {
-		const { status, htmlElement } = await showPopup({
+		const { status, value } = await showPopup<{ name: string }>({
 			content: props => (
 				<CreateCodeForm
 					{...props}
@@ -68,9 +68,7 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 			),
 		})
 		if (status !== 'ok') return
-		const form = htmlElement.querySelector('form')
-		const { name } = htmlFormToJson<{ name: string }>(form!)
-		if (name?.trim()) createdFileCode(name.trim())
+		createdFileCode(value.name)
 	}
 
 	const handlerClickItemList = (item: ListItem) => {
@@ -93,7 +91,7 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 	}
 
 	const handlerRename = async (item: ListItem) => {
-		const { status, htmlElement } = await showPopup({
+		const { status, value } = await showPopup<{ name: string }>({
 			content: props => (
 				<CreateCodeForm
 					{...props}
@@ -103,9 +101,7 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 			),
 		})
 		if (status !== 'ok') return
-		const form = htmlElement.querySelector('form')
-		const { name } = htmlFormToJson<{ name: string }>(form!)
-		renameFileCode({ oldName: item.id, newName: name })
+		renamedFileCode({ oldName: item.id, newName: value.name })
 	}
 
 	return (
@@ -156,7 +152,7 @@ const CreateCodeForm = ({
 	codesName,
 	title,
 }: {
-	ok: () => void
+	ok: (value: { name: string }) => void
 	cancel: () => void
 	codesName: string[]
 	title: string
@@ -168,9 +164,12 @@ const CreateCodeForm = ({
 			onSubmit={e => {
 				e.preventDefault()
 				const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
-				const fileExists = !!codesName.find(name => name === dataForm.name)
+				const codeName = dataForm.name.includes('.')
+					? dataForm.name
+					: `${dataForm.name}.js`
+				const fileExists = !!codesName.find(name => name === codeName)
 				if (fileExists) showMessage({ content: t('fileExists') })
-				else ok()
+				else ok({ name: codeName })
 			}}
 		>
 			<div className={'popup-header'}>{title}</div>
