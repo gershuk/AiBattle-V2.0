@@ -97,6 +97,7 @@ export const CodesList = ({ active, ontToggleSelect }: LoaderScriptProps) => {
 					{...props}
 					codesName={codes.map(({ name }) => name)}
 					title={t('rename')}
+					name={item.id}
 				/>
 			),
 		})
@@ -151,11 +152,13 @@ const CreateCodeForm = ({
 	cancel,
 	codesName,
 	title,
+	name,
 }: {
 	ok: (value: { name: string }) => void
 	cancel: () => void
 	codesName: string[]
 	title: string
+	name?: string
 }) => {
 	const t = useTranslation()
 
@@ -176,7 +179,7 @@ const CreateCodeForm = ({
 			<div className={'popup-content'}>
 				<div className={'create-map-popup-item'}>
 					<div>{t('fileName')}</div>
-					<Input autoFocus required name={'name'} />
+					<Input initialValue={name} autoFocus required name={'name'} />
 				</div>
 			</div>
 			<div className={'popup-footer'}>
