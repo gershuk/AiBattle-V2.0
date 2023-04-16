@@ -71,10 +71,16 @@ class Controller {
 const errorReadStringFile = new Error('error read string from file')
 const errorAbortLoadFileUser = new Error('user abort upload file')
 
-const { $sessions, $sessionsValue, addSession, removeSession, resetSession, renameSession } =
-	createSessionsManager({
-		mode: 'ace/mode/javascript',
-	})
+const {
+	$sessions,
+	$sessionsValue,
+	addSession,
+	removeSession,
+	resetSession,
+	renameSession,
+} = createSessionsManager({
+	mode: 'ace/mode/javascript',
+})
 
 //TODO: ПЛОХА бижим по всем файлам
 const $codesModified = combine(
@@ -92,7 +98,7 @@ const $codesModified = combine(
 const uploadedFileCode = createEvent()
 const createdFileCode = createEvent<string>()
 const removedFileCode = createEvent<string>()
-const renameFileCode = createEvent<{ oldName: string; newName: string }>()
+const renamedFileCode = createEvent<{ oldName: string; newName: string }>()
 
 const loadScriptFx = attach({
 	source: $codes,
@@ -167,7 +173,7 @@ sample({
 })
 
 sample({
-	clock: renameFileCode,
+	clock: renamedFileCode,
 	target: [renameCode, renameSession],
 })
 
@@ -201,5 +207,5 @@ export {
 	uploadedFileCode,
 	removedFileCode,
 	createdFileCode,
-	renameFileCode
+	renamedFileCode,
 }
