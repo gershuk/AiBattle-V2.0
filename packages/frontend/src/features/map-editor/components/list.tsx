@@ -75,21 +75,13 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 	}
 
 	const createMapFile = async () => {
-		const { status, htmlElement } = await showPopup({
+		const { status, value } = await showPopup<MapCreated>({
 			content: props => (
 				<CreateMapForm {...props} mapsName={maps.map(({ name }) => name)} />
 			),
 		})
 		if (status !== 'ok') return
-		const form = htmlElement.querySelector('form')
-		const dataForm = htmlFormToJson<{
-			name: string
-			rows: number
-			columns: number
-			fillCode: number
-			borderCode: number
-		}>(form!)
-		createdFile(dataForm)
+		createdFile(value)
 	}
 
 	const handlerDeviceSave = (item: ListItem) => {
@@ -103,15 +95,17 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 	}
 
 	const handlerRename = async (item: ListItem) => {
-		const { status, htmlElement } = await showPopup({
+		const { status, value } = await showPopup<{ name: string }>({
 			content: props => (
-				<RenameMapForm {...props} mapsName={maps.map(({ name }) => name)} />
+				<RenameMapForm
+					{...props}
+					name={item.id}
+					mapsName={maps.map(({ name }) => name)}
+				/>
 			),
 		})
 		if (status !== 'ok') return
-		const form = htmlElement.querySelector('form')
-		const { name } = htmlFormToJson<{ name: string }>(form!)
-		renameFileMap({ oldName: item.id, newName: name })
+		renameFileMap({ oldName: item.id, newName: value.name })
 	}
 
 	return (
@@ -156,12 +150,20 @@ export const MapsList = ({ active, ontToggleSelect }: MapsListProps) => {
 	)
 }
 
+interface MapCreated {
+	name: string
+	rows: number
+	columns: number
+	fillCode: number
+	borderCode: number
+}
+
 const CreateMapForm = ({
 	ok,
 	cancel,
 	mapsName,
 }: {
-	ok: () => void
+	ok: (value: MapCreated) => void
 	cancel: () => void
 	mapsName: string[]
 }) => {
@@ -171,10 +173,13 @@ const CreateMapForm = ({
 		<form
 			onSubmit={e => {
 				e.preventDefault()
-				const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
+				const dataForm = htmlFormToJson<MapCreated>(e.currentTarget)
+				dataForm.name = dataForm.name.includes('.')
+					? dataForm.name
+					: `${dataForm.name}.json`
 				const fileExists = !!mapsName.find(name => name === dataForm.name)
 				if (fileExists) showMessage({ content: t('fileExists') })
-				else ok()
+				else ok(dataForm)
 			}}
 		>
 			<div className={'popup-header'}>{t('createMap')}</div>
@@ -216,10 +221,12 @@ const RenameMapForm = ({
 	ok,
 	cancel,
 	mapsName,
+	name,
 }: {
-	ok: () => void
+	ok: (value: { name: string }) => void
 	cancel: () => void
 	mapsName: string[]
+	name: string
 }) => {
 	const t = useTranslation()
 
@@ -228,16 +235,19 @@ const RenameMapForm = ({
 			onSubmit={e => {
 				e.preventDefault()
 				const dataForm = htmlFormToJson<{ name: string }>(e.currentTarget)
+				dataForm.name = dataForm.name.includes('.')
+					? dataForm.name
+					: `${dataForm.name}.json`
 				const fileExists = !!mapsName.find(name => name === dataForm.name)
 				if (fileExists) showMessage({ content: t('fileExists') })
-				else ok()
+				else ok(dataForm)
 			}}
 		>
 			<div className={'popup-header'}>{t('rename')}</div>
 			<div className={'popup-content create-map-popup'}>
 				<div className={'create-map-popup-item'}>
 					<div>{t('fileName')}</div>
-					<Input autoFocus required name={'name'} />
+					<Input initialValue={name} autoFocus required name={'name'} />
 				</div>
 			</div>
 			<div className={'popup-footer'}>
