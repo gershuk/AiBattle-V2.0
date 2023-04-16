@@ -43,6 +43,5 @@ export function workerInitFunction() {
 			default:
 				break
 		}
-		controller.Init()
 	}
 }
