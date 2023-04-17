@@ -2,7 +2,7 @@ import {
 	GameObjectComponent,
 	ComponentParameters,
 } from '../BaseComponents/GameObjectComponent'
-import { GameObject } from '../GameObject/GameObject'
+import { IGameObject } from '../GameObject/IGameObject'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { IMessageBroker } from 'GameEngine/MessageBroker/IMessageBroker'
 import { UpdatableGroup } from 'GameEngine/ObjectBaseType/UpdatableGroup'
@@ -12,7 +12,7 @@ import {
 } from 'GameEngine/ObjectBaseType/ObjectContainer'
 import { SlimEvent } from 'Utilities'
 
-export interface IScene extends UpdatableGroup<GameObject> {
+export interface IScene extends UpdatableGroup<IGameObject> {
 	get OnSceneStart(): SlimEvent<void>
 
 	get OnTurnStart(): SlimEvent<void>
@@ -22,7 +22,7 @@ export interface IScene extends UpdatableGroup<GameObject> {
 	get OnGameEnd(): SlimEvent<void>
 
 	get isGameEnd():
-		| ((refs: IReadOnlyObjectContainer<GameObject>) => boolean)
+		| ((refs: IReadOnlyObjectContainer<IGameObject>) => boolean)
 		| undefined
 
 	get playModeParameters(): PlayModeParameters
@@ -75,29 +75,29 @@ export interface IScene extends UpdatableGroup<GameObject> {
 		position: Vector2,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
-	): SafeReference<GameObject>
+	): SafeReference<IGameObject>
 
-	AddGameObject<T extends GameObject>(
+	AddGameObject<T extends IGameObject>(
 		position: Vector2,
 		gameObject: T,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
-	): SafeReference<GameObject>
+	): SafeReference<IGameObject>
 
-	AddGameObjects<T extends GameObject>(
+	AddGameObjects<T extends IGameObject>(
 		gameObjectInits: [
 			Vector2,
 			T,
 			[GameObjectComponent, ComponentParameters?][]
 		][]
-	): SafeReference<GameObject>[]
+	): SafeReference<IGameObject>[]
 
 	GetGameObjectsRefByFilter(
-		filter: (r: SafeReference<GameObject>) => boolean
-	): SafeReference<GameObject>[]
+		filter: (r: SafeReference<IGameObject>) => boolean
+	): SafeReference<IGameObject>[]
 
 	RemoveGameObjectsByFilter(
-		filter: (r: SafeReference<GameObject>) => boolean
+		filter: (r: SafeReference<IGameObject>) => boolean
 	): void
 
 	Start(): Promise<unknown>
@@ -138,7 +138,7 @@ export class SceneParameters {
 	canvas: HTMLCanvasElement
 	tileSizeScale: number
 	playModeParameters: PlayModeParameters
-	isGameEnd: (refs: IReadOnlyObjectContainer<GameObject>) => boolean | undefined
+	isGameEnd: (refs: IReadOnlyObjectContainer<IGameObject>) => boolean | undefined
 
 	constructor(
 		maxTurnIndex: number,
@@ -150,7 +150,7 @@ export class SceneParameters {
 		initTimeout: number = -1,
 		commandCalcTimeout: number = -1,
 		playModeParameters: PlayModeParameters = new PlayModeParameters(),
-		isGameEnd?: (refs: IReadOnlyObjectContainer<GameObject>) => boolean
+		isGameEnd?: (refs: IReadOnlyObjectContainer<IGameObject>) => boolean
 	) {
 		this.maxTurnIndex = maxTurnIndex
 		this.animTicksCount = animTicksCount

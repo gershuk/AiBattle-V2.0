@@ -2,7 +2,7 @@ import {
 	GameObjectComponent,
 	ComponentParameters,
 } from '../BaseComponents/GameObjectComponent'
-import { GameObject } from '../GameObject/GameObject'
+import { IGameObject } from '../GameObject/IGameObject'
 import { IScene, PlayModeParameters, SceneParameters } from './IScene'
 import { Vector2 } from '../BaseComponents/Vector2'
 import { MessageBroker } from 'GameEngine/MessageBroker/MessageBroker'
@@ -24,6 +24,7 @@ import {
 } from 'GameEngine/UserAIRuner/AbstractController'
 import { ControllerBody } from 'GameEngine/UserAIRuner/ControllerBody'
 import { SlimEvent } from 'Utilities'
+import { GameObject } from 'GameEngine/GameObject/GameObject'
 
 enum SceneState {
 	Init,
@@ -36,13 +37,13 @@ enum SceneState {
 	EndGame,
 }
 
-export class Scene extends UpdatableGroup<GameObject> implements IScene {
+export class Scene extends UpdatableGroup<IGameObject> implements IScene {
 	private _onSceneStart: SlimEvent<void>
 	private _onTurnStart: SlimEvent<void>
 	private _onTurnEnd: SlimEvent<void>
 	private _onGameEnd: SlimEvent<void>
 	private _isGameEnd:
-		| ((refs: IReadOnlyObjectContainer<GameObject>) => boolean)
+		| ((refs: IReadOnlyObjectContainer<IGameObject>) => boolean)
 		| undefined
 	private _tileSizeScale: number
 	private _turnIndex: number
@@ -74,12 +75,12 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	get isGameEnd():
-		| ((refs: IReadOnlyObjectContainer<GameObject>) => boolean)
+		| ((refs: IReadOnlyObjectContainer<IGameObject>) => boolean)
 		| undefined {
 		return this._isGameEnd
 	}
 	public set isGameEnd(
-		v: ((refs: IReadOnlyObjectContainer<GameObject>) => boolean) | undefined
+		v: ((refs: IReadOnlyObjectContainer<IGameObject>) => boolean) | undefined
 	) {
 		this._isGameEnd = v
 	}
@@ -249,7 +250,7 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		position: Vector2,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
-	): SafeReference<GameObject> {
+	): SafeReference<IGameObject> {
 		const gameObject = new GameObject()
 		return this.AddGameObject(position, gameObject, newComponents, id)
 	}
@@ -258,26 +259,26 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 		return this.isGameEnd && this.isGameEnd(this.GetReadonlyContainer())
 	}
 
-	public AddGameObject<T extends GameObject>(
+	public AddGameObject<T extends IGameObject>(
 		position: Vector2,
 		gameObject: T,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
 		id?: string
-	): SafeReference<GameObject> {
+	): SafeReference<IGameObject> {
 		const ref = this._container.Add(gameObject, () =>
 			gameObject.Init(position, this, newComponents, id)
 		)
 		return ref
 	}
 
-	public AddGameObjects<T extends GameObject>(
+	public AddGameObjects<T extends IGameObject>(
 		gameObjectInits: [
 			Vector2,
 			T,
 			[GameObjectComponent, ComponentParameters?][]
 		][]
-	): SafeReference<GameObject>[] {
-		const refs: SafeReference<GameObject>[] = []
+	): SafeReference<IGameObject>[] {
+		const refs: SafeReference<IGameObject>[] = []
 		for (let gameObjectInit of gameObjectInits)
 			refs.push(
 				this.AddGameObject(
@@ -290,13 +291,13 @@ export class Scene extends UpdatableGroup<GameObject> implements IScene {
 	}
 
 	public GetGameObjectsRefByFilter(
-		filter: (g: SafeReference<GameObject>) => boolean
-	): SafeReference<GameObject>[] {
+		filter: (g: SafeReference<IGameObject>) => boolean
+	): SafeReference<IGameObject>[] {
 		return this.GetSafeRefsByFilter(filter)
 	}
 
 	public RemoveGameObjectsByFilter(
-		filter: (g: SafeReference<GameObject>) => boolean
+		filter: (g: SafeReference<IGameObject>) => boolean
 	): void {
 		return this.DestroyObjectsByFilter(filter)
 	}
