@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'preact/hooks'
+import { useState } from 'preact/hooks'
 import { JSXInternal } from 'preact/src/jsx'
 import Split, { SplitProps } from 'react-split'
 import './styles.scss'
+import { clsx } from 'libs'
 
 interface SplitPanelProps extends SplitProps {
 	Left: JSXInternal.Element | null
@@ -18,15 +19,8 @@ export const SplitPanel = ({
 	...props
 }: SplitPanelProps) => {
 	const [drag, setDrag] = useState(false)
-	const className = useMemo(
-		() =>
-			['split-panel', drag ? 'drag-split' : '', _className || '', direction]
-				.join(' ')
-				.trim(),
-		[drag, _className]
-	)
 	return (
-		//TODO: разобраться с типами реакта и тс конфигом
+		//TODO: разобраться с типами преакта и тс конфигом
 		//@ts-ignore
 		<Split
 			{...props}
@@ -39,7 +33,12 @@ export const SplitPanel = ({
 				setDrag(false)
 				onDragEnd?.(value)
 			}}
-			className={className}
+			className={clsx(
+				'split-panel',
+				drag && 'drag-split',
+				_className || '',
+				direction
+			)}
 		>
 			<div className={'column'}>{Left}</div>
 			<div className={'column'}>{Right}</div>

@@ -20,6 +20,8 @@ export const createSessionsManager = ({
 	const $sessions = createStore<{ [name: string]: Ace.EditSession }>({})
 	const $sessionsValue = createStore<{ [name: string]: string }>({})
 
+	const $changeListeners = createStore<{ [name: string]: () => void }>({})
+
 	const addSession = createEvent<SessionItem | SessionItem[]>()
 	const removeSession = createEvent<string | string[]>()
 	const resetUndoManager = createEvent<string | string[]>()
@@ -35,16 +37,21 @@ export const createSessionsManager = ({
 	const setSessionValue = createEvent<SessionItem | SessionItem[]>()
 
 	const addListenersFx = attach({
-		source: $sessions,
-		effect: (sessions, name: string | string[]) => {
+		source: [$sessions, $changeListeners],
+		effect: ([sessions, changeListeners], name: string | string[]) => {
 			const names = Array.isArray(name) ? name : [name]
+			const addedListeners: { [name: string]: () => void } = {}
 			names.forEach(name => {
 				const session = sessions[name]
-				session.removeAllListeners()
-				session.addEventListener('change', () => {
+				if (name in changeListeners) {
+					session.removeListener('change', changeListeners[name])
+				}
+				addedListeners[name] = () => {
 					setSessionValue({ name, value: session.doc.getValue() })
-				})
+				}
+				session.addEventListener('change', addedListeners[name])
 			})
+			return { addedListeners }
 		},
 	})
 
@@ -75,7 +82,7 @@ export const createSessionsManager = ({
 				if (nameSession in newSessions) {
 					const targetSession = newSessions[nameSession]
 					delete newSessions[nameSession]
-					targetSession.destroy()
+					targetSession.removeAllListeners()
 				}
 			})
 			return newSessions
@@ -150,6 +157,19 @@ export const createSessionsManager = ({
 		}
 	})
 
+	$changeListeners.on(
+		renameSession,
+		(changeListeners, { oldName, newName }) => {
+			const temp = changeListeners[oldName]
+			const newSessionsValue = { ...changeListeners }
+			delete newSessionsValue[oldName]
+			return {
+				...newSessionsValue,
+				[newName]: temp,
+			}
+		}
+	)
+
 	sample({ clock: resetUndoManager, target: resetUndoManagerFx })
 
 	sample({ clock: resetSession, target: resetSessionFx })
@@ -159,16 +179,37 @@ export const createSessionsManager = ({
 	sample({ clock: removeSession, target: removeSessionFx })
 
 	sample({
-		clock: addSessionFx.done,
-		fn: ({ params }) =>
-			(Array.isArray(params) ? params : [params]).map(({ name }) => name),
+		clock: [
+			addSessionFx.done.map(({ params }) =>
+				(Array.isArray(params) ? params : [params]).map(({ name }) => name)
+			),
+			renameSession.map(({ newName }) => newName),
+		],
 		target: addListenersFx,
 	})
 
 	sample({
-		clock: renameSession,
-		fn: ({ newName }) => newName,
-		target: addListenersFx,
+		source: $changeListeners,
+		clock: addListenersFx.doneData,
+		fn: (listeners, { addedListeners }) => ({
+			...listeners,
+			...addedListeners,
+		}),
+		target: $changeListeners,
+	})
+
+	sample({
+		source: $changeListeners,
+		clock: removeSessionFx.done,
+		fn: (listeners, { params }) => {
+			const names = Array.isArray(params) ? params : [params]
+			const newListeners = { ...listeners }
+			names.forEach(name => {
+				delete newListeners[name]
+			})
+			return newListeners
+		},
+		target: $changeListeners,
 	})
 
 	return {
