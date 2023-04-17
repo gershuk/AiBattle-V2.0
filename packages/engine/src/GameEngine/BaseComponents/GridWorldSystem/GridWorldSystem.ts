@@ -27,7 +27,7 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 	public get commandReceiveLock(): boolean {
 		return this._commandReceiveLock
 	}
-	public set commandReceiveLock(v: boolean) {
+	protected set commandReceiveLock(v: boolean) {
 		this._commandReceiveLock = v
 	}
 
@@ -128,13 +128,10 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 
 	public abstract CanObjectMoveTo(
 		ref: SafeReference<GameObject>,
-		newPosition: Vector2,
+		newPosition: Vector2
 	): boolean
 
-	public TryMoveObject(
-		ref: SafeReference<GameObject>,
-		newPosition: Vector2,
-	) {
+	public TryMoveObject(ref: SafeReference<GameObject>, newPosition: Vector2) {
 		if (this.commandReceiveLock) {
 			console.warn(`Receiving of movement commands is blocked (moving phase).`)
 			return false
@@ -173,8 +170,11 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 		}
 	}
 
+	public abstract CheckAndFixMovementExceptions(): void
+
 	public OnFixedUpdate(index: number): void {
 		this.commandReceiveLock = true
+		this.CheckAndFixMovementExceptions()
 	}
 
 	public OnFixedUpdateEnded(index: number): void {

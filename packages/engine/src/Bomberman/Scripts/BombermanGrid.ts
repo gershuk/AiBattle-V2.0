@@ -6,6 +6,9 @@ import { ManBody } from './ManBody'
 import { BombController } from './BombController'
 
 export class BombermanGrid extends GridWorldSystem {
+	//ToDo : secure if 1 of the objects canceled the transition (although this is not possible now)
+	public CheckAndFixMovementExceptions(): void {}
+
 	public CanInitObject(ref: SafeReference<GameObject>): boolean {
 		const cellData = this.GetCellData(ref.object.position)
 		return (
@@ -17,7 +20,6 @@ export class BombermanGrid extends GridWorldSystem {
 		)
 	}
 
-	//ToDo : secure if 1 of the objects canceled the transition (although this is not possible now)
 	public CanObjectMoveTo(
 		ref: SafeReference<GameObject>,
 		newPosition: Vector2
