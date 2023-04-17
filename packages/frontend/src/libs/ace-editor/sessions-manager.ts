@@ -55,22 +55,6 @@ export const createSessionsManager = ({
 		},
 	})
 
-	const removeListenersFx = attach({
-		source: [$sessions, $changeListeners],
-		effect: ([sessions, changeListeners], name: string | string[]) => {
-			const names = Array.isArray(name) ? name : [name]
-			const removedListeners: string[] = []
-			names.forEach(name => {
-				const session = sessions[name]
-				if (name in changeListeners) {
-					if (session) session.removeListener('change', changeListeners[name])
-					removedListeners.push(name)
-				}
-			})
-			return { removedListeners }
-		},
-	})
-
 	const addSessionFx = createEffect(
 		(newSession: SessionItem | SessionItem[]) => {
 			const array = Array.isArray(newSession) ? newSession : [newSession]
@@ -95,7 +79,7 @@ export const createSessionsManager = ({
 			const names = Array.isArray(nameSession) ? nameSession : [nameSession]
 			const newSessions = { ...sessions }
 			names.forEach(nameSession => {
-				if (nameSession in newSessions) {					
+				if (nameSession in newSessions) {
 					const targetSession = newSessions[nameSession]
 					delete newSessions[nameSession]
 					targetSession.removeAllListeners()
@@ -195,11 +179,6 @@ export const createSessionsManager = ({
 	sample({ clock: removeSession, target: removeSessionFx })
 
 	sample({
-		clock: removeSessionFx.done.map(({ params }) => params),
-		target: removeListenersFx,
-	})
-
-	sample({
 		clock: [
 			addSessionFx.done.map(({ params }) =>
 				(Array.isArray(params) ? params : [params]).map(({ name }) => name)
@@ -221,10 +200,11 @@ export const createSessionsManager = ({
 
 	sample({
 		source: $changeListeners,
-		clock: removeListenersFx.doneData,
-		fn: (listeners, { removedListeners }) => {
+		clock: removeSessionFx.done,
+		fn: (listeners, { params }) => {
+			const names = Array.isArray(params) ? params : [params]
 			const newListeners = { ...listeners }
-			removedListeners.forEach(name => {
+			names.forEach(name => {
 				delete newListeners[name]
 			})
 			return newListeners
