@@ -1,3 +1,4 @@
+import { SlimEvent } from 'Utilities'
 import { UpdatableObject } from './UpdatableObject'
 
 export interface IReadOnlyObjectContainer<T extends UpdatableObject>
@@ -27,6 +28,23 @@ export class SafeReference<T extends UpdatableObject> {
 
 	private _addAction: (() => void) | undefined
 	private _destroyAction: (() => void) | undefined
+
+	private _onHasDestroyed: SlimEvent<SafeReference<T>>
+	private _onHasInitiated: SlimEvent<SafeReference<T>>
+
+	public get onHasDestroyed(): SlimEvent<SafeReference<T>> {
+		return this._onHasDestroyed
+	}
+	protected set onHasDestroyed(v: SlimEvent<SafeReference<T>>) {
+		this._onHasDestroyed = v
+	}
+
+	public get onHasInitiated(): SlimEvent<SafeReference<T>> {
+		return this._onHasInitiated
+	}
+	protected set onHasInitiated(v: SlimEvent<SafeReference<T>>) {
+		this._onHasInitiated = v
+	}
 
 	public get object(): T {
 		if (this.isDestroyed) throw new Error('Object is destroyed')
@@ -59,6 +77,9 @@ export class SafeReference<T extends UpdatableObject> {
 		this.isAdded = false
 		this._addAction = addAction
 		this._destroyAction = destroyAction
+
+		this.onHasDestroyed = new SlimEvent()
+		this.onHasInitiated = new SlimEvent()
 	}
 
 	public SetAdded() {
@@ -66,6 +87,8 @@ export class SafeReference<T extends UpdatableObject> {
 		if (this.isAdded) throw new Error('Object already added')
 		this.isAdded = true
 		if (this._addAction) this._addAction()
+
+		this.onHasInitiated.Notify(this)
 	}
 
 	public Destroy() {
@@ -73,5 +96,7 @@ export class SafeReference<T extends UpdatableObject> {
 		this.object.OnDestroy()
 		this.object = null
 		this.isDestroyed = true
+
+		this.onHasDestroyed.Notify(this)
 	}
 }
