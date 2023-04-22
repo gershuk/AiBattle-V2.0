@@ -1,4 +1,3 @@
-import { DiscreteMovementComponent } from 'GameEngine/BaseComponents/DiscreteColliderSystem/DiscreteMovementComponent'
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
@@ -14,7 +13,6 @@ import {
 import { DestructibleWall } from './DestructibleWall'
 import { Wall } from './Wall'
 import { BombController } from './BombController'
-import { DiscreteColliderSystem } from 'GameEngine/BaseComponents/DiscreteColliderSystem/DiscreteColliderSystem'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 import {
 	BombermanActions,
@@ -26,6 +24,7 @@ import {
 	ControllerBodyParameters,
 } from 'GameEngine/UserAIRuner/ControllerBody'
 import { IAsyncControllerBridge } from 'GameEngine/UserAIRuner/AsyncControllerBridge'
+import { BombermanGrid } from './BombermanGrid'
 
 export class ManBody extends ControllerBody<
 	BombermanControllerData,
@@ -33,11 +32,12 @@ export class ManBody extends ControllerBody<
 	BombermanControllerCommand
 > {
 	private _bombSpawnFunction: (
+		ref: SafeReference<IGameObject>,
 		position: Vector2,
 		damage: number,
 		range: number,
 		ticksToExplosion: number
-	) => GameObject
+	) => SafeReference<IGameObject>
 
 	private _bombDamage: number
 	private _blastRange: number
@@ -49,9 +49,8 @@ export class ManBody extends ControllerBody<
 	private _bombsRestoreCount: number
 	private _lastRestoreTurn: number
 
-	private _movementComponentRef: SafeReference<DiscreteMovementComponent>
 	private _healthComponent: SafeReference<HealthComponent>
-	private _discreteColliderSystem: DiscreteColliderSystem
+	private _grid: SafeReference<BombermanGrid>
 
 	Init(gameObject: IGameObject, parameters?: ManBodyParameters): void {
 		super.Init(gameObject, parameters)
@@ -68,7 +67,7 @@ export class ManBody extends ControllerBody<
 			this._bombsRestoreCount = parameters.bombsRestoreCount
 			this._lastRestoreTurn = this.gameObject.scene.turnIndex
 
-			this._discreteColliderSystem = parameters.discreteColliderSystem
+			this._grid = parameters.grid
 		}
 	}
 
@@ -98,10 +97,6 @@ export class ManBody extends ControllerBody<
 		this._healthComponent = this.gameObject.GetComponents(
 			HealthComponent
 		)[0] as SafeReference<HealthComponent>
-
-		this._movementComponentRef = this.gameObject.GetComponents(
-			DiscreteMovementComponent
-		)[0] as SafeReference<DiscreteMovementComponent>
 	}
 
 	public GetMapData(): MapData {
@@ -110,7 +105,7 @@ export class ManBody extends ControllerBody<
 		const bombsData: BombData[] = []
 		const bodiesData: BodyPublicData[] = []
 		const playerData = this.GetAllData()
-		const refObjects: SafeReference<GameObject>[] =
+		const refObjects: SafeReference<IGameObject>[] =
 			this.gameObject.scene.GetGameObjectsRefByFilter(() => true)
 
 		for (let ref of refObjects) {
@@ -141,8 +136,8 @@ export class ManBody extends ControllerBody<
 			bombsData,
 			bodiesData,
 			playerData,
-			this._discreteColliderSystem.width,
-			this._discreteColliderSystem.height
+			this._grid.object.width,
+			this._grid.object.height
 		)
 	}
 
@@ -161,45 +156,51 @@ export class ManBody extends ControllerBody<
 			console.warn(reason)
 			return BombermanControllerCommand.GetIdleCommand()
 		})
+
+		const safeRef = this.gameObject.scene
+			.GetReadonlyContainer()
+			.GetSafeRefForObject(this.gameObject)
 		switch (command.bombermanAction) {
 			case BombermanActions.idle:
 				//idle
 				break
 			case BombermanActions.up:
-				this._movementComponentRef.object.bufferNewPosition =
-					this._movementComponentRef.object.currentPosition.Add(
-						new Vector2(0, 1)
-					)
+				this._grid.object.TryMoveObject(
+					safeRef,
+					this.gameObject.position.Add(new Vector2(0, 1))
+				)
 				break
 			case BombermanActions.right:
-				this._movementComponentRef.object.bufferNewPosition =
-					this._movementComponentRef.object.currentPosition.Add(
-						new Vector2(1, 0)
-					)
+				this._grid.object.TryMoveObject(
+					safeRef,
+					this.gameObject.position.Add(new Vector2(1, 0))
+				)
 				break
 			case BombermanActions.down:
-				this._movementComponentRef.object.bufferNewPosition =
-					this._movementComponentRef.object.currentPosition.Add(
-						new Vector2(0, -1)
-					)
+				this._grid.object.TryMoveObject(
+					safeRef,
+					this.gameObject.position.Add(new Vector2(0, -1))
+				)
 				break
 			case BombermanActions.left:
-				this._movementComponentRef.object.bufferNewPosition =
-					this._movementComponentRef.object.currentPosition.Add(
-						new Vector2(-1, 0)
-					)
+				this._grid.object.TryMoveObject(
+					safeRef,
+					this.gameObject.position.Add(new Vector2(-1, 0))
+				)
 				break
 			case BombermanActions.bomb:
 				if (this._bombsCount == 0) return
 				const bomb = this._bombSpawnFunction(
-					this._movementComponentRef.object.currentPosition,
+					this.gameObject.scene
+						.GetReadonlyContainer()
+						.GetSafeRefForObject(this.gameObject),
+					this.gameObject.position,
 					this._bombDamage,
 					this._blastRange,
 					this._ticksToExplosion
 				)
 				if (bomb) {
 					this._bombsCount -= 1
-					this._movementComponentRef.object.SetReceiver(bomb)
 				}
 				break
 			default:
@@ -235,14 +236,15 @@ export class ManBodyParameters extends ControllerBodyParameters<
 	bombsRestoreTicks: number
 	bombsRestoreCount: number
 
-	discreteColliderSystem: DiscreteColliderSystem
+	grid: SafeReference<BombermanGrid>
 
 	bombSpawnFunction: (
+		ref: SafeReference<IGameObject>,
 		position: Vector2,
 		damage: number,
 		range: number,
 		ticksToExplosion: number
-	) => GameObject
+	) => SafeReference<IGameObject>
 
 	constructor(
 		controllerBridge: IAsyncControllerBridge<
@@ -250,13 +252,14 @@ export class ManBodyParameters extends ControllerBodyParameters<
 			BombermanControllerData,
 			BombermanControllerCommand
 		>,
-		discreteColliderSystem: DiscreteColliderSystem,
+		grid: SafeReference<BombermanGrid>,
 		bombSpawnFunction: (
+			ref: SafeReference<IGameObject>,
 			position: Vector2,
 			damage: number,
 			range: number,
 			ticksToExplosion: number
-		) => GameObject,
+		) => SafeReference<IGameObject>,
 		bombDamage: number = 1,
 		blastRange: number = 1,
 		ticksToExplosion: number = 3,
@@ -275,7 +278,7 @@ export class ManBodyParameters extends ControllerBodyParameters<
 			executionPriority,
 			uuid
 		)
-		this.discreteColliderSystem = discreteColliderSystem
+		this.grid = grid
 		this.bombDamage = bombDamage
 		this.blastRange = blastRange
 		this.ticksToExplosion = ticksToExplosion

@@ -1,4 +1,3 @@
-import { GameObject } from 'GameEngine/GameObject/GameObject'
 import {
 	ComponentParameters,
 	GameObjectComponent,
@@ -8,11 +7,11 @@ import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 
 export class ObjectMovementData {
-	ref: SafeReference<GameObject>
+	ref: SafeReference<IGameObject>
 	oldPosition: Vector2
 	newPosition: Vector2 | null
 
-	constructor(ref: SafeReference<GameObject>) {
+	constructor(ref: SafeReference<IGameObject>) {
 		this.ref = ref
 		this.oldPosition = this.ref.object.position
 		this.newPosition = null
@@ -31,7 +30,7 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 		this._commandReceiveLock = v
 	}
 
-	public abstract CanInitObject(ref: SafeReference<GameObject>): boolean
+	public abstract CanInitObject(ref: SafeReference<IGameObject>): boolean
 
 	public Init(
 		gameObject: IGameObject,
@@ -57,10 +56,12 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 	): void {
 		if (this._grid[position.x] === undefined) {
 			this._grid[position.x] = []
-			if (this._grid[position.x][position.y] === undefined) {
-				this._grid[position.x][position.y] = []
-			}
 		}
+
+		if (this._grid[position.x][position.y] === undefined) {
+			this._grid[position.x][position.y] = []
+		}
+
 		this._grid[position.x][position.y].push(objectsMovementData)
 	}
 
@@ -87,7 +88,7 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 		return true
 	}
 
-	public TryUnregisterObject(ref: SafeReference<GameObject>): boolean {
+	public TryUnregisterObject(ref: SafeReference<IGameObject>): boolean {
 		const data = this._objectsMovementData[ref.object.uuid]
 
 		if (data === undefined) {
@@ -104,7 +105,7 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 		return true
 	}
 
-	public TryRegisterObject(ref: SafeReference<GameObject>): boolean {
+	public TryRegisterObject(ref: SafeReference<IGameObject>): boolean {
 		if (this.commandReceiveLock) {
 			console.warn(`Receiving of movement commands is blocked (moving phase).`)
 			return false
@@ -127,11 +128,11 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 	}
 
 	public abstract CanObjectMoveTo(
-		ref: SafeReference<GameObject>,
+		ref: SafeReference<IGameObject>,
 		newPosition: Vector2
 	): boolean
 
-	public TryMoveObject(ref: SafeReference<GameObject>, newPosition: Vector2) {
+	public TryMoveObject(ref: SafeReference<IGameObject>, newPosition: Vector2) {
 		if (this.commandReceiveLock) {
 			console.warn(`Receiving of movement commands is blocked (moving phase).`)
 			return false
@@ -183,9 +184,9 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 
 			if (data.newPosition) {
 				this.RemoveObjectMovementDataFromCell(data, data.oldPosition)
+				data.oldPosition = data.newPosition.Clone()
 			}
 
-			data.oldPosition = data.newPosition.Clone()
 			data.newPosition = null
 		}
 
@@ -194,8 +195,6 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 }
 
 export class GridWorldSystemParameters extends ComponentParameters {
-	uuid: string
-	executionPriority: number
 	constructor(executionPriority: number = -100, uuid?: string) {
 		super(executionPriority, uuid)
 	}

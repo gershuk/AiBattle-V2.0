@@ -1,12 +1,4 @@
 import {
-	DiscreteColliderSystem,
-	DiscreteColliderSystemParameters,
-} from 'GameEngine/BaseComponents/DiscreteColliderSystem/DiscreteColliderSystem'
-import {
-	DiscreteMovementComponent,
-	DiscreteMovementComponentParameters,
-} from 'GameEngine/BaseComponents/DiscreteColliderSystem/DiscreteMovementComponent'
-import {
 	StaticImageRenderComponent,
 	StaticRenderComponentParameters,
 } from 'GameEngine/BaseComponents/RenderComponents/StaticImageRenderComponent'
@@ -39,8 +31,14 @@ import {
 import { IAsyncControllerBridge } from 'GameEngine/UserAIRuner/AsyncControllerBridge'
 import { Scene } from 'GameEngine/Scene/Scene'
 import { BodyAllData } from './MapData'
+import { BombermanGrid, BombermanGridParameters } from './BombermanGrid'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
+import { IGameObject } from 'GameEngine/GameObject/IGameObject'
+import { ComponentParameters } from 'GameEngine/BaseComponents/GameObjectComponent'
 
 export class BombermanGame extends GameEngine {
+	private _gridComponent: SafeReference<BombermanGrid>
+
 	async Init(parameters: BombermanGameParameters): Promise<unknown> {
 		parameters.sceneParameters.isGameEnd ??= (container): boolean => {
 			let counter = 0
@@ -71,7 +69,14 @@ export class BombermanGame extends GameEngine {
 		const height = map.field.length
 		const width = map.field[0].length
 
-		const colliderSystem = this.CreateColliderSystem(width, height)
+		const gridObject = this.CreateGrid(
+			new BombermanGridParameters(width, height)
+		)
+		//Force init grid
+		this.scene.OnFinalize()
+		this._gridComponent = gridObject.object.GetComponents(
+			BombermanGrid
+		)[0] as SafeReference<BombermanGrid>
 
 		const shuffledSpawns = shuffle(map.spawns)
 
@@ -83,10 +88,10 @@ export class BombermanGame extends GameEngine {
 			for (let x = 0; x < width; ++x) {
 				switch (map.field[y][x]) {
 					case 1:
-						this.CreateDestructibleWall(new Vector2(x, y), colliderSystem)
+						this.CreateDestructibleWall(new Vector2(x, y))
 						break
 					case 2:
-						this.CreateSimpleWall(new Vector2(x, y), colliderSystem)
+						this.CreateSimpleWall(new Vector2(x, y))
 						break
 					default:
 						break
@@ -105,15 +110,14 @@ export class BombermanGame extends GameEngine {
 					BombermanControllerData,
 					BombermanControllerCommand
 				>,
-				colliderSystem,
-				(position: Vector2, damage: number, range: number, ticksToExplosion) =>
-					this.CreateBomb(
-						position,
-						colliderSystem,
-						damage,
-						range,
-						ticksToExplosion
-					)
+				this._gridComponent,
+				(
+					ref: SafeReference<IGameObject>,
+					position: Vector2,
+					damage: number,
+					range: number,
+					ticksToExplosion: number
+				) => this.CreateBomb(ref, position, damage, range, ticksToExplosion)
 			)
 			manBodyParameters.initTimeout = this.scene.initTimeout
 			manBodyParameters.commandCalcTimeout = this.scene.commandCalcTimeout
@@ -139,12 +143,17 @@ export class BombermanGame extends GameEngine {
 		])
 	}
 
-	private CreateDestructibleWall(
-		position: Vector2,
-		discreteColliderSystem: DiscreteColliderSystem
-	) {
-		const gameObject = new GameObject()
-		this.scene.AddGameObject(position, gameObject, [
+	private RegisterObjectEventsToGrid(ref: SafeReference<IGameObject>) {
+		ref.onHasInitiated.Subscribe(data =>
+			this._gridComponent.object.TryRegisterObject(ref)
+		)
+		ref.onHasDestroyed.Subscribe(data =>
+			this._gridComponent.object.TryUnregisterObject(ref)
+		)
+	}
+
+	private CreateDestructibleWall(position: Vector2) {
+		const ref = this.scene.CreateDefaultGameObject(position, [
 			[
 				new StaticImageRenderComponent(),
 				new StaticRenderComponentParameters(
@@ -153,18 +162,14 @@ export class BombermanGame extends GameEngine {
 					0
 				),
 			],
-			[
-				new DiscreteMovementComponent(),
-				new DiscreteMovementComponentParameters(discreteColliderSystem),
-			],
 			[new HealthComponent(), new HealthComponentParameters()],
-			[new DestructibleWall()],
+			[new DestructibleWall(), new ComponentParameters()],
 		])
+		this.RegisterObjectEventsToGrid(ref)
 	}
 
 	private CreateBlast(position: Vector2) {
-		const gameObject = new GameObject()
-		this.scene.AddGameObject(position, gameObject, [
+		this.scene.CreateDefaultGameObject(position, [
 			[
 				new BlastRender(),
 				new StaticRenderComponentParameters(
@@ -176,12 +181,8 @@ export class BombermanGame extends GameEngine {
 		])
 	}
 
-	private CreateSimpleWall(
-		position: Vector2,
-		discreteColliderSystem: DiscreteColliderSystem
-	) {
-		const gameObject = new GameObject()
-		this.scene.AddGameObject(position, gameObject, [
+	private CreateSimpleWall(position: Vector2) {
+		const ref = this.scene.CreateDefaultGameObject(position, [
 			[
 				new StaticImageRenderComponent(),
 				new StaticRenderComponentParameters(
@@ -190,29 +191,23 @@ export class BombermanGame extends GameEngine {
 					0
 				),
 			],
-			[
-				new DiscreteMovementComponent(),
-				new DiscreteMovementComponentParameters(discreteColliderSystem),
-			],
-			[new Wall()],
+			[new Wall(), new ComponentParameters()],
 		])
+
+		this.RegisterObjectEventsToGrid(ref)
 	}
 
 	private CreateBomb(
+		creator: SafeReference<IGameObject>,
 		position: Vector2,
-		discreteColliderSystem: DiscreteColliderSystem,
 		damage: number = 1,
 		range: number = 1,
 		ticksToExplosion: number = 3
-	): GameObject {
-		if (
-			!discreteColliderSystem.CanInit(position.x, position.y) &&
-			discreteColliderSystem.GetCellData(position.x, position.y).receiver
-		) {
+	): SafeReference<IGameObject> {
+		if (!this._gridComponent.object.CanCreateBomb(creator, position)) {
 			return null
 		}
-		const gameObject = new GameObject()
-		this.scene.AddGameObject(position, gameObject, [
+		const ref = this.scene.CreateDefaultGameObject(position, [
 			[
 				new AnimationRenderComponent(),
 				new AnimationRenderComponentParameters([
@@ -237,7 +232,7 @@ export class BombermanGame extends GameEngine {
 			[
 				new BombController(),
 				new BombControllerParameters(
-					discreteColliderSystem,
+					this._gridComponent,
 					(position: Vector2) => this.CreateBlast(position),
 					damage,
 					range,
@@ -245,12 +240,14 @@ export class BombermanGame extends GameEngine {
 				),
 			],
 		])
-		return gameObject
+
+		this.RegisterObjectEventsToGrid(ref)
+
+		return ref
 	}
 
 	private CreateMan(position: Vector2, manBodyParameters: ManBodyParameters) {
-		const gameObject = new GameObject()
-		this.scene.AddGameObject(position, gameObject, [
+		const ref = this.scene.CreateDefaultGameObject(position, [
 			[
 				new StaticImageRenderComponent(),
 				new StaticRenderComponentParameters(
@@ -259,30 +256,20 @@ export class BombermanGame extends GameEngine {
 					1
 				),
 			],
-			[
-				new DiscreteMovementComponent(),
-				new DiscreteMovementComponentParameters(
-					manBodyParameters.discreteColliderSystem
-				),
-			],
 			[new ManBody(), manBodyParameters],
 			[new HealthComponent(), new HealthComponentParameters()],
 		])
+
+		this.RegisterObjectEventsToGrid(ref)
 	}
 
-	private CreateColliderSystem(
-		width: number,
-		height: number
-	): DiscreteColliderSystem {
-		const gameObject = new GameObject()
-		const discreteColliderSystem = new DiscreteColliderSystem()
-		this.scene.AddGameObject(new Vector2(0, 0), gameObject, [
-			[
-				discreteColliderSystem,
-				new DiscreteColliderSystemParameters(width, height),
-			],
+	private CreateGrid(
+		parameters: BombermanGridParameters
+	): SafeReference<IGameObject> {
+		const grid = new BombermanGrid()
+		return this.scene.CreateDefaultGameObject(new Vector2(), [
+			[grid, parameters],
 		])
-		return discreteColliderSystem
 	}
 
 	public GetGameInfo(): BombermanGameInfo {

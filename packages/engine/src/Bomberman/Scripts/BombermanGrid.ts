@@ -1,12 +1,46 @@
-import { GridWorldSystem } from 'GameEngine/BaseComponents/GridWorldSystem/GridWorldSystem'
+import {
+	GridWorldSystem,
+	GridWorldSystemParameters,
+} from 'GameEngine/BaseComponents/GridWorldSystem/GridWorldSystem'
 import { Vector2 } from 'GameEngine/BaseComponents/Vector2'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 import { ManBody } from './ManBody'
 import { BombController } from './BombController'
+import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 
 export class BombermanGrid extends GridWorldSystem {
 	//ToDo : secure if 1 of the objects canceled the transition (although this is not possible now)
+
+	private _width: number
+	private _height: number
+
+	public get width(): number {
+		return this._width
+	}
+	protected set width(v: number) {
+		this._width = v
+	}
+
+	public get height(): number {
+		return this._height
+	}
+	protected set height(v: number) {
+		this._height = v
+	}
+
+	public Init(
+		gameObject: IGameObject,
+		parameters?: BombermanGridParameters
+	): void {
+		super.Init(gameObject, parameters)
+
+		if (parameters) {
+			this.width = parameters.width
+			this.height = parameters.height
+		}
+	}
+
 	public CheckAndFixMovementExceptions(): void {}
 
 	public CanInitObject(ref: SafeReference<GameObject>): boolean {
@@ -36,5 +70,30 @@ export class BombermanGrid extends GridWorldSystem {
 			}
 		}
 		return true
+	}
+
+	public CanCreateBomb(
+		ref: SafeReference<IGameObject>,
+		position: Vector2
+	): boolean {
+		const data = this.GetCellData(position)
+
+		return data.length == 0 || (data.length == 1 && data[0].ref == ref)
+	}
+}
+
+export class BombermanGridParameters extends GridWorldSystemParameters {
+	width: number
+	height: number
+
+	constructor(
+		width: number,
+		height: number,
+		executionPriority: number = -100,
+		uuid?: string
+	) {
+		super(executionPriority, uuid)
+		this.width = width
+		this.height = height
 	}
 }

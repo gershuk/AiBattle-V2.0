@@ -94,9 +94,10 @@ export class SafeReference<T extends UpdatableObject> {
 	public Destroy() {
 		if (this._destroyAction) this._destroyAction()
 		this.object.OnDestroy()
-		this.object = null
-		this.isDestroyed = true
 
 		this.onHasDestroyed.Notify(this)
+
+		this.object = null
+		this.isDestroyed = true
 	}
 }

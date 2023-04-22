@@ -96,8 +96,7 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 			const newRefs = []
 
 			while (this._newRefsQueue.Size() > 0) {
-				const ref = this._newRefsQueue.Dequeue()
-				this._objectToRef[ref.object.uuid] = ref
+				const ref = this._newRefsQueue.Dequeue()				
 				this.references.push(ref)
 				newRefs.push(ref)
 			}
@@ -106,6 +105,7 @@ export class UpdatableObjectArrayContainer<T extends UpdatableObject>
 
 			for (let ref of newRefs) {
 				ref.SetAdded()
+				this._objectToRef[ref.object.uuid] = ref
 			}
 		}
 
