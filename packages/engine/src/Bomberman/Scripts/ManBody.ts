@@ -215,7 +215,7 @@ export class ManBody extends ControllerBody<
 			this.gameObject.scene.turnIndex
 		) {
 			this._lastRestoreTurn = this.gameObject.scene.turnIndex
-			this._bombsCount = Math.max(
+			this._bombsCount = Math.min(
 				this._bombsCount + this._bombsRestoreCount,
 				this._bombsMaxCount
 			)
