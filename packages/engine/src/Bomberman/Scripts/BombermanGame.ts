@@ -121,6 +121,7 @@ export class BombermanGame extends GameEngine {
 			)
 			manBodyParameters.initTimeout = this.scene.initTimeout
 			manBodyParameters.commandCalcTimeout = this.scene.commandCalcTimeout
+			manBodyParameters.label = controllerData.nickName ?? controllerData.uuid
 
 			this.CreateMan(shuffledSpawns[i], manBodyParameters)
 
@@ -130,17 +131,20 @@ export class BombermanGame extends GameEngine {
 	}
 
 	private CreateGrass(position: Vector2) {
-		const gameObject = new GameObject()
-		this.scene.AddGameObject(position, gameObject, [
+		this.scene.CreateDefaultGameObject(
+			position,
 			[
-				new StaticImageRenderComponent(),
-				new StaticRenderComponentParameters(
-					new Vector2(1, 1),
-					this.imageLoader.GetPng('./Resources/Grass.png'),
-					-1
-				),
+				[
+					new StaticImageRenderComponent(),
+					new StaticRenderComponentParameters(
+						new Vector2(1, 1),
+						this.imageLoader.GetPng('./Resources/Grass.png'),
+						-1
+					),
+				],
 			],
-		])
+			`Grass_${position.x}_${position.y}`
+		)
 	}
 
 	private RegisterObjectEventsToGrid(ref: SafeReference<IGameObject>) {
@@ -153,46 +157,58 @@ export class BombermanGame extends GameEngine {
 	}
 
 	private CreateDestructibleWall(position: Vector2) {
-		const ref = this.scene.CreateDefaultGameObject(position, [
+		const ref = this.scene.CreateDefaultGameObject(
+			position,
 			[
-				new StaticImageRenderComponent(),
-				new StaticRenderComponentParameters(
-					new Vector2(1, 1),
-					this.imageLoader.GetPng('./Resources/Wall.png'),
-					0
-				),
+				[
+					new StaticImageRenderComponent(),
+					new StaticRenderComponentParameters(
+						new Vector2(1, 1),
+						this.imageLoader.GetPng('./Resources/Wall.png'),
+						0
+					),
+				],
+				[new HealthComponent(), new HealthComponentParameters()],
+				[new DestructibleWall(), new ComponentParameters()],
 			],
-			[new HealthComponent(), new HealthComponentParameters()],
-			[new DestructibleWall(), new ComponentParameters()],
-		])
+			`DestructibleWall_${position.x}_${position.y}`
+		)
 		this.RegisterObjectEventsToGrid(ref)
 	}
 
 	private CreateBlast(position: Vector2) {
-		this.scene.CreateDefaultGameObject(position, [
+		this.scene.CreateDefaultGameObject(
+			position,
 			[
-				new BlastRender(),
-				new StaticRenderComponentParameters(
-					new Vector2(1, 1),
-					this.imageLoader.GetPng('./Resources/Blast.png'),
-					3
-				),
+				[
+					new BlastRender(),
+					new StaticRenderComponentParameters(
+						new Vector2(1, 1),
+						this.imageLoader.GetPng('./Resources/Blast.png'),
+						3
+					),
+				],
 			],
-		])
+			`Blast_${position.x}_${position.y}`
+		)
 	}
 
 	private CreateSimpleWall(position: Vector2) {
-		const ref = this.scene.CreateDefaultGameObject(position, [
+		const ref = this.scene.CreateDefaultGameObject(
+			position,
 			[
-				new StaticImageRenderComponent(),
-				new StaticRenderComponentParameters(
-					new Vector2(1, 1),
-					this.imageLoader.GetPng('./Resources/Metal.png'),
-					0
-				),
+				[
+					new StaticImageRenderComponent(),
+					new StaticRenderComponentParameters(
+						new Vector2(1, 1),
+						this.imageLoader.GetPng('./Resources/Metal.png'),
+						0
+					),
+				],
+				[new Wall(), new ComponentParameters()],
 			],
-			[new Wall(), new ComponentParameters()],
-		])
+			`Wall_${position.x}_${position.y}`
+		)
 
 		this.RegisterObjectEventsToGrid(ref)
 	}
@@ -207,39 +223,43 @@ export class BombermanGame extends GameEngine {
 		if (!this._gridComponent.object.CanCreateBomb(creator, position)) {
 			return null
 		}
-		const ref = this.scene.CreateDefaultGameObject(position, [
+		const ref = this.scene.CreateDefaultGameObject(
+			position,
 			[
-				new AnimationRenderComponent(),
-				new AnimationRenderComponentParameters([
-					new AnimationFrame(
-						new StaticRenderComponentParameters(
-							new Vector2(1, 1),
-							this.imageLoader.GetPng('./Resources/Bomb.png'),
-							0
+				[
+					new AnimationRenderComponent(),
+					new AnimationRenderComponentParameters([
+						new AnimationFrame(
+							new StaticRenderComponentParameters(
+								new Vector2(1, 1),
+								this.imageLoader.GetPng('./Resources/Bomb.png'),
+								0
+							),
+							0.5
 						),
-						0.5
-					),
-					new AnimationFrame(
-						new StaticRenderComponentParameters(
-							new Vector2(1, 1),
-							this.imageLoader.GetPng('./Resources/BombRed.png'),
-							0
+						new AnimationFrame(
+							new StaticRenderComponentParameters(
+								new Vector2(1, 1),
+								this.imageLoader.GetPng('./Resources/BombRed.png'),
+								0
+							),
+							1
 						),
-						1
+					]),
+				],
+				[
+					new BombController(),
+					new BombControllerParameters(
+						this._gridComponent,
+						(position: Vector2) => this.CreateBlast(position),
+						damage,
+						range,
+						ticksToExplosion
 					),
-				]),
+				],
 			],
-			[
-				new BombController(),
-				new BombControllerParameters(
-					this._gridComponent,
-					(position: Vector2) => this.CreateBlast(position),
-					damage,
-					range,
-					ticksToExplosion
-				),
-			],
-		])
+			`Bomb_${position.x}_${position.y}`
+		)
 
 		this.RegisterObjectEventsToGrid(ref)
 
@@ -247,18 +267,22 @@ export class BombermanGame extends GameEngine {
 	}
 
 	private CreateMan(position: Vector2, manBodyParameters: ManBodyParameters) {
-		const ref = this.scene.CreateDefaultGameObject(position, [
+		const ref = this.scene.CreateDefaultGameObject(
+			position,
 			[
-				new StaticImageRenderComponent(),
-				new StaticRenderComponentParameters(
-					new Vector2(1, 1),
-					this.imageLoader.GetPng('./Resources/Man.png'),
-					1
-				),
+				[
+					new StaticImageRenderComponent(),
+					new StaticRenderComponentParameters(
+						new Vector2(1, 1),
+						this.imageLoader.GetPng('./Resources/Man.png'),
+						1
+					),
+				],
+				[new ManBody(), manBodyParameters],
+				[new HealthComponent(), new HealthComponentParameters()],
 			],
-			[new ManBody(), manBodyParameters],
-			[new HealthComponent(), new HealthComponentParameters()],
-		])
+			`Man:${manBodyParameters.label}`
+		)
 
 		this.RegisterObjectEventsToGrid(ref)
 	}
@@ -267,9 +291,11 @@ export class BombermanGame extends GameEngine {
 		parameters: BombermanGridParameters
 	): SafeReference<IGameObject> {
 		const grid = new BombermanGrid()
-		return this.scene.CreateDefaultGameObject(new Vector2(), [
-			[grid, parameters],
-		])
+		return this.scene.CreateDefaultGameObject(
+			new Vector2(),
+			[[grid, parameters]],
+			'BombermanGameGrid'
+		)
 	}
 
 	public GetGameInfo(): BombermanGameInfo {

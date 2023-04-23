@@ -31,16 +31,20 @@ export class BombController extends GameObjectComponent {
 			this._turnToExplosion,
 			this._damage,
 			this._range,
-			this.uuid
+			this.label
 		)
 	}
 
-	Init(gameObjectRef: SafeReference<IGameObject>, parameters?: BombControllerParameters): void {
+	Init(
+		gameObjectRef: SafeReference<IGameObject>,
+		parameters?: BombControllerParameters
+	): void {
 		super.Init(gameObjectRef, parameters)
 		if (parameters) {
 			this._turnToExplosion =
-				(gameObjectRef.object.scene.turnIndex ? gameObjectRef.object.scene.turnIndex : 1) +
-				parameters.ticksToExplosion
+				(gameObjectRef.object.scene.turnIndex
+					? gameObjectRef.object.scene.turnIndex
+					: 1) + parameters.ticksToExplosion
 			this._grid = parameters.grid
 			this._damage = parameters.damage
 			this._range = parameters.range
@@ -50,9 +54,6 @@ export class BombController extends GameObjectComponent {
 
 	OnObjectCreationStage(index: number): void {
 		if (index === this._turnToExplosion) {
-			this.gameObjectRef.object.scene.RemoveGameObjectsByFilter(
-				r => this.gameObjectRef == r
-			)
 			this.DamageTile(this.gameObjectRef.object.position)
 
 			for (let dir of this._pattern) {
@@ -93,6 +94,10 @@ export class BombController extends GameObjectComponent {
 					}
 				}
 			}
+
+			this.gameObjectRef.object.scene.RemoveGameObjectsByFilter(
+				r => this.gameObjectRef == r
+			)
 		}
 	}
 

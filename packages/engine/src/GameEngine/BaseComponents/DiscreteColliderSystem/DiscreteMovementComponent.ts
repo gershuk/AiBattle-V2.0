@@ -118,9 +118,9 @@ export class DiscreteMovementComponentParameters extends ComponentParameters {
 	constructor(
 		discreteColliderSystem: DiscreteColliderSystem,
 		executionPriority: number = -100,
-		uuid?: string
+		label?: string
 	) {
-		super(executionPriority, uuid)
+		super(executionPriority, label)
 		this.discreteColliderSystem = discreteColliderSystem
 	}
 }

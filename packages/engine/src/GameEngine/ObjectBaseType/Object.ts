@@ -1,11 +1,18 @@
+import { GenerateUUID } from 'Utilities'
+
 export class Object {
-	protected _uuid: string
+	protected _label: string
+	protected _uuid: string = GenerateUUID()
+
+	public get label(): string {
+		return this._label
+	}
+
+	public set label(label: string) {
+		this._label = label
+	}
 
 	public get uuid(): string {
 		return this._uuid
-	}
-
-	public set uuid(uuid: string) {
-		this._uuid = uuid
 	}
 }

@@ -74,14 +74,14 @@ export interface IScene extends UpdatableGroup<IGameObject> {
 	CreateDefaultGameObject(
 		position: Vector2,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
-		id?: string
+		label?: string
 	): SafeReference<IGameObject>
 
 	AddGameObject<T extends IGameObject>(
 		position: Vector2,
 		gameObject: T,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
-		id?: string
+		label?: string
 	): SafeReference<IGameObject>
 
 	AddGameObjects<T extends IGameObject>(

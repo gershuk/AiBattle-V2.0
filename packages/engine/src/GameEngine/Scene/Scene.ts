@@ -249,10 +249,10 @@ export class Scene extends UpdatableGroup<IGameObject> implements IScene {
 	CreateDefaultGameObject(
 		position: Vector2,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
-		id?: string
+		label?: string
 	): SafeReference<IGameObject> {
 		const gameObject = new GameObject()
-		return this.AddGameObject(position, gameObject, newComponents, id)
+		return this.AddGameObject(position, gameObject, newComponents, label)
 	}
 
 	public CheckGameEnd(): boolean {
@@ -263,10 +263,10 @@ export class Scene extends UpdatableGroup<IGameObject> implements IScene {
 		position: Vector2,
 		gameObject: T,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
-		id?: string
+		label?: string
 	): SafeReference<IGameObject> {
 		const ref = this._container.Add(gameObject, () =>
-			gameObject.Init(position, this, newComponents, id)
+			gameObject.Init(position, this, newComponents, label)
 		)
 		return ref
 	}
