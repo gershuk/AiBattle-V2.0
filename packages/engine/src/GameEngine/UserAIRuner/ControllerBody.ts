@@ -8,6 +8,7 @@ import {
 } from './AbstractController'
 import { IAsyncControllerBridge } from './AsyncControllerBridge'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
 export class ControllerBody<
 	TInitData extends AbstractControllerData,
@@ -50,10 +51,10 @@ export class ControllerBody<
 	}
 
 	public Init(
-		gameObject: IGameObject,
+		gameObjectRef: SafeReference<IGameObject>,
 		parameters?: ControllerBodyParameters<TInitData, TTurnData, TCommand>
 	): void {
-		super.Init(gameObject, parameters)
+		super.Init(gameObjectRef, parameters)
 
 		if (parameters) {
 			this.controllerBridge = parameters.controllerBridge

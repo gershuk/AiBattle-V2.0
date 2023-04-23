@@ -2,6 +2,7 @@ import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 import { ComponentParameters } from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
 import { AbstractImageRenderComponent } from './AbstractImageRenderComponent'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
 export class StaticImageRenderComponent extends AbstractImageRenderComponent {
 	private _offset: Vector2
@@ -28,8 +29,11 @@ export class StaticImageRenderComponent extends AbstractImageRenderComponent {
 		this._image = image
 	}
 
-	Init(gameObject: IGameObject, parameters?: StaticRenderComponentParameters) {
-		super.Init(gameObject, parameters)
+	Init(
+		gameObjectRef: SafeReference<IGameObject>,
+		parameters?: StaticRenderComponentParameters
+	) {
+		super.Init(gameObjectRef, parameters)
 		if (parameters) {
 			this.size = parameters.size
 			this.offset = parameters.offset

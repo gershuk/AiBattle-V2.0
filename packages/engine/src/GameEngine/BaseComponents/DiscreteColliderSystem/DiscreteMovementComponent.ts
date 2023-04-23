@@ -4,6 +4,7 @@ import { DiscreteColliderSystem } from './DiscreteColliderSystem'
 import { ComponentParameters } from '../GameObjectComponent'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
 //ToDo : Add a number of moves for the transition and update all the moving methods.
 export class DiscreteMovementComponent extends GameObjectComponent {
@@ -34,10 +35,10 @@ export class DiscreteMovementComponent extends GameObjectComponent {
 	}
 
 	public get currentPosition(): Vector2 {
-		return this._gameObject.position.Clone()
+		return this._gameObject.object.position.Clone()
 	}
 
-	public SetReceiver(receiver: GameObject) {
+	public SetReceiver(receiver: SafeReference<IGameObject>) {
 		const position = this.currentPosition
 		this._discreteColliderSystem.SetReceiver(
 			this,
@@ -48,14 +49,14 @@ export class DiscreteMovementComponent extends GameObjectComponent {
 	}
 
 	Init(
-		gameObject: IGameObject,
+		gameObjectRef: SafeReference<IGameObject>,
 		parameters?: DiscreteMovementComponentParameters
 	) {
-		super.Init(gameObject, parameters)
+		super.Init(gameObjectRef, parameters)
 		if (parameters) {
 			this._discreteColliderSystem = parameters.discreteColliderSystem
 			this._discreteColliderSystem.InitNewObject(this)
-			this.oldPosition = this.gameObject.position.Clone()
+			this.oldPosition = this.gameObjectRef.object.position.Clone()
 		}
 	}
 
@@ -69,7 +70,7 @@ export class DiscreteMovementComponent extends GameObjectComponent {
 
 	OnBeforeFrameRender(currentFrame: number, frameCount: number): void {
 		if (this.newPosition) {
-			this.gameObject.position = Vector2.Lerp(
+			this.gameObjectRef.object.position = Vector2.Lerp(
 				this.oldPosition,
 				this.newPosition,
 				(currentFrame + 1) / frameCount
@@ -107,7 +108,7 @@ export class DiscreteMovementComponent extends GameObjectComponent {
 			this.oldPosition = this.newPosition.Clone()
 		}
 
-		this.gameObject.position = this.oldPosition.Clone()
+		this.gameObjectRef.object.position = this.oldPosition.Clone()
 	}
 }
 

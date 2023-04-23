@@ -3,6 +3,6 @@ import { WallData as WallData } from './MapData'
 
 export class Wall extends GameObjectComponent {
 	public GetData(): WallData {
-		return new WallData(this.gameObject.position.Clone(), this.uuid)
+		return new WallData(this.gameObjectRef.object.position.Clone(), this.uuid)
 	}
 }

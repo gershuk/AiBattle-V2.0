@@ -30,10 +30,10 @@ export class BombermanGrid extends GridWorldSystem {
 	}
 
 	public Init(
-		gameObject: IGameObject,
+		gameObjectRef: SafeReference<IGameObject>,
 		parameters?: BombermanGridParameters
 	): void {
-		super.Init(gameObject, parameters)
+		super.Init(gameObjectRef, parameters)
 
 		if (parameters) {
 			this.width = parameters.width
@@ -43,7 +43,7 @@ export class BombermanGrid extends GridWorldSystem {
 
 	public CheckAndFixMovementExceptions(): void {}
 
-	public CanInitObject(ref: SafeReference<GameObject>): boolean {
+	public CanInitObject(ref: SafeReference<IGameObject>): boolean {
 		const cellData = this.GetCellData(ref.object.position)
 		return (
 			cellData == null ||
@@ -55,7 +55,7 @@ export class BombermanGrid extends GridWorldSystem {
 	}
 
 	public CanObjectMoveTo(
-		ref: SafeReference<GameObject>,
+		ref: SafeReference<IGameObject>,
 		newPosition: Vector2
 	): boolean {
 		const cellData = this.GetCellData(newPosition)

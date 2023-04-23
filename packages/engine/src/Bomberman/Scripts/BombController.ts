@@ -27,7 +27,7 @@ export class BombController extends GameObjectComponent {
 
 	public GetData(): BombData {
 		return new BombData(
-			this.gameObject.position.Clone(),
+			this.gameObjectRef.object.position.Clone(),
 			this._turnToExplosion,
 			this._damage,
 			this._range,
@@ -35,11 +35,11 @@ export class BombController extends GameObjectComponent {
 		)
 	}
 
-	Init(gameObject: IGameObject, parameters?: BombControllerParameters): void {
-		super.Init(gameObject, parameters)
+	Init(gameObjectRef: SafeReference<IGameObject>, parameters?: BombControllerParameters): void {
+		super.Init(gameObjectRef, parameters)
 		if (parameters) {
 			this._turnToExplosion =
-				(gameObject.scene.turnIndex ? gameObject.scene.turnIndex : 1) +
+				(gameObjectRef.object.scene.turnIndex ? gameObjectRef.object.scene.turnIndex : 1) +
 				parameters.ticksToExplosion
 			this._grid = parameters.grid
 			this._damage = parameters.damage
@@ -50,14 +50,14 @@ export class BombController extends GameObjectComponent {
 
 	OnObjectCreationStage(index: number): void {
 		if (index === this._turnToExplosion) {
-			this.gameObject.scene.RemoveGameObjectsByFilter(
-				r => this.gameObject == r.object
+			this.gameObjectRef.object.scene.RemoveGameObjectsByFilter(
+				r => this.gameObjectRef == r
 			)
-			this.DamageTile(this.gameObject.position)
+			this.DamageTile(this.gameObjectRef.object.position)
 
 			for (let dir of this._pattern) {
 				for (let i = 1; i <= this._range; ++i) {
-					const pos = this.gameObject.position.Add(dir.MulScalar(i))
+					const pos = this.gameObjectRef.object.position.Add(dir.MulScalar(i))
 					const cellData = this._grid.object.GetCellData(
 						new Vector2(pos.x, pos.y)
 					)
