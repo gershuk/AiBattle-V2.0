@@ -59,12 +59,11 @@ export class BombermanGrid extends GridWorldSystem {
 		newPosition: Vector2
 	): boolean {
 		const cellData = this.GetCellData(newPosition)
-
 		if (cellData == null) return true
 
 		for (let data of cellData) {
 			if (data) {
-				if (data.newPosition == null) {
+				if (data.newPosition == null || data.newPosition.Equal(newPosition)) {
 					return false
 				}
 			}

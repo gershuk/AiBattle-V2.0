@@ -91,4 +91,8 @@ export class Vector2 {
 	public Clone(): Vector2 {
 		return new Vector2(this.x, this.y)
 	}
+
+	public Equal(other: Vector2) {
+		return this.x === other.x && this.y === other.y
+	}
 }
