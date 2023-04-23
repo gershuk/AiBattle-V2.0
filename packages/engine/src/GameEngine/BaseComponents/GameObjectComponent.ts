@@ -1,16 +1,20 @@
 import { GenerateUUID } from 'Utilities'
 import { IGameObject } from '../GameObject/IGameObject'
 import { UpdatableObject } from 'GameEngine/ObjectBaseType/UpdatableObject'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
 export class GameObjectComponent extends UpdatableObject {
-	protected _gameObject: IGameObject | undefined
+	protected _gameObject: SafeReference<IGameObject> | undefined
 
-	public get gameObject(): IGameObject {
+	public get gameObjectRef(): SafeReference<IGameObject> {
 		return this._gameObject
 	}
 
-	Init(gameObject: IGameObject, parameters?: ComponentParameters) {
-		this._gameObject = gameObject
+	Init(
+		gameObjectRef: SafeReference<IGameObject>,
+		parameters?: ComponentParameters
+	) {
+		this._gameObject = gameObjectRef
 		if (parameters) {
 			this._uuid = parameters.uuid
 			this.executionPriority = parameters.executionPriority

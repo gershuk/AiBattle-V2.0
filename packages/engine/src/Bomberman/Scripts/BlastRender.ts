@@ -14,8 +14,8 @@ export class BlastRender extends StaticImageRenderComponent {
 	}
 
 	OnFixedUpdateEnded(index: number): void {
-		this.gameObject.scene.RemoveGameObjectsByFilter(
-			r => this.gameObject === r.object
+		this.gameObjectRef.object.scene.RemoveGameObjectsByFilter(
+			r => this.gameObjectRef === r
 		)
 	}
 }

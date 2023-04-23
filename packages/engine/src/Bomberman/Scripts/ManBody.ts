@@ -52,8 +52,11 @@ export class ManBody extends ControllerBody<
 	private _healthComponent: SafeReference<HealthComponent>
 	private _grid: SafeReference<BombermanGrid>
 
-	Init(gameObject: IGameObject, parameters?: ManBodyParameters): void {
-		super.Init(gameObject, parameters)
+	Init(
+		gameObjectRef: SafeReference<IGameObject>,
+		parameters?: ManBodyParameters
+	): void {
+		super.Init(gameObjectRef, parameters)
 		if (parameters) {
 			this._bombSpawnFunction = parameters.bombSpawnFunction
 
@@ -65,7 +68,7 @@ export class ManBody extends ControllerBody<
 			this._bombsMaxCount = parameters.bombsMaxCount
 			this._bombsRestoreTicks = parameters.bombsRestoreTicks
 			this._bombsRestoreCount = parameters.bombsRestoreCount
-			this._lastRestoreTurn = this.gameObject.scene.turnIndex
+			this._lastRestoreTurn = this.gameObjectRef.object.scene.turnIndex
 
 			this._grid = parameters.grid
 		}
@@ -73,7 +76,7 @@ export class ManBody extends ControllerBody<
 
 	public GetPublicData(): BodyPublicData {
 		return new BodyPublicData(
-			this.gameObject.position.Clone(),
+			this.gameObjectRef.object.position.Clone(),
 			this._healthComponent.object.health,
 			this.uuid
 		)
@@ -81,7 +84,7 @@ export class ManBody extends ControllerBody<
 
 	public GetAllData(): BodyAllData {
 		return new BodyAllData(
-			this.gameObject.position.Clone(),
+			this.gameObjectRef.object.position.Clone(),
 			this._healthComponent.object.health,
 			this._bombsMaxCount,
 			this._bombsCount,
@@ -94,7 +97,7 @@ export class ManBody extends ControllerBody<
 	}
 
 	OnOwnerInit(): void {
-		this._healthComponent = this.gameObject.GetComponents(
+		this._healthComponent = this.gameObjectRef.object.GetComponents(
 			HealthComponent
 		)[0] as SafeReference<HealthComponent>
 	}
@@ -106,10 +109,10 @@ export class ManBody extends ControllerBody<
 		const bodiesData: BodyPublicData[] = []
 		const playerData = this.GetAllData()
 		const refObjects: SafeReference<IGameObject>[] =
-			this.gameObject.scene.GetGameObjectsRefByFilter(() => true)
+			this.gameObjectRef.object.scene.GetGameObjectsRefByFilter(() => true)
 
 		for (let ref of refObjects) {
-			if (ref.object === this.gameObject) continue
+			if (ref === this.gameObjectRef) continue
 
 			const destructibleWall = (
 				ref.object.GetComponents(DestructibleWall)[0]
@@ -157,44 +160,39 @@ export class ManBody extends ControllerBody<
 			return BombermanControllerCommand.GetIdleCommand()
 		})
 
-		const safeRef = this.gameObject.scene
-			.GetReadonlyContainer()
-			.GetSafeRefForObject(this.gameObject)
 		switch (command.bombermanAction) {
 			case BombermanActions.idle:
 				//idle
 				break
 			case BombermanActions.up:
 				this._grid.object.TryMoveObject(
-					safeRef,
-					this.gameObject.position.Add(new Vector2(0, 1))
+					this.gameObjectRef,
+					this.gameObjectRef.object.position.Add(new Vector2(0, 1))
 				)
 				break
 			case BombermanActions.right:
 				this._grid.object.TryMoveObject(
-					safeRef,
-					this.gameObject.position.Add(new Vector2(1, 0))
+					this.gameObjectRef,
+					this.gameObjectRef.object.position.Add(new Vector2(1, 0))
 				)
 				break
 			case BombermanActions.down:
 				this._grid.object.TryMoveObject(
-					safeRef,
-					this.gameObject.position.Add(new Vector2(0, -1))
+					this.gameObjectRef,
+					this.gameObjectRef.object.position.Add(new Vector2(0, -1))
 				)
 				break
 			case BombermanActions.left:
 				this._grid.object.TryMoveObject(
-					safeRef,
-					this.gameObject.position.Add(new Vector2(-1, 0))
+					this.gameObjectRef,
+					this.gameObjectRef.object.position.Add(new Vector2(-1, 0))
 				)
 				break
 			case BombermanActions.bomb:
 				if (this._bombsCount == 0) return
 				const bomb = this._bombSpawnFunction(
-					this.gameObject.scene
-						.GetReadonlyContainer()
-						.GetSafeRefForObject(this.gameObject),
-					this.gameObject.position,
+					this.gameObjectRef,
+					this.gameObjectRef.object.position,
 					this._bombDamage,
 					this._blastRange,
 					this._ticksToExplosion
@@ -212,9 +210,9 @@ export class ManBody extends ControllerBody<
 	OnFixedUpdate(index: number) {
 		if (
 			this._lastRestoreTurn + this._bombsRestoreTicks ===
-			this.gameObject.scene.turnIndex
+			this.gameObjectRef.object.scene.turnIndex
 		) {
-			this._lastRestoreTurn = this.gameObject.scene.turnIndex
+			this._lastRestoreTurn = this.gameObjectRef.object.scene.turnIndex
 			this._bombsCount = Math.min(
 				this._bombsCount + this._bombsRestoreCount,
 				this._bombsMaxCount

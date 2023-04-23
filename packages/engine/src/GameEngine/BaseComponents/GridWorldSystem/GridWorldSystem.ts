@@ -33,10 +33,10 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 	public abstract CanInitObject(ref: SafeReference<IGameObject>): boolean
 
 	public Init(
-		gameObject: IGameObject,
+		gameObjectRef: SafeReference<IGameObject>,
 		parameters?: GridWorldSystemParameters
 	): void {
-		super.Init(gameObject, parameters)
+		super.Init(gameObjectRef, parameters)
 	}
 
 	public GetCellData(position: Vector2): ObjectMovementData[] | null {

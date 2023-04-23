@@ -6,16 +6,17 @@ import {
 import { Vector2 } from '../Vector2'
 import { DiscreteMovementComponent } from './DiscreteMovementComponent'
 import { GameObject } from 'GameEngine/GameObject/GameObject'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
 export class CellData {
 	owner: DiscreteMovementComponent | undefined
-	receiver: GameObject | undefined
+	receiver: SafeReference<IGameObject> | undefined
 	startRentTurn: number
 	endRentTurn: number | undefined
 
 	constructor(
 		owner: DiscreteMovementComponent | undefined = undefined,
-		receiver: GameObject | undefined = undefined,
+		receiver: SafeReference<IGameObject> | undefined = undefined,
 		startRentTurn: number = 0,
 		endRentTurn: number | undefined = undefined
 	) {
@@ -59,10 +60,10 @@ export class DiscreteColliderSystem extends GameObjectComponent {
 	}
 
 	public Init(
-		owner: IGameObject,
+		gameObjectRef: SafeReference<IGameObject>,
 		parameters?: DiscreteColliderSystemParameters
 	): void {
-		super.Init(owner, parameters)
+		super.Init(gameObjectRef, parameters)
 		if (parameters) {
 			this._width = parameters.width
 			this._height = parameters.height
@@ -88,8 +89,8 @@ export class DiscreteColliderSystem extends GameObjectComponent {
 	}
 
 	public CanInitOwner(owner: DiscreteMovementComponent) {
-		const x = owner.gameObject.position.x
-		const y = owner.gameObject.position.y
+		const x = owner.gameObjectRef.object.position.x
+		const y = owner.gameObjectRef.object.position.y
 
 		if (!this.CellExist(x, y)) {
 			console.error(`Cell is not exist (${x} ${y})`)
@@ -98,14 +99,14 @@ export class DiscreteColliderSystem extends GameObjectComponent {
 
 		return (
 			(this._grid[x][y].receiver === undefined ||
-				this._grid[x][y].receiver === owner.gameObject) &&
+				this._grid[x][y].receiver === owner.gameObjectRef) &&
 			(this._grid[x][y].owner === undefined ||
 				this._grid[x][y].owner === owner ||
 				this._grid[x][y].endRentTurn <= this._turn)
 		)
 	}
 
-	public CanInit(x: number, y: number, owner?: IGameObject) {
+	public CanInit(x: number, y: number, owner?: SafeReference<IGameObject>) {
 		if (!this.CellExist(x, y)) {
 			console.error(`Cell is not exist (${x} ${y})`)
 			return false
@@ -149,7 +150,7 @@ export class DiscreteColliderSystem extends GameObjectComponent {
 		const targetCell = this._grid[newPos.x][newPos.y]
 		const cond =
 			(this._grid[newPos.x][newPos.y].receiver === undefined ||
-				this._grid[newPos.x][newPos.y].receiver === owner.gameObject) &&
+				this._grid[newPos.x][newPos.y].receiver === owner.gameObjectRef) &&
 			(targetCell.owner === owner ||
 				targetCell.owner === undefined ||
 				(targetCell.endRentTurn !== undefined &&
@@ -198,7 +199,7 @@ export class DiscreteColliderSystem extends GameObjectComponent {
 		owner: DiscreteMovementComponent,
 		x: number,
 		y: number,
-		receiver: GameObject
+		receiver: SafeReference<IGameObject>
 	) {
 		if (this._grid[x][y].owner === owner) {
 			this._grid[x][y].receiver = receiver

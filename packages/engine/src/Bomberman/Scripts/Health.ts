@@ -3,6 +3,7 @@ import {
 	ComponentParameters,
 } from 'GameEngine/BaseComponents/GameObjectComponent'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
 export class HealthComponent extends GameObjectComponent {
 	private _maxHealth: number
@@ -30,13 +31,16 @@ export class HealthComponent extends GameObjectComponent {
 		this.health = Math.max(this.health - damage, 0)
 
 		if (this.health === 0)
-			this.gameObject.scene.RemoveGameObjectsByFilter(
-				r => r.object == this.gameObject
+			this.gameObjectRef.object.scene.RemoveGameObjectsByFilter(
+				r => r == this.gameObjectRef
 			)
 	}
 
-	Init(gameObject: IGameObject, parameters?: HealthComponentParameters): void {
-		super.Init(gameObject, parameters)
+	Init(
+		gameObjectRef: SafeReference<IGameObject>,
+		parameters?: HealthComponentParameters
+	): void {
+		super.Init(gameObjectRef, parameters)
 		if (parameters) {
 			this.health = parameters.health ?? parameters.maxHealth
 			this.maxHealth = parameters.maxHealth

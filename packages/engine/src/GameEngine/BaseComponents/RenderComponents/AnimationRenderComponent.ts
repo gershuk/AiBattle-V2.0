@@ -3,6 +3,7 @@ import { ComponentParameters } from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
 import { StaticRenderComponentParameters } from './StaticImageRenderComponent'
 import { AbstractImageRenderComponent } from './AbstractImageRenderComponent'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 
 export class AnimationRenderComponent extends AbstractImageRenderComponent {
 	private _frameIndex: number
@@ -32,8 +33,8 @@ export class AnimationRenderComponent extends AbstractImageRenderComponent {
 		return this.CurrentFrameData.image
 	}
 
-	Init(owner: IGameObject, parameters?: AnimationRenderComponentParameters) {
-		super.Init(owner, parameters)
+	Init(gameObjectRef: SafeReference<IGameObject>, parameters?: AnimationRenderComponentParameters) {
+		super.Init(gameObjectRef, parameters)
 		if (parameters) {
 			this._frameIndex = 0
 			this._frames = parameters.frames

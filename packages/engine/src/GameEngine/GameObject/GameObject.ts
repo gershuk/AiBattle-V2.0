@@ -51,7 +51,10 @@ export class GameObject
 	): void {
 		if (newComponents) {
 			for (let component of newComponents) {
-				component[0].Init(this, component[1])
+				component[0].Init(
+					this.scene.GetReadonlyContainer().GetSafeRefForObject(this),
+					component[1]
+				)
 				this.Add(component[0])
 			}
 		}

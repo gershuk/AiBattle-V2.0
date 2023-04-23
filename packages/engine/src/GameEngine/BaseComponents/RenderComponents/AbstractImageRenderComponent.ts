@@ -7,7 +7,7 @@ export abstract class AbstractImageRenderComponent extends AbstractRenderCompone
 	abstract get image(): HTMLImageElement
 
 	protected RenderImage(viewPort: ViewPort) {
-		const pos = this.gameObject.position
+		const pos = this.gameObjectRef.object.position
 			.Add(this.offset)
 			.Add(viewPort.renderOffset)
 		const dw = this.size.x
