@@ -109,9 +109,12 @@ export class BombController extends GameObjectComponent {
 
 		for (let data of cellData) {
 			let object = data.ref.object
-			let isMoving = data.newPosition !== undefined && data.newPosition !== null
+			let isInCell = true
+			if (data.newPosition) {
+				isInCell = data.newPosition.Equal(position)
+			}
 
-			if (object && !isMoving) {
+			if (object && isInCell) {
 				let healthComponent = object.GetComponents(
 					HealthComponent
 				)[0] as SafeReference<HealthComponent>
