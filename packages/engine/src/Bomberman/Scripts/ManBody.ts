@@ -78,7 +78,7 @@ export class ManBody extends ControllerBody<
 		return new BodyPublicData(
 			this.gameObjectRef.object.position.Clone(),
 			this._healthComponent.object.health,
-			this.uuid
+			this.label
 		)
 	}
 
@@ -91,7 +91,7 @@ export class ManBody extends ControllerBody<
 			this._bombsRestoreTicks,
 			this._bombsRestoreCount,
 			this._lastRestoreTurn,
-			this.uuid,
+			this.label,
 			this.controllerBridge.UUID
 		)
 	}
@@ -267,14 +267,14 @@ export class ManBodyParameters extends ControllerBodyParameters<
 		initTimeout: number = -1,
 		commandCalcTimeout: number = -1,
 		executionPriority: number = 0,
-		uuid?: string
+		label?: string
 	) {
 		super(
 			controllerBridge,
 			initTimeout,
 			commandCalcTimeout,
 			executionPriority,
-			uuid
+			label
 		)
 		this.grid = grid
 		this.bombDamage = bombDamage

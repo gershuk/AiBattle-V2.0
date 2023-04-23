@@ -281,6 +281,7 @@ export class GameEngine implements IGameEngine {
 export class ControllerCreationData {
 	text: string
 	uuid: string | undefined
+	nickName: string | undefined
 	controllerBridgeInstance:
 		| IAsyncControllerBridge<
 				AbstractControllerData,
@@ -292,6 +293,7 @@ export class ControllerCreationData {
 	constructor(
 		text: string,
 		uuid?: string,
+		nickName?: string,
 		controllerBridgeInstance?: IAsyncControllerBridge<
 			AbstractControllerData,
 			AbstractControllerData,
@@ -300,6 +302,7 @@ export class ControllerCreationData {
 	) {
 		this.text = text
 		this.uuid = uuid
+		this.nickName = nickName
 		this.controllerBridgeInstance = controllerBridgeInstance
 	}
 }

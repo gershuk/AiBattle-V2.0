@@ -20,7 +20,7 @@ export interface IGameObject extends UpdatableGroup<GameObjectComponent> {
 		position: Vector2,
 		scene?: IScene,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
-		id?: string
+		label?: string
 	): void
 
 	AddComponents(

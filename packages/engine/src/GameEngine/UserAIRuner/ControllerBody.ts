@@ -100,9 +100,9 @@ export class ControllerBodyParameters<
 		initTimeout: number = -1,
 		commandCalcTimeout: number = -1,
 		executionPriority: number = 0,
-		uuid?: string
+		label?: string
 	) {
-		super(executionPriority, uuid)
+		super(executionPriority, label)
 		this.initTimeout = initTimeout
 		this.commandCalcTimeout = commandCalcTimeout
 		this.controllerBridge = controllerBridge

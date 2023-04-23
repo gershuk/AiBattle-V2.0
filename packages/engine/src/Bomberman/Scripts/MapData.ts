@@ -53,25 +53,25 @@ export class MapData {
 
 export abstract class MapObjectData {
 	position: Vector2
-	uuid: string
+	label: string
 
-	constructor(position: Vector2, uuid: string) {
-		this.uuid = uuid
+	constructor(position: Vector2, label: string) {
+		this.label = label
 		this.position = position
 	}
 }
 
 export class WallData extends MapObjectData {
-	constructor(position: Vector2, uuid: string) {
-		super(position, uuid)
+	constructor(position: Vector2, label: string) {
+		super(position, label)
 	}
 }
 
 export class DestructibleWallData extends WallData {
 	health: number
 
-	constructor(position: Vector2, health: number, uuid: string) {
-		super(position, uuid)
+	constructor(position: Vector2, health: number, label: string) {
+		super(position, label)
 		this.health = health
 	}
 }
@@ -79,8 +79,8 @@ export class DestructibleWallData extends WallData {
 export class BodyPublicData extends MapObjectData {
 	health: number
 
-	constructor(position: Vector2, health: number, uuid: string) {
-		super(position, uuid)
+	constructor(position: Vector2, health: number, label: string) {
+		super(position, label)
 		this.position = position
 		this.health = health
 	}
@@ -102,10 +102,10 @@ export class BodyAllData extends BodyPublicData {
 		bombsRestoreTicks: number,
 		bombsRestoreCount: number,
 		lastBombRestoreTurn: number,
-		uuid: string,
+		label: string,
 		controllerUUID: string
 	) {
-		super(position, health, uuid)
+		super(position, health, label)
 		this.health = health
 		this.bombsMaxCount = bombsMaxCount
 		this.bombsCount = bombsCount
@@ -126,9 +126,9 @@ export class BombData extends MapObjectData {
 		turnToExplosion: number,
 		damage: number,
 		range: number,
-		uuid: string
+		label: string
 	) {
-		super(position, uuid)
+		super(position, label)
 		this.turnToExplosion = turnToExplosion
 		this.damage = damage
 		this.range = range

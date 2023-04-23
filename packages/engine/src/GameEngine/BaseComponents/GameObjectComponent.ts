@@ -1,4 +1,3 @@
-import { GenerateUUID } from 'Utilities'
 import { IGameObject } from '../GameObject/IGameObject'
 import { UpdatableObject } from 'GameEngine/ObjectBaseType/UpdatableObject'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
@@ -16,10 +15,10 @@ export class GameObjectComponent extends UpdatableObject {
 	) {
 		this._gameObject = gameObjectRef
 		if (parameters) {
-			this._uuid = parameters.uuid
+			this._label = parameters.label ?? this.uuid
 			this.executionPriority = parameters.executionPriority
 		} else {
-			this._uuid = GenerateUUID()
+			this._label = this.uuid
 			this.executionPriority = 0
 		}
 	}
@@ -44,10 +43,10 @@ export class GameObjectComponent extends UpdatableObject {
 }
 
 export class ComponentParameters {
-	uuid: string
+	label: string
 	executionPriority: number
-	constructor(executionPriority: number = 0, uuid?: string) {
+	constructor(executionPriority: number = 0, label?: string) {
 		this.executionPriority = executionPriority
-		this.uuid = uuid ?? GenerateUUID()
+		this.label = label
 	}
 }

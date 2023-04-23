@@ -1,4 +1,3 @@
-import { GenerateUUID } from 'Utilities'
 import {
 	GameObjectComponent,
 	ComponentParameters,
@@ -33,12 +32,12 @@ export class GameObject
 		position: Vector2,
 		scene?: IScene,
 		newComponents?: [GameObjectComponent, ComponentParameters?][],
-		id?: string,
+		label?: string,
 		executionPriority: number = 0
 	) {
 		this._position = position
 		this._container = new UpdatableObjectArrayContainer()
-		this.uuid = id ?? GenerateUUID()
+		this.label = label ?? this.uuid
 		this._scene = scene
 		this.executionPriority = executionPriority
 		this.AddComponents(newComponents)

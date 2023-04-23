@@ -195,7 +195,7 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 }
 
 export class GridWorldSystemParameters extends ComponentParameters {
-	constructor(executionPriority: number = -100, uuid?: string) {
-		super(executionPriority, uuid)
+	constructor(executionPriority: number = -100, label?: string) {
+		super(executionPriority, label)
 	}
 }

@@ -14,7 +14,7 @@ export class DestructibleWall extends GameObjectComponent {
 		return new DestructibleWallData(
 			this.gameObjectRef.object.position.Clone(),
 			this._healthComponent.health,
-			this.uuid
+			this.label
 		)
 	}
 }

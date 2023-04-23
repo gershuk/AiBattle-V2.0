@@ -89,9 +89,9 @@ export class BombermanGridParameters extends GridWorldSystemParameters {
 		width: number,
 		height: number,
 		executionPriority: number = -100,
-		uuid?: string
+		label?: string
 	) {
-		super(executionPriority, uuid)
+		super(executionPriority, label)
 		this.width = width
 		this.height = height
 	}
