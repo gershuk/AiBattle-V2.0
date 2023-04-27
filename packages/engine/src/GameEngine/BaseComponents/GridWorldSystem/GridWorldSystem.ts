@@ -188,6 +188,8 @@ export abstract class GridWorldSystem extends GameObjectComponent {
 			}
 
 			data.newPosition = null
+
+			data.ref.object.position = data.oldPosition.Clone()
 		}
 
 		this.commandReceiveLock = false

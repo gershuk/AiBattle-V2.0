@@ -47,30 +47,28 @@ return { bombermanAction: 2 }
 )
 secondControllerData.nickName = 'second_man'
 
-engine
-	.Init(
-		new BombermanGameParameters(
-			new BombermanMap(
-				[
-					[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-					[2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2],
-					[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
-				],
-				[new Vector2(1, 1), new Vector2(9, 1)]
-			),
-			[firstControllerData, secondControllerData],
-			new SceneParameters(
-				1000000,
-				60,
-				12,
-				1100,
-				document.getElementById('canvas') as HTMLCanvasElement,
-				50,
-				80,
-				80
-			)
-		)
+const parameters = new BombermanGameParameters(
+	new BombermanMap(
+		[
+			[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+			[2, 0, 0, 0, 0, 1, 0, 0, 0, 0, 2],
+			[2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+		],
+		[new Vector2(1, 1), new Vector2(9, 1)]
+	),
+	[firstControllerData, secondControllerData],
+	new SceneParameters(
+		1000000,
+		60,
+		12,
+		1100,
+		document.getElementById('canvas') as HTMLCanvasElement,
+		50,
+		80,
+		80
 	)
-	.then(() => {
-		engine.Start().then(() => engine.StartAutoTurn())
-	})
+)
+
+engine.Init(parameters).then(() => {
+	engine.Start().then(() => engine.StartAutoTurn())
+})
