@@ -1,4 +1,9 @@
-import { GameObjectComponent } from '../GameObjectComponent'
+import { IGameObject } from 'GameEngine/GameObject/IGameObject'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
+import {
+	ComponentParameters,
+	GameObjectComponent,
+} from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
 
 export class AbstractRenderComponent extends GameObjectComponent {
@@ -11,6 +16,30 @@ export class AbstractRenderComponent extends GameObjectComponent {
 	}
 
 	public Render(viewPort: ViewPort) {}
+
+	public Init(
+		gameObjectRef: SafeReference<IGameObject>,
+		parameters?: AbstractRenderComponentParameters
+	): void {
+		super.Init(gameObjectRef, parameters)
+
+		if (parameters) {
+				this.zOrder = parameters.zOrder
+		}
+	}
+}
+
+export class AbstractRenderComponentParameters extends ComponentParameters {
+	zOrder: number
+
+	constructor(
+		executionPriority: number = 0,
+		label?: string,
+		zOrder: number = 0
+	) {
+		super(executionPriority, label)
+		this.zOrder = zOrder
+	}
 }
 
 export class ViewPort {

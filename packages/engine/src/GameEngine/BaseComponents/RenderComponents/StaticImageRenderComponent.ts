@@ -1,8 +1,8 @@
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
-import { ComponentParameters } from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
 import { AbstractImageRenderComponent } from './AbstractImageRenderComponent'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
+import { AbstractRenderComponentParameters } from './AbstractRenderComponent'
 
 export class StaticImageRenderComponent extends AbstractImageRenderComponent {
 	private _offset: Vector2
@@ -35,30 +35,39 @@ export class StaticImageRenderComponent extends AbstractImageRenderComponent {
 	) {
 		super.Init(gameObjectRef, parameters)
 		if (parameters) {
-			this.size = parameters.size
-			this.offset = parameters.offset
-			this.image = parameters.image
-			this.zOrder = parameters.zOrder
+			this.size = parameters.frame.size
+			this.offset = parameters.frame.offset.Clone()
+			this.image = parameters.frame.image
 		}
 	}
 }
 
-export class StaticRenderComponentParameters extends ComponentParameters {
+export class Frame {
 	offset: Vector2
 	size: Vector2
 	image: HTMLImageElement
-	zOrder: number
 
 	constructor(
-		size: Vector2,
 		image: HTMLImageElement,
-		zOrder: number = 0,
+		size: Vector2 = new Vector2(),
 		offset: Vector2 = new Vector2()
 	) {
-		super()
+		this.image = image
 		this.offset = offset
 		this.size = size
-		this.image = image
-		this.zOrder = zOrder
+	}
+}
+
+export class StaticRenderComponentParameters extends AbstractRenderComponentParameters {
+	frame: Frame
+
+	constructor(
+		frame: Frame,
+		zOrder: number = 0,
+		executionPriority: number = 0,
+		label?: string,
+	) {
+		super(executionPriority, label, zOrder)
+		this.frame = frame
 	}
 }

@@ -1,15 +1,17 @@
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
-import { ComponentParameters } from '../GameObjectComponent'
 import { Vector2 } from '../Vector2'
-import { StaticRenderComponentParameters } from './StaticImageRenderComponent'
+import {
+	Frame
+} from './StaticImageRenderComponent'
 import { AbstractImageRenderComponent } from './AbstractImageRenderComponent'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
+import { AbstractRenderComponentParameters } from './AbstractRenderComponent'
 
 export class AnimationRenderComponent extends AbstractImageRenderComponent {
-	private _frameIndex: number
-	private _frames: AnimationFrame[]
+	protected _frameIndex: number
+	protected _frames: AnimationFrame[]
 
-	public get CurrentFrameData(): StaticRenderComponentParameters {
+	public get CurrentFrameData(): Frame {
 		return this._frames[this._frameIndex].frame
 	}
 
@@ -25,15 +27,14 @@ export class AnimationRenderComponent extends AbstractImageRenderComponent {
 		return this.CurrentFrameData.size
 	}
 
-	public get zOrder(): number {
-		return this.CurrentFrameData.zOrder
-	}
-
 	public get image(): HTMLImageElement {
 		return this.CurrentFrameData.image
 	}
 
-	Init(gameObjectRef: SafeReference<IGameObject>, parameters?: AnimationRenderComponentParameters) {
+	Init(
+		gameObjectRef: SafeReference<IGameObject>,
+		parameters?: AnimationRenderComponentParameters
+	) {
 		super.Init(gameObjectRef, parameters)
 		if (parameters) {
 			this._frameIndex = 0
@@ -53,17 +54,23 @@ export class AnimationRenderComponent extends AbstractImageRenderComponent {
 	}
 }
 
-export class AnimationRenderComponentParameters extends ComponentParameters {
+export class AnimationRenderComponentParameters extends AbstractRenderComponentParameters {
 	frames: AnimationFrame[]
-	constructor(frames: AnimationFrame[]) {
-		super()
+
+	constructor(
+		frames: AnimationFrame[],
+		zOrder: number = 0,
+		executionPriority: number = 0,
+		label?: string
+	) {
+		super(executionPriority, label, zOrder)
 		this.frames = frames
 	}
 }
 export class AnimationFrame {
-	frame: StaticRenderComponentParameters
+	frame: Frame
 	part: number
-	constructor(frame: StaticRenderComponentParameters, part: number) {
+	constructor(frame: Frame, part: number) {
 		this.frame = frame
 		this.part = part
 	}

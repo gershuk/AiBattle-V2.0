@@ -1,10 +1,25 @@
+import { IGameObject } from 'GameEngine/GameObject/IGameObject'
+import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 import { Vector2 } from '../Vector2'
-import { AbstractRenderComponent, ViewPort } from './AbstractRenderComponent'
+import {
+	AbstractRenderComponent,
+	AbstractRenderComponentParameters,
+	ViewPort,
+} from './AbstractRenderComponent'
 
 export abstract class AbstractTextRenderComponent extends AbstractRenderComponent {
+	private _text: string
+
+	public get text(): string {
+		return this._text
+	}
+
+	public set text(v: string) {
+		this._text = this.text
+	}
+
 	abstract get offset(): Vector2
 	abstract get maxWidth(): number | undefined
-	abstract get text(): string
 
 	abstract get font(): string
 	abstract get textAlign(): CanvasTextAlign
@@ -38,5 +53,29 @@ export abstract class AbstractTextRenderComponent extends AbstractRenderComponen
 	public Render(viewPort: ViewPort) {
 		this.SetStyle(viewPort.canvasRenderingContext)
 		this.RenderText(viewPort)
+	}
+
+	public Init(
+		gameObjectRef: SafeReference<IGameObject>,
+		parameters?: AbstractTextRenderComponentParameters
+	): void {
+		super.Init(gameObjectRef, parameters)
+		if (parameters) {
+			this.text = parameters.text
+		}
+	}
+}
+
+export class AbstractTextRenderComponentParameters extends AbstractRenderComponentParameters {
+	text: string
+
+	constructor(
+		text: string,
+		executionPriority: number = 0,
+		label?: string,
+		zOrder: number = 0
+	) {
+		super(executionPriority, label, zOrder)
+		this.text = text
 	}
 }

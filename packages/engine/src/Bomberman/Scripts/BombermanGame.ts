@@ -1,4 +1,6 @@
 import {
+	Frame,
+	Frame as Sprite,
 	StaticImageRenderComponent,
 	StaticRenderComponentParameters,
 } from 'GameEngine/BaseComponents/RenderComponents/StaticImageRenderComponent'
@@ -137,8 +139,10 @@ export class BombermanGame extends GameEngine {
 				[
 					new StaticImageRenderComponent(),
 					new StaticRenderComponentParameters(
-						new Vector2(1, 1),
-						this.imageLoader.GetPng('./Resources/Grass.png'),
+						new Sprite(
+							this.imageLoader.GetPng('./Resources/Grass.png'),
+							new Vector2(1, 1)
+						),
 						-1
 					),
 				],
@@ -163,8 +167,10 @@ export class BombermanGame extends GameEngine {
 				[
 					new StaticImageRenderComponent(),
 					new StaticRenderComponentParameters(
-						new Vector2(1, 1),
-						this.imageLoader.GetPng('./Resources/Wall.png'),
+						new Frame(
+							this.imageLoader.GetPng('./Resources/Wall.png'),
+							new Vector2(1, 1)
+						),
 						0
 					),
 				],
@@ -183,8 +189,10 @@ export class BombermanGame extends GameEngine {
 				[
 					new BlastRender(),
 					new StaticRenderComponentParameters(
-						new Vector2(1, 1),
-						this.imageLoader.GetPng('./Resources/Blast.png'),
+						new Frame(
+							this.imageLoader.GetPng('./Resources/Blast.png'),
+							new Vector2(1, 1)
+						),
 						3
 					),
 				],
@@ -200,8 +208,10 @@ export class BombermanGame extends GameEngine {
 				[
 					new StaticImageRenderComponent(),
 					new StaticRenderComponentParameters(
-						new Vector2(1, 1),
-						this.imageLoader.GetPng('./Resources/Metal.png'),
+						new Frame(
+							this.imageLoader.GetPng('./Resources/Metal.png'),
+							new Vector2(1, 1)
+						),
 						0
 					),
 				],
@@ -228,24 +238,25 @@ export class BombermanGame extends GameEngine {
 			[
 				[
 					new AnimationRenderComponent(),
-					new AnimationRenderComponentParameters([
-						new AnimationFrame(
-							new StaticRenderComponentParameters(
-								new Vector2(1, 1),
-								this.imageLoader.GetPng('./Resources/Bomb.png'),
-								0
+					new AnimationRenderComponentParameters(
+						[
+							new AnimationFrame(
+								new Frame(
+									this.imageLoader.GetPng('./Resources/Bomb.png'),
+									new Vector2(1, 1)
+								),
+								0.5
 							),
-							0.5
-						),
-						new AnimationFrame(
-							new StaticRenderComponentParameters(
-								new Vector2(1, 1),
-								this.imageLoader.GetPng('./Resources/BombRed.png'),
-								0
+							new AnimationFrame(
+								new Frame(
+									this.imageLoader.GetPng('./Resources/BombRed.png'),
+									new Vector2(1, 1)
+								),
+								1
 							),
-							1
-						),
-					]),
+						],
+						0
+					),
 				],
 				[
 					new BombController(),
@@ -273,8 +284,10 @@ export class BombermanGame extends GameEngine {
 				[
 					new StaticImageRenderComponent(),
 					new StaticRenderComponentParameters(
-						new Vector2(1, 1),
-						this.imageLoader.GetPng('./Resources/Man.png'),
+						new Frame(
+							this.imageLoader.GetPng('./Resources/Man.png'),
+							new Vector2(1, 1)
+						),
 						1
 					),
 				],
