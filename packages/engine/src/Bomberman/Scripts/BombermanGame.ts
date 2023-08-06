@@ -1,6 +1,5 @@
 import {
-	Frame,
-	Frame as Sprite,
+	Sprite,
 	StaticImageRenderComponent,
 	StaticRenderComponentParameters,
 } from 'GameEngine/BaseComponents/RenderComponents/StaticImageRenderComponent'
@@ -37,6 +36,10 @@ import { BombermanGrid, BombermanGridParameters } from './BombermanGrid'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 import { ComponentParameters } from 'GameEngine/BaseComponents/GameObjectComponent'
+import {
+	PlayerNameRender,
+	PlayerNameRenderParameters,
+} from 'GameEngine/BaseComponents/RenderComponents/PlayerNameRender'
 
 export class BombermanGame extends GameEngine {
 	private _gridComponent: SafeReference<BombermanGrid>
@@ -136,16 +139,16 @@ export class BombermanGame extends GameEngine {
 		this.scene.CreateDefaultGameObject(
 			position,
 			[
-				[
-					new StaticImageRenderComponent(),
-					new StaticRenderComponentParameters(
-						new Sprite(
-							this.imageLoader.GetPng('./Resources/Grass.png'),
-							new Vector2(1, 1)
-						),
-						-1
-					),
-				],
+				// [
+				// 	new StaticImageRenderComponent(),
+				// 	new StaticRenderComponentParameters(
+				// 		new Sprite(
+				// 			this.imageLoader.GetPng('./Resources/Grass.png'),
+				// 			new Vector2(1, 1)
+				// 		),
+				// 		-1
+				// 	),
+				// ],
 			],
 			`Grass_${position.x}_${position.y}`
 		)
@@ -164,16 +167,16 @@ export class BombermanGame extends GameEngine {
 		const ref = this.scene.CreateDefaultGameObject(
 			position,
 			[
-				[
-					new StaticImageRenderComponent(),
-					new StaticRenderComponentParameters(
-						new Frame(
-							this.imageLoader.GetPng('./Resources/Wall.png'),
-							new Vector2(1, 1)
-						),
-						0
-					),
-				],
+				// [
+				// 	new StaticImageRenderComponent(),
+				// 	new StaticRenderComponentParameters(
+				// 		new Frame(
+				// 			this.imageLoader.GetPng('./Resources/Wall.png'),
+				// 			new Vector2(1, 1)
+				// 		),
+				// 		0
+				// 	),
+				// ],
 				[new HealthComponent(), new HealthComponentParameters()],
 				[new DestructibleWall(), new ComponentParameters()],
 			],
@@ -189,7 +192,7 @@ export class BombermanGame extends GameEngine {
 				[
 					new BlastRender(),
 					new StaticRenderComponentParameters(
-						new Frame(
+						new Sprite(
 							this.imageLoader.GetPng('./Resources/Blast.png'),
 							new Vector2(1, 1)
 						),
@@ -205,16 +208,16 @@ export class BombermanGame extends GameEngine {
 		const ref = this.scene.CreateDefaultGameObject(
 			position,
 			[
-				[
-					new StaticImageRenderComponent(),
-					new StaticRenderComponentParameters(
-						new Frame(
-							this.imageLoader.GetPng('./Resources/Metal.png'),
-							new Vector2(1, 1)
-						),
-						0
-					),
-				],
+				// [
+				// 	new StaticImageRenderComponent(),
+				// 	new StaticRenderComponentParameters(
+				// 		new Sprite(
+				// 			this.imageLoader.GetPng('./Resources/Metal.png'),
+				// 			new Vector2(1, 1)
+				// 		),
+				// 		0
+				// 	),
+				// ],
 				[new Wall(), new ComponentParameters()],
 			],
 			`Wall_${position.x}_${position.y}`
@@ -241,14 +244,14 @@ export class BombermanGame extends GameEngine {
 					new AnimationRenderComponentParameters(
 						[
 							new AnimationFrame(
-								new Frame(
+								new Sprite(
 									this.imageLoader.GetPng('./Resources/Bomb.png'),
 									new Vector2(1, 1)
 								),
 								0.5
 							),
 							new AnimationFrame(
-								new Frame(
+								new Sprite(
 									this.imageLoader.GetPng('./Resources/BombRed.png'),
 									new Vector2(1, 1)
 								),
@@ -281,18 +284,22 @@ export class BombermanGame extends GameEngine {
 		const ref = this.scene.CreateDefaultGameObject(
 			position,
 			[
-				[
-					new StaticImageRenderComponent(),
-					new StaticRenderComponentParameters(
-						new Frame(
-							this.imageLoader.GetPng('./Resources/Man.png'),
-							new Vector2(1, 1)
-						),
-						1
-					),
-				],
+				// [
+				// 	new StaticImageRenderComponent(),
+				// 	new StaticRenderComponentParameters(
+				// 		new Frame(
+				// 			this.imageLoader.GetPng('./Resources/Man.png'),
+				// 			new Vector2(1, 1)
+				// 		),
+				// 		1
+				// 	),
+				// ],
 				[new ManBody(), manBodyParameters],
 				[new HealthComponent(), new HealthComponentParameters()],
+				[
+					new PlayerNameRender(),
+					new PlayerNameRenderParameters('Test', 0, null, 1),
+				],
 			],
 			`Man:${manBodyParameters.label}`
 		)

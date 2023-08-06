@@ -1,8 +1,6 @@
 import { IGameObject } from 'GameEngine/GameObject/IGameObject'
 import { Vector2 } from '../Vector2'
-import {
-	Frame
-} from './StaticImageRenderComponent'
+import { Sprite } from './StaticImageRenderComponent'
 import { AbstractImageRenderComponent } from './AbstractImageRenderComponent'
 import { SafeReference } from 'GameEngine/ObjectBaseType/ObjectContainer'
 import { AbstractRenderComponentParameters } from './AbstractRenderComponent'
@@ -11,7 +9,7 @@ export class AnimationRenderComponent extends AbstractImageRenderComponent {
 	protected _frameIndex: number
 	protected _frames: AnimationFrame[]
 
-	public get CurrentFrameData(): Frame {
+	public get CurrentFrameData(): Sprite {
 		return this._frames[this._frameIndex].frame
 	}
 
@@ -68,9 +66,9 @@ export class AnimationRenderComponentParameters extends AbstractRenderComponentP
 	}
 }
 export class AnimationFrame {
-	frame: Frame
+	frame: Sprite
 	part: number
-	constructor(frame: Frame, part: number) {
+	constructor(frame: Sprite, part: number) {
 		this.frame = frame
 		this.part = part
 	}

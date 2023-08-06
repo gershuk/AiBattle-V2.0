@@ -42,7 +42,7 @@ export class StaticImageRenderComponent extends AbstractImageRenderComponent {
 	}
 }
 
-export class Frame {
+export class Sprite {
 	offset: Vector2
 	size: Vector2
 	image: HTMLImageElement
@@ -59,13 +59,13 @@ export class Frame {
 }
 
 export class StaticRenderComponentParameters extends AbstractRenderComponentParameters {
-	frame: Frame
+	frame: Sprite
 
 	constructor(
-		frame: Frame,
+		frame: Sprite,
 		zOrder: number = 0,
 		executionPriority: number = 0,
-		label?: string,
+		label?: string
 	) {
 		super(executionPriority, label, zOrder)
 		this.frame = frame

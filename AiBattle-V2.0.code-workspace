@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"name": "AiBattle-V2.0 @ refactoring",
+			"uri": "gitlens://7b22726566223a227265666163746f72696e67222c227265706f50617468223a222f686f6d652f766c61642f4465736b746f702f5265706f732f4169426174746c652d56322e30227d/home/vlad/Desktop/Repos/AiBattle-V2.0?{\"ref\":\"refactoring\"}"
+		}
+	],
+	"settings": {
+		"powershell.cwd": "/home/vlad/Desktop/Repos/AiBattle-V2.0"
+	}
+}

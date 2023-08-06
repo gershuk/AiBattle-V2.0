@@ -15,7 +15,7 @@ export abstract class AbstractTextRenderComponent extends AbstractRenderComponen
 	}
 
 	public set text(v: string) {
-		this._text = this.text
+		this._text = v
 	}
 
 	abstract get offset(): Vector2
